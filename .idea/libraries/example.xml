@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="example">
+    <CLASSES />
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/src/commons-validator-1.6-src/src/example" />
+      <root url="file://$PROJECT_DIR$/src/commons-validator-1.6-src/src/main/java" />
+      <root url="file://$PROJECT_DIR$/src/commons-validator-1.6-src/src/test/java" />
+    </SOURCES>
+  </library>
+</component>
