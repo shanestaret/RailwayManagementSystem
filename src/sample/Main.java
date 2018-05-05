@@ -33,7 +33,7 @@ public class Main extends Application {
     Scene loginUI, adminUI, custUI, createAccountUI, adminAuthorizationUI; //the different screens that we can get to within our "Stage" or frame
     Button loginButton, signOutButton, signOutButton2, createAccountLoginButton, createAccountCreateButton, createAccountCancelButton, adminAuthorizationAuthorizeButton, adminAuthorizationCancelButton, adminSaveChangesButton; //button that user can interact with
     Label loginDirections, createAccountDirections1, createAccountDirections2, createAccountEmailWarning1, createAccountEmailWarning2, personalInfo, accountInfo, adminDirections1, adminDirections2, adminAuthorizationDirections; //String that will tell user how to login
-    TextField username, createAccountName, createAccountEmail, createAccountUsername, adminCheckCustID, adminCheckTrackID, adminCheckSchedID, adminCreateCustName, adminCreateTrainName, adminCheckTrainName, adminCreateTrainStationName, adminCreateModel, adminCreateNumOfSeats, adminCreateLocation, adminCreateSchedIn, adminCreateSchedOut, adminCreateDate, adminCreateStationFrom, adminCreateStationTo, adminCreateLength,  adminCreateCustSeat, adminCreatePrice, adminCreateEmail, adminCreateUsername; //Where user can input information
+    TextField username, createAccountName, createAccountEmail, createAccountUsername, adminUpdateCheckCustID, adminCheckTrackID, adminUpdateCheckTrainID, adminUpdateTrackID, adminUpdateSchedID, adminUpdateCheckTrainStationID, adminUpdateCheckTicketID, adminUpdateCheckTrackID, adminCheckSchedID, adminUpdateCheckSchedID, adminCreateCustName, adminCreateTrainName, adminCheckTrainName, adminCreateTrainStationName, adminCreateModel, adminCreateNumOfSeats, adminCreateLocation, adminCreateSchedIn, adminCreateSchedOut, adminCreateDate, adminCreateStationFrom, adminCreateStationTo, adminCreateLength,  adminCreateCustSeat, adminCreatePrice, adminCreateEmail, adminCreateUsername, adminUpdateCustName, adminUpdateEmail, adminUpdateUsername, adminUpdatePassword, adminUpdateConfirmPassword, adminUpdateTrainName, adminUpdateCheckTrainName,adminUpdateTrainStationName, adminUpdateModel, adminUpdatePrice, adminUpdateDate, adminUpdateSchedIn, adminUpdateSchedOut, adminUpdateNumOfSeats, adminUpdateLocation, adminUpdateStationFrom, adminUpdateStationTo, adminUpdateLength, adminUpdateCustSeat; //Where user can input information
     PasswordField password, createAccountPassword, createAccountConfirmPassword, adminUsername, adminPassword, adminCreatePassword, adminCreateConfirmPassword; //Where user password's will be entered
     CheckBox rememberUsernameBox; //Box user can check if it wants application to remember their username after signing out
     ChoiceBox<String> accountTypeBox, adminManipulateDropdownBox, adminElementDropdownBox; //Dropdown menus
@@ -150,100 +150,220 @@ public class Main extends Application {
         adminCheckTrackID.setPromptText("Track ID Number");
         adminCheckTrackID.setTooltip(new Tooltip("Enter Track ID Number"));
 
-        adminCheckCustID = new TextField();
-        adminCheckCustID.setMaxWidth(300);
-        adminCheckCustID.setPromptText("Pre-Existing Customer ID Number");
-        adminCheckCustID.setTooltip(new Tooltip("Enter Pre-Existing Customer ID Number"));
+        adminUpdateTrackID = new TextField();
+        adminUpdateTrackID.setMaxWidth(300);
+        adminUpdateTrackID.setPromptText("Enter Pre-Existing Track ID Number");
+        adminUpdateTrackID.setTooltip(new Tooltip("Enter Pre-Existing Track ID Number"));
+
+        adminUpdateSchedID = new TextField();
+        adminUpdateSchedID.setMaxWidth(300);
+        adminUpdateSchedID.setPromptText("Enter Pre-Existing Schedule ID Number");
+        adminUpdateSchedID.setTooltip(new Tooltip("Enter Pre-Existing Schedule ID Number"));
+
+        adminUpdateCheckTrackID = new TextField();
+        adminUpdateCheckTrackID.setMaxWidth(300);
+        adminUpdateCheckTrackID.setPromptText("Update Track ID Number");
+        adminUpdateCheckTrackID.setTooltip(new Tooltip("Update Track ID Number"));
+
+        adminUpdateCheckTrainStationID = new TextField();
+        adminUpdateCheckTrainStationID.setMaxWidth(300);
+        adminUpdateCheckTrainStationID.setPromptText("Update Train Station ID Number");
+        adminUpdateCheckTrainStationID.setTooltip(new Tooltip("Update Train Station ID Number"));
+
+        adminUpdateCheckTicketID = new TextField();
+        adminUpdateCheckTicketID.setMaxWidth(300);
+        adminUpdateCheckTicketID.setPromptText("Enter Pre-Existing Ticket ID Number");
+        adminUpdateCheckTicketID.setTooltip(new Tooltip("Enter Pre-Existing Ticket ID Number"));
+
+        adminUpdateCheckCustID = new TextField();
+        adminUpdateCheckCustID.setMaxWidth(300);
+        adminUpdateCheckCustID.setPromptText("Pre-Existing Customer ID Number");
+        adminUpdateCheckCustID.setTooltip(new Tooltip("Enter Pre-Existing Customer ID Number"));
 
         adminCheckSchedID = new TextField();
         adminCheckSchedID.setMaxWidth(300);
         adminCheckSchedID.setPromptText("Pre-Existing Schedule Entry ID Number");
         adminCheckSchedID.setTooltip(new Tooltip("Enter Pre-Existing Schedule Entry ID Number"));
 
+        adminUpdateCheckTrainID = new TextField();
+        adminUpdateCheckTrainID.setMaxWidth(300);
+        adminUpdateCheckTrainID.setPromptText("Pre-Existing Train ID Number");
+        adminUpdateCheckTrainID.setTooltip(new Tooltip("Enter Pre-Existing Train ID Number"));
+
+        adminUpdateCheckSchedID = new TextField();
+        adminUpdateCheckSchedID.setMaxWidth(300);
+        adminUpdateCheckSchedID.setPromptText("Update Pre-Existing Schedule Entry ID Number");
+        adminUpdateCheckSchedID.setTooltip(new Tooltip("Update Pre-Existing Schedule Entry ID Number"));
+
         adminCreateCustName = new TextField();
         adminCreateCustName.setMaxWidth(300);
         adminCreateCustName.setPromptText("Customer Name");
         adminCreateCustName.setTooltip(new Tooltip("Enter Customer Name"));
+
+        adminUpdateCustName = new TextField();
+        adminUpdateCustName.setMaxWidth(300);
+        adminUpdateCustName.setPromptText("Update Customer Name");
+        adminUpdateCustName.setTooltip(new Tooltip("Update Customer Name"));
 
         adminCreateTrainName = new TextField();
         adminCreateTrainName.setMaxWidth(300);
         adminCreateTrainName.setPromptText("Train Name");
         adminCreateTrainName.setTooltip(new Tooltip("Enter Train Name"));
 
+        adminUpdateTrainName = new TextField();
+        adminUpdateTrainName.setMaxWidth(300);
+        adminUpdateTrainName.setPromptText("Update Train Name");
+        adminUpdateTrainName.setTooltip(new Tooltip("Update Train Name"));
+
         adminCheckTrainName = new TextField();
         adminCheckTrainName.setMaxWidth(300);
         adminCheckTrainName.setPromptText("Pre-Existing Train Name");
         adminCheckTrainName.setTooltip(new Tooltip("Enter Pre-Existing Train Name"));
+
+        adminUpdateCheckTrainName = new TextField();
+        adminUpdateCheckTrainName.setMaxWidth(300);
+        adminUpdateCheckTrainName.setPromptText("Update Pre-Existing Train Name");
+        adminUpdateCheckTrainName.setTooltip(new Tooltip("Update Pre-Existing Train Name"));
 
         adminCreateTrainStationName = new TextField();
         adminCreateTrainStationName.setMaxWidth(300);
         adminCreateTrainStationName.setPromptText("Train Station Name");
         adminCreateTrainStationName.setTooltip(new Tooltip("Enter Train Station Name"));
 
+        adminUpdateTrainStationName = new TextField();
+        adminUpdateTrainStationName.setMaxWidth(300);
+        adminUpdateTrainStationName.setPromptText("Update Train Station Name");
+        adminUpdateTrainStationName.setTooltip(new Tooltip("Update Train Station Name"));
+
         adminCreateModel = new TextField();
         adminCreateModel.setMaxWidth(300);
         adminCreateModel.setPromptText("Train Model");
         adminCreateModel.setTooltip(new Tooltip("Enter Train Model"));
+
+        adminUpdateModel = new TextField();
+        adminUpdateModel.setMaxWidth(300);
+        adminUpdateModel.setPromptText("Update Train Model");
+        adminUpdateModel.setTooltip(new Tooltip("Update Train Model"));
 
         adminCreateNumOfSeats = new TextField();
         adminCreateNumOfSeats.setMaxWidth(300);
         adminCreateNumOfSeats.setPromptText("# of Seats");
         adminCreateNumOfSeats.setTooltip(new Tooltip("Enter Capacity of Train"));
 
+        adminUpdateNumOfSeats = new TextField();
+        adminUpdateNumOfSeats.setMaxWidth(300);
+        adminUpdateNumOfSeats.setPromptText("Update # of Seats");
+        adminUpdateNumOfSeats.setTooltip(new Tooltip("Update Capacity of Train"));
+
         adminCreateLocation = new TextField();
         adminCreateLocation.setMaxWidth(300);
         adminCreateLocation.setPromptText("Location");
         adminCreateLocation.setTooltip(new Tooltip("Enter Location of Train Station"));
+
+        adminUpdateLocation = new TextField();
+        adminUpdateLocation.setMaxWidth(300);
+        adminUpdateLocation.setPromptText("Update Location");
+        adminUpdateLocation.setTooltip(new Tooltip("Update Location of Train Station"));
 
         adminCreateSchedOut = new TextField();
         adminCreateSchedOut.setMaxWidth(300);
         adminCreateSchedOut.setPromptText("Time of Departure (HH:MM format)");
         adminCreateSchedOut.setTooltip(new Tooltip("Enter Time of Departure"));
 
+        adminUpdateSchedOut = new TextField();
+        adminUpdateSchedOut.setMaxWidth(300);
+        adminUpdateSchedOut.setPromptText("Update Time of Departure (HH:MM format)");
+        adminUpdateSchedOut.setTooltip(new Tooltip("Update Time of Departure"));
+
         adminCreateSchedIn = new TextField();
         adminCreateSchedIn.setMaxWidth(300);
         adminCreateSchedIn.setPromptText("Time of Arrival (HH:MM format)");
         adminCreateSchedIn.setTooltip(new Tooltip("Enter Time of Arrival"));
+
+        adminUpdateSchedIn = new TextField();
+        adminUpdateSchedIn.setMaxWidth(300);
+        adminUpdateSchedIn.setPromptText("Update Time of Arrival (HH:MM format)");
+        adminUpdateSchedIn.setTooltip(new Tooltip("Update Time of Arrival"));
 
         adminCreateDate = new TextField();
         adminCreateDate.setMaxWidth(300);
         adminCreateDate.setPromptText("Date (MM/DD/YY format)");
         adminCreateDate.setTooltip(new Tooltip("Enter Date of Event"));
 
+        adminUpdateDate = new TextField();
+        adminUpdateDate.setMaxWidth(300);
+        adminUpdateDate.setPromptText("Update Date (MM/DD/YY format)");
+        adminUpdateDate.setTooltip(new Tooltip("Update Date of Event"));
+
         adminCreateStationFrom = new TextField();
         adminCreateStationFrom.setMaxWidth(300);
         adminCreateStationFrom.setPromptText("Station From");
         adminCreateStationFrom.setTooltip(new Tooltip("Enter Station the Train is Leaving From"));
+
+        adminUpdateStationFrom = new TextField();
+        adminUpdateStationFrom.setMaxWidth(300);
+        adminUpdateStationFrom.setPromptText("Update Station From");
+        adminUpdateStationFrom.setTooltip(new Tooltip("Update Station the Train is Leaving From"));
 
         adminCreateStationTo = new TextField();
         adminCreateStationTo.setMaxWidth(300);
         adminCreateStationTo.setPromptText("Station To");
         adminCreateStationTo.setTooltip(new Tooltip("Enter Station the Train is Going to"));
 
+        adminUpdateStationTo = new TextField();
+        adminUpdateStationTo.setMaxWidth(300);
+        adminUpdateStationTo.setPromptText("Update Station To");
+        adminUpdateStationTo.setTooltip(new Tooltip("Update Station the Train is Going to"));
+
         adminCreateLength = new TextField();
         adminCreateLength.setMaxWidth(300);
         adminCreateLength.setPromptText("Length of Track (miles)");
         adminCreateLength.setTooltip(new Tooltip("Enter Length of Track in Miles"));
+
+        adminUpdateLength = new TextField();
+        adminUpdateLength.setMaxWidth(300);
+        adminUpdateLength.setPromptText("Update Length of Track (miles)");
+        adminUpdateLength.setTooltip(new Tooltip("Update Length of Track in Miles"));
 
         adminCreateCustSeat = new TextField();
         adminCreateCustSeat.setMaxWidth(300);
         adminCreateCustSeat.setPromptText("Customer Seat #");
         adminCreateCustSeat.setTooltip(new Tooltip("Enter the Seat of the Customer"));
 
+        adminUpdateCustSeat = new TextField();
+        adminUpdateCustSeat.setMaxWidth(300);
+        adminUpdateCustSeat.setPromptText("Update Customer Seat #");
+        adminUpdateCustSeat.setTooltip(new Tooltip("Update the Seat of the Customer"));
+
         adminCreatePrice = new TextField();
         adminCreatePrice.setMaxWidth(300);
         adminCreatePrice.setPromptText("Price of Ticket (Two Digits After Decimal)");
         adminCreatePrice.setTooltip(new Tooltip("Enter the Price of the Ticket"));
+
+        adminUpdatePrice = new TextField();
+        adminUpdatePrice.setMaxWidth(300);
+        adminUpdatePrice.setPromptText("Update Price of Ticket (Two Digits After Decimal)");
+        adminUpdatePrice.setTooltip(new Tooltip("Update the Price of the Ticket"));
 
         adminCreateEmail = new TextField();
         adminCreateEmail.setMaxWidth(300);
         adminCreateEmail.setPromptText("Email");
         adminCreateEmail.setTooltip(new Tooltip("Enter Email of the Customer"));
 
+        adminUpdateEmail = new TextField();
+        adminUpdateEmail.setMaxWidth(300);
+        adminUpdateEmail.setPromptText("Update Email");
+        adminUpdateEmail.setTooltip(new Tooltip("Update Email of the Customer"));
+
         adminCreateUsername = new TextField();
         adminCreateUsername.setMaxWidth(300);
         adminCreateUsername.setPromptText("Username");
         adminCreateUsername.setTooltip(new Tooltip("Enter Username of Customer"));
+
+        adminUpdateUsername = new TextField();
+        adminUpdateUsername.setMaxWidth(300);
+        adminUpdateUsername.setPromptText("Update Username");
+        adminUpdateUsername.setTooltip(new Tooltip("Update Username of Customer"));
 
         //PasswordFields used in admin view
         adminCreatePassword = new PasswordField();
@@ -255,6 +375,16 @@ public class Main extends Application {
         adminCreateConfirmPassword.setMaxWidth(300);
         adminCreateConfirmPassword.setPromptText("Confirm Password");
         adminCreateConfirmPassword.setTooltip(new Tooltip("Enter Password of Customer Again"));
+
+        adminUpdatePassword = new PasswordField();
+        adminUpdatePassword.setMaxWidth(300);
+        adminUpdatePassword.setPromptText("Update Password");
+        adminUpdatePassword.setTooltip(new Tooltip("Enter New Password of Customer"));
+
+        adminUpdateConfirmPassword = new PasswordField();
+        adminUpdateConfirmPassword.setMaxWidth(300);
+        adminUpdateConfirmPassword.setPromptText("Confirm New Password");
+        adminUpdateConfirmPassword.setTooltip(new Tooltip("Enter New Password of Customer Again"));
 
         //PasswordFields used to enter pre-existing admin info so new admin user can be created
         adminUsername = new PasswordField();
@@ -413,140 +543,254 @@ public class Main extends Application {
         adminSaveChangesButton.setOnAction(e -> {
             result = ConfirmBox.display("Confirm Changes", 500, 200, "Are you sure you want to make this change?");
             if(result) {
-                if(adminElementDropdownBox.getValue().equals("Customer")) {
-                    invalidDomain = SendEmail.readDomains(adminCreateEmail.getText());
-                    if(adminCreateEmail.getText().equals("") || invalidDomain) {
-                        AlertBox.display("Email Invalid", 500, 200, "You did not enter a proper email address.");
-                        return;
-                    }
-                    else if(adminCreateCustName.getText().equals("")) {
-                        AlertBox.display("Name Invalid", 500, 200, "You did not enter a proper name.");
-                        return;
-                    }
-                    else if(adminCreateUsername.getText().equals("")) {
-                        AlertBox.display("Username Invalid", 500, 200, "You did not enter a proper username.");
-                        return;
-                    }
-                    else if(adminCreatePassword.getText().equals("")) {
-                        AlertBox.display("Password Invalid", 500, 200, "You did not enter a proper password.");
-                        return;
-                    }
-                    else if(!adminCreatePassword.getText().equals(adminCreateConfirmPassword.getText())) {
-                        AlertBox.display("Password Confirmation Error", 500, 200, "Password and Confirmation do not match.");
-                        return;
-                    }
-                    else {
-                        emailAddress = adminCreateEmail.getText();
-                        if(SendEmail.isValidEmailAddress(emailAddress) && SendEmail.isValidRegex(emailAddress)) {
-                            SendEmail.send(emailAddress);
-                            adminCreateCustName.clear();
-                            adminCreateEmail.clear();
-                            adminCreateUsername.clear();
-                            adminCreatePassword.clear();
-                            adminCreateConfirmPassword.clear();
-                            AlertBox.display("Create Account Successful", 500, 200, "Successfully created new account! An email has been sent to the customer's email address.");
+                if(adminManipulateDropdownBox.getValue().equals("Create")) {
+                    if (adminElementDropdownBox.getValue().equals("Customer")) {
+                        invalidDomain = SendEmail.readDomains(adminCreateEmail.getText());
+                        if (adminCreateEmail.getText().equals("") || invalidDomain) {
+                            AlertBox.display("Email Invalid", 500, 200, "You did not enter a proper email address.");
+                            return;
+                        } else if (adminCreateCustName.getText().equals("")) {
+                            AlertBox.display("Name Invalid", 500, 200, "You did not enter a proper name.");
+                            return;
+                        } else if (adminCreateUsername.getText().equals("")) {
+                            AlertBox.display("Username Invalid", 500, 200, "You did not enter a proper username.");
+                            return;
+                        } else if (adminCreatePassword.getText().equals("")) {
+                            AlertBox.display("Password Invalid", 500, 200, "You did not enter a proper password.");
+                            return;
+                        } else if (!adminCreatePassword.getText().equals(adminCreateConfirmPassword.getText())) {
+                            AlertBox.display("Password Confirmation Error", 500, 200, "Password and Confirmation do not match.");
+                            return;
+                        } else {
+                            emailAddress = adminCreateEmail.getText();
+                            if (SendEmail.isValidEmailAddress(emailAddress) && SendEmail.isValidRegex(emailAddress)) {
+                                SendEmail.send(emailAddress);
+                                if (adminManipulateDropdownBox.getValue().equals("Update")) {
+                                    adminUpdateCheckCustID.clear();
+                                }
+                                adminCreateCustName.clear();
+                                adminCreateEmail.clear();
+                                adminCreateUsername.clear();
+                                adminCreatePassword.clear();
+                                adminCreateConfirmPassword.clear();
+                                AlertBox.display("Create Account Successful", 500, 200, "Successfully created new account! An email has been sent to the customer's email address.");
 
+                            }
+                        }
+                    } else if (adminElementDropdownBox.getValue().equals("Train")) {
+                        if (adminCreateTrainName.getText().equals("")) {
+                            AlertBox.display("Name Invalid", 500, 200, "You did not enter a proper name.");
+                            return;
+                        } else if (adminCreateModel.getText().equals("")) {
+                            AlertBox.display("Model Invalid", 500, 200, "You did not enter a proper train model.");
+                            return;
+                        } else if (!(Pattern.matches("[0-9]+", adminCreateNumOfSeats.getText())) || Integer.parseInt(adminCreateNumOfSeats.getText()) < 1) {
+                            AlertBox.display("Number of Seats Invalid", 500, 200, "You did not enter a proper number of seats");
+                            return;
+                        } else {
+                            adminCreateTrainName.clear();
+                            adminCreateModel.clear();
+                            adminCreateNumOfSeats.clear();
+                            AlertBox.display("Create Train Successful", 500, 200, "Successfully created new train!");
+                        }
+                    } else if (adminElementDropdownBox.getValue().equals("Train Station")) {
+                        if (adminCreateTrainStationName.getText().equals("")) {
+                            AlertBox.display("Name Invalid", 500, 200, "You did not enter a proper name.");
+                            return;
+                        } else if (adminCreateLocation.getText().equals("")) {
+                            AlertBox.display("Location Invalid", 500, 200, "You did not enter a proper location.");
+                            return;
+                        } else {
+                            adminCreateTrainStationName.clear();
+                            adminCreateLocation.clear();
+                            AlertBox.display("Create Train Station Successful", 500, 200, "Successfully created a new train station!");
+                        }
+                    } else if (adminElementDropdownBox.getValue().equals("Schedule Entry")) {
+                        if (adminCheckTrainName.getText().equals("")) {
+                            AlertBox.display("Name Invalid", 500, 200, "You did not enter a train name that exists.");
+                            return;
+                        } else if (adminCheckTrackID.getText().equals("")) {
+                            AlertBox.display("Track ID Invalid", 500, 200, "You did not enter a track ID that exists.");
+                            return;
+                        } else if (adminCreateSchedOut.getText().equals("") || adminCreateSchedOut.getText().length() != 5 || !(Pattern.matches("[0-9]+", adminCreateSchedOut.getText().substring(0, 2))) || !(Pattern.matches("[0-9]+", adminCreateSchedOut.getText().substring(3, 5))) || !adminCreateSchedOut.getText().substring(2, 3).equals(":") || Integer.parseInt(adminCreateSchedOut.getText().substring(0, 2)) < 1 || Integer.parseInt(adminCreateSchedOut.getText().substring(0, 2)) > 23 || Integer.parseInt(adminCreateSchedOut.getText().substring(3, 5)) < 0 || Integer.parseInt(adminCreateSchedOut.getText().substring(3, 5)) > 59) {
+                            AlertBox.display("Departure Time Invalid", 500, 200, "You did not enter a proper departure time (Must be in HH:MM format).");
+                            return;
+                        } else if (adminCreateSchedIn.getText().equals("") || adminCreateSchedIn.getText().length() != 5 || !(Pattern.matches("[0-9]+", adminCreateSchedIn.getText().substring(0, 2))) || !(Pattern.matches("[0-9]+", adminCreateSchedIn.getText().substring(3, 5))) || !adminCreateSchedIn.getText().substring(2, 3).equals(":") || Integer.parseInt(adminCreateSchedIn.getText().substring(0, 2)) < 1 || Integer.parseInt(adminCreateSchedIn.getText().substring(0, 2)) > 23 || Integer.parseInt(adminCreateSchedIn.getText().substring(3, 5)) < 0 || Integer.parseInt(adminCreateSchedIn.getText().substring(3, 5)) > 59) {
+                            AlertBox.display("Arrival Time Invalid", 500, 200, "You did not enter a proper arrival time (Must be in HH:MM format).");
+                            return;
+                        } else {
+                            adminCheckTrainName.clear();
+                            adminCheckTrackID.clear();
+                            adminCreateSchedOut.clear();
+                            adminCreateSchedIn.clear();
+                            AlertBox.display("Create Schedule Entry Successful", 500, 200, "Successfully created a new Schedule Entry!");
+                        }
+                    } else if (adminElementDropdownBox.getValue().equals("Track")) {
+                        if (adminCreateStationFrom.getText().equals("")) {
+                            AlertBox.display("Station From Invalid", 500, 200, "You did not enter a proper station to depart from.");
+                            return;
+                        } else if (adminCreateStationTo.getText().equals("")) {
+                            AlertBox.display("Station To Invalid", 500, 200, "You did not enter a proper station to arrive at.");
+                            return;
+                        } else if (adminCreateLength.getText().equals("") || !(Pattern.matches("[0-9]+", adminCreateLength.getText())) || Integer.parseInt(adminCreateLength.getText()) < 1) {
+                            AlertBox.display("Length Invalid", 500, 200, "You did not enter a proper length (Must be a whole number).");
+                            return;
+                        } else {
+                            adminCreateStationFrom.clear();
+                            adminCreateStationTo.clear();
+                            adminCreateLength.clear();
+                            AlertBox.display("Create Track Successful", 500, 200, "Successfully created a new track!");
+                        }
+                    } else if (adminElementDropdownBox.getValue().equals("Ticket")) {
+                        if (adminCheckSchedID.getText().equals("")) {
+                            AlertBox.display("Schedule Entry ID Invalid", 500, 200, "You did not enter a schedule entry that exists.");
+                            return;
+                        } else if (adminCreateDate.getText().equals("") || adminCreateDate.getText().length() != 8 || !adminCreateDate.getText().substring(2, 3).equals("/") || !adminCreateDate.getText().substring(5, 6).equals("/") || !(Pattern.matches("[0-9]+", adminCreateDate.getText().substring(0, 2))) || !(Pattern.matches("[0-9]+", adminCreateDate.getText().substring(3, 5))) || !(Pattern.matches("[0-9]+", adminCreateDate.getText().substring(6, 8))) || Integer.parseInt(adminCreateDate.getText().substring(0, 2)) < 1 || Integer.parseInt(adminCreateDate.getText().substring(0, 2)) > 12 || Integer.parseInt(adminCreateDate.getText().substring(3, 5)) < 1 || Integer.parseInt(adminCreateDate.getText().substring(3, 5)) > 30 || Integer.parseInt(adminCreateDate.getText().substring(6, 8)) < 1 || Integer.parseInt(adminCreateDate.getText().substring(6, 8)) > 99) {
+                            AlertBox.display("Date Invalid", 500, 200, "You did not enter a proper date (Must be in MM/DD/YY format).");
+                            return;
+                        } else if (adminCreatePrice.getText().equals("") || adminCreatePrice.getText().length() < 4 || !adminCreatePrice.getText().contains(".") || !(Pattern.matches("[0-9]+", adminCreatePrice.getText().substring(0, adminCreatePrice.getText().indexOf(".")))) || !(Pattern.matches("[0-9]+", adminCreatePrice.getText().substring(adminCreatePrice.getText().indexOf(".") + 1))) || Integer.parseInt(adminCreatePrice.getText().substring(0, adminCreatePrice.getText().indexOf("."))) < 1 || Integer.parseInt(adminCreatePrice.getText().substring(adminCreatePrice.getText().indexOf(".") + 1)) > 99) {
+                            AlertBox.display("Price Invalid", 500, 200, "You did not enter a proper price (Must be two digits after the decimal).");
+                            return;
+                        } else {
+                            adminCheckSchedID.clear();
+                            adminCreateDate.clear();
+                            adminCreatePrice.clear();
+                            AlertBox.display("Create Ticket Successful", 500, 200, "Successfully created a new ticket!");
                         }
                     }
                 }
-                else if(adminElementDropdownBox.getValue().equals("Train")) {
-                    if(adminCreateTrainName.getText().equals("")) {
-                        AlertBox.display("Name Invalid", 500, 200, "You did not enter a proper name.");
-                        return;
-                    }
-                    else if(adminCreateModel.getText().equals("")) {
-                        AlertBox.display("Model Invalid", 500, 200, "You did not enter a proper train model.");
-                        return;
-                    }
-                    else if(!(Pattern.matches("[0-9]+", adminCreateNumOfSeats.getText())) || Integer.parseInt(adminCreateNumOfSeats.getText()) < 1) {
-                        AlertBox.display("Number of Seats Invalid", 500, 200, "You did not enter a proper number of seats");
-                        return;
-                    }
-                    else {
-                        adminCreateTrainName.clear();
-                        adminCreateModel.clear();
-                        adminCreateNumOfSeats.clear();
-                        AlertBox.display("Create Train Successful", 500, 200, "Successfully created new train!");
-                    }
-                }
-                else if(adminElementDropdownBox.getValue().equals("Train Station")) {
-                    if(adminCreateTrainStationName.getText().equals("")) {
-                        AlertBox.display("Name Invalid", 500, 200, "You did not enter a proper name.");
-                        return;
-                    }
-                    else if(adminCreateLocation.getText().equals("")) {
-                        AlertBox.display("Location Invalid", 500, 200, "You did not enter a proper location.");
-                        return;
-                    }
-                    else {
-                        adminCreateTrainStationName.clear();
-                        adminCreateLocation.clear();
-                        AlertBox.display("Create Train Station Successful", 500, 200, "Successfully created a new train station!");
-                    }
-                }
-                else if(adminElementDropdownBox.getValue().equals("Schedule Entry")) {
-                    if(adminCheckTrainName.getText().equals("")) {
-                        AlertBox.display("Name Invalid", 500, 200, "You did not enter a train name that exists.");
-                        return;
-                    }
-                    else if(adminCheckTrackID.getText().equals("")) {
-                        AlertBox.display("Track ID Invalid", 500, 200, "You did not enter a track ID that exists.");
-                        return;
-                    }
-                    else if(adminCreateSchedOut.getText().equals("") || adminCreateSchedOut.getText().length() != 5 || !(Pattern.matches("[0-9]+", adminCreateSchedOut.getText().substring(0, 2))) || !(Pattern.matches("[0-9]+", adminCreateSchedOut.getText().substring(3, 5))) || !adminCreateSchedOut.getText().substring(2, 3).equals(":") || Integer.parseInt(adminCreateSchedOut.getText().substring(0, 2)) < 1 || Integer.parseInt(adminCreateSchedOut.getText().substring(0, 2)) > 23 || Integer.parseInt(adminCreateSchedOut.getText().substring(3, 5)) < 0 || Integer.parseInt(adminCreateSchedOut.getText().substring(3, 5)) > 59) {
-                        AlertBox.display("Departure Time Invalid", 500, 200, "You did not enter a proper departure time (Must be in HH:MM format).");
-                        return;
-                    }
-                    else if(adminCreateSchedIn.getText().equals("") || adminCreateSchedIn.getText().length() != 5 || !(Pattern.matches("[0-9]+", adminCreateSchedIn.getText().substring(0, 2))) || !(Pattern.matches("[0-9]+", adminCreateSchedIn.getText().substring(3, 5))) || !adminCreateSchedIn.getText().substring(2, 3).equals(":")|| Integer.parseInt(adminCreateSchedIn.getText().substring(0, 2)) < 1 || Integer.parseInt(adminCreateSchedIn.getText().substring(0, 2)) > 23 || Integer.parseInt(adminCreateSchedIn.getText().substring(3, 5)) < 0 || Integer.parseInt(adminCreateSchedIn.getText().substring(3, 5)) > 59) {
-                        AlertBox.display("Arrival Time Invalid", 500, 200, "You did not enter a proper arrival time (Must be in HH:MM format).");
-                        return;
-                    }
-                    else {
-                        adminCheckTrainName.clear();
-                        adminCheckTrackID.clear();
-                        adminCreateSchedOut.clear();
-                        adminCreateSchedIn.clear();
-                        AlertBox.display("Create Schedule Entry Successful", 500, 200, "Successfully created a new Schedule Entry!");
-                    }
-                }
-                else if(adminElementDropdownBox.getValue().equals("Track")) {
-                    if(adminCreateStationFrom.getText().equals("")) {
-                        AlertBox.display("Station From Invalid", 500, 200, "You did not enter a proper station to depart from.");
-                        return;
-                    }
-                    else if(adminCreateStationTo.getText().equals("")) {
-                        AlertBox.display("Station To Invalid", 500, 200, "You did not enter a proper station to arrive at.");
-                        return;
-                    }
-                    else if(adminCreateLength.getText().equals("") || !(Pattern.matches("[0-9]+", adminCreateLength.getText())) || Integer.parseInt(adminCreateLength.getText()) < 1) {
-                        AlertBox.display("Length Invalid", 500, 200, "You did not enter a proper length (Must be a whole number).");
-                        return;
-                    }
-                    else {
-                        adminCreateStationFrom.clear();
-                        adminCreateStationTo.clear();
-                        adminCreateLength.clear();
-                        AlertBox.display("Create Track Successful", 500, 200, "Successfully created a new track!");
-                    }
-                }
-                else if(adminElementDropdownBox.getValue().equals("Ticket")) {
-                    if(adminCheckSchedID.getText().equals("")) {
-                        AlertBox.display("Schedule Entry ID Invalid", 500, 200, "You did not enter a schedule entry that exists.");
-                        return;
-                    }
-                    else if(adminCreateDate.getText().equals("") || adminCreateDate.getText().length() != 8 || !adminCreateDate.getText().substring(2, 3).equals("/") || !adminCreateDate.getText().substring(5, 6).equals("/") || !(Pattern.matches("[0-9]+", adminCreateDate.getText().substring(0, 2))) || !(Pattern.matches("[0-9]+", adminCreateDate.getText().substring(3, 5))) || !(Pattern.matches("[0-9]+", adminCreateDate.getText().substring(6, 8))) || Integer.parseInt(adminCreateDate.getText().substring(0, 2)) < 1 || Integer.parseInt(adminCreateDate.getText().substring(0, 2)) > 12 || Integer.parseInt(adminCreateDate.getText().substring(3, 5)) < 1 || Integer.parseInt(adminCreateDate.getText().substring(3, 5)) > 30 || Integer.parseInt(adminCreateDate.getText().substring(6, 8)) < 1 || Integer.parseInt(adminCreateDate.getText().substring(6, 8)) > 99) {
-                        AlertBox.display("Date Invalid", 500, 200, "You did not enter a proper date (Must be in MM/DD/YY format).");
-                        return;
-                    }
-                    else if(adminCreatePrice.getText().equals("") || adminCreatePrice.getText().length() < 4 || !adminCreatePrice.getText().contains(".") || !(Pattern.matches("[0-9]+", adminCreatePrice.getText().substring(0, adminCreatePrice.getText().indexOf(".")))) || !(Pattern.matches("[0-9]+", adminCreatePrice.getText().substring(adminCreatePrice.getText().indexOf(".") + 1))) || Integer.parseInt(adminCreatePrice.getText().substring(0, adminCreatePrice.getText().indexOf("."))) < 1 || Integer.parseInt(adminCreatePrice.getText().substring(adminCreatePrice.getText().indexOf(".") + 1)) > 99) {
-                        AlertBox.display("Price Invalid", 500, 200, "You did not enter a proper price (Must be two digits after the decimal).");
-                        return;
-                    }
-                    else {
-                        adminCheckSchedID.clear();
-                        adminCreateDate.clear();
-                        adminCreatePrice.clear();
-                        AlertBox.display("Create Ticket Successful", 500, 200, "Successfully created a new ticket!");
+                if(adminManipulateDropdownBox.getValue().equals("Update")) {
+                    if (adminElementDropdownBox.getValue().equals("Customer")) {
+                        invalidDomain = SendEmail.readDomains(adminUpdateEmail.getText());
+                        if(adminUpdateCheckCustID.getText().equals(" ")) {
+                            AlertBox.display("Customer ID Invalid", 500, 200, "You did not enter a proper pre-existing customer ID.");
+                        }
+                        else if (adminUpdateEmail.getText().equals("") || invalidDomain) {
+                            AlertBox.display("Email Invalid", 500, 200, "You did not enter a proper email address.");
+                            return;
+                        } else if (adminUpdateCustName.getText().equals("")) {
+                            AlertBox.display("Name Invalid", 500, 200, "You did not enter a proper name.");
+                            return;
+                        } else if (adminUpdateUsername.getText().equals("")) {
+                            AlertBox.display("Username Invalid", 500, 200, "You did not enter a proper username.");
+                            return;
+                        } else if (adminUpdatePassword.getText().equals("")) {
+                            AlertBox.display("Password Invalid", 500, 200, "You did not enter a proper password.");
+                            return;
+                        } else if (!adminUpdatePassword.getText().equals(adminUpdateConfirmPassword.getText())) {
+                            AlertBox.display("Password Confirmation Error", 500, 200, "Password and Confirmation do not match.");
+                            return;
+                        } else {
+                            emailAddress = adminUpdateEmail.getText();
+                            if (SendEmail.isValidEmailAddress(emailAddress) && SendEmail.isValidRegex(emailAddress)) {
+                                SendEmail.send(emailAddress);
+                                if (adminManipulateDropdownBox.getValue().equals("Update")) {
+                                    adminUpdateCheckCustID.clear();
+                                }
+                                adminUpdateCustName.clear();
+                                adminUpdateEmail.clear();
+                                adminUpdateUsername.clear();
+                                adminUpdatePassword.clear();
+                                adminUpdateConfirmPassword.clear();
+                                AlertBox.display("Update Account Successful", 500, 200, "Successfully updated account! An email has been sent to the customer's email address.");
+
+                            }
+                        }
+                    } else if (adminElementDropdownBox.getValue().equals("Train")) {
+                        if(adminUpdateCheckTrainID.getText().equals(" ")) {
+                            AlertBox.display("Train ID Invalid", 500, 200, "You did not enter a proper pre-existing train ID.");
+                        }
+                        else if (adminUpdateTrainName.getText().equals("")) {
+                            AlertBox.display("Name Invalid", 500, 200, "You did not enter a proper name.");
+                            return;
+                        } else if (adminUpdateModel.getText().equals("")) {
+                            AlertBox.display("Model Invalid", 500, 200, "You did not enter a proper train model.");
+                            return;
+                        } else if (!(Pattern.matches("[0-9]+", adminUpdateNumOfSeats.getText())) || Integer.parseInt(adminUpdateNumOfSeats.getText()) < 1) {
+                            AlertBox.display("Number of Seats Invalid", 500, 200, "You did not enter a proper number of seats");
+                            return;
+                        } else {
+                            adminUpdateTrainName.clear();
+                            adminUpdateModel.clear();
+                            adminUpdateNumOfSeats.clear();
+                            AlertBox.display("Update Train Successful", 500, 200, "Successfully updated train!");
+                        }
+                    } else if (adminElementDropdownBox.getValue().equals("Train Station")) {
+                        if(adminUpdateCheckTrainStationID.getText().equals(" ")) {
+                            AlertBox.display("Train Station ID Invalid", 500, 200, "You did not enter a proper pre-existing train station ID.");
+                        }
+                        else if (adminUpdateTrainStationName.getText().equals("")) {
+                            AlertBox.display("Name Invalid", 500, 200, "You did not enter a proper name.");
+                            return;
+                        } else if (adminUpdateLocation.getText().equals("")) {
+                            AlertBox.display("Location Invalid", 500, 200, "You did not enter a proper location.");
+                            return;
+                        } else {
+                            adminUpdateTrainStationName.clear();
+                            adminUpdateLocation.clear();
+                            AlertBox.display("Update Train Station Successful", 500, 200, "Successfully updated a train station!");
+                        }
+                    } else if (adminElementDropdownBox.getValue().equals("Schedule Entry")) {
+                        if(adminUpdateSchedID.getText().equals(" ")) {
+                            AlertBox.display("Schedule Entry ID Invalid", 500, 200, "You did not enter a proper pre-existing schedule entry ID.");
+                        }
+                        else if (adminUpdateCheckTrainName.getText().equals("")) {
+                            AlertBox.display("Name Invalid", 500, 200, "You did not enter a train name that exists.");
+                            return;
+                        } else if (adminUpdateCheckTrackID.getText().equals("")) {
+                            AlertBox.display("Track ID Invalid", 500, 200, "You did not enter a track ID that exists.");
+                            return;
+                        } else if (adminUpdateSchedOut.getText().equals("") || adminUpdateSchedOut.getText().length() != 5 || !(Pattern.matches("[0-9]+", adminUpdateSchedOut.getText().substring(0, 2))) || !(Pattern.matches("[0-9]+", adminUpdateSchedOut.getText().substring(3, 5))) || !adminUpdateSchedOut.getText().substring(2, 3).equals(":") || Integer.parseInt(adminUpdateSchedOut.getText().substring(0, 2)) < 1 || Integer.parseInt(adminUpdateSchedOut.getText().substring(0, 2)) > 23 || Integer.parseInt(adminUpdateSchedOut.getText().substring(3, 5)) < 0 || Integer.parseInt(adminUpdateSchedOut.getText().substring(3, 5)) > 59) {
+                            AlertBox.display("Departure Time Invalid", 500, 200, "You did not enter a proper departure time (Must be in HH:MM format).");
+                            return;
+                        } else if (adminUpdateSchedIn.getText().equals("") || adminUpdateSchedIn.getText().length() != 5 || !(Pattern.matches("[0-9]+", adminUpdateSchedIn.getText().substring(0, 2))) || !(Pattern.matches("[0-9]+", adminUpdateSchedIn.getText().substring(3, 5))) || !adminUpdateSchedIn.getText().substring(2, 3).equals(":") || Integer.parseInt(adminUpdateSchedIn.getText().substring(0, 2)) < 1 || Integer.parseInt(adminUpdateSchedIn.getText().substring(0, 2)) > 23 || Integer.parseInt(adminUpdateSchedIn.getText().substring(3, 5)) < 0 || Integer.parseInt(adminUpdateSchedIn.getText().substring(3, 5)) > 59) {
+                            AlertBox.display("Arrival Time Invalid", 500, 200, "You did not enter a proper arrival time (Must be in HH:MM format).");
+                            return;
+                        } else {
+                            adminUpdateCheckTrainName.clear();
+                            adminUpdateCheckTrackID.clear();
+                            adminUpdateSchedOut.clear();
+                            adminUpdateSchedIn.clear();
+                            AlertBox.display("Update Schedule Entry Successful", 500, 200, "Successfully updated a Schedule Entry!");
+                        }
+                    } else if (adminElementDropdownBox.getValue().equals("Track")) {
+                        if(adminUpdateTrackID.getText().equals(" ")) {
+                            AlertBox.display("Schedule Entry ID Invalid", 500, 200, "You did not enter a proper pre-existing track ID.");
+                        }
+                        else if (adminUpdateStationFrom.getText().equals("")) {
+                            AlertBox.display("Station From Invalid", 500, 200, "You did not enter a proper station to depart from.");
+                            return;
+                        } else if (adminUpdateStationTo.getText().equals("")) {
+                            AlertBox.display("Station To Invalid", 500, 200, "You did not enter a proper station to arrive at.");
+                            return;
+                        } else if (adminUpdateLength.getText().equals("") || !(Pattern.matches("[0-9]+", adminUpdateLength.getText())) || Integer.parseInt(adminUpdateLength.getText()) < 1) {
+                            AlertBox.display("Length Invalid", 500, 200, "You did not enter a proper length (Must be a whole number).");
+                            return;
+                        } else {
+                            adminUpdateStationFrom.clear();
+                            adminUpdateStationTo.clear();
+                            adminUpdateLength.clear();
+                            AlertBox.display("Update Track Successful", 500, 200, "Successfully updated a track!");
+                        }
+                    } else if (adminElementDropdownBox.getValue().equals("Ticket")) {
+                        if(adminUpdateCheckTicketID.getText().equals(" ")) {
+                            AlertBox.display("Ticket ID Invalid", 500, 200, "You did not enter a proper pre-existing ticket ID.");
+                        }
+                        else if (adminCheckSchedID.getText().equals("")) {
+                            AlertBox.display("Schedule Entry ID Invalid", 500, 200, "You did not enter a schedule entry that exists.");
+                            return;
+                        } else if (adminUpdateDate.getText().equals("") || adminUpdateDate.getText().length() != 8 || !adminUpdateDate.getText().substring(2, 3).equals("/") || !adminUpdateDate.getText().substring(5, 6).equals("/") || !(Pattern.matches("[0-9]+", adminUpdateDate.getText().substring(0, 2))) || !(Pattern.matches("[0-9]+", adminUpdateDate.getText().substring(3, 5))) || !(Pattern.matches("[0-9]+", adminUpdateDate.getText().substring(6, 8))) || Integer.parseInt(adminUpdateDate.getText().substring(0, 2)) < 1 || Integer.parseInt(adminUpdateDate.getText().substring(0, 2)) > 12 || Integer.parseInt(adminUpdateDate.getText().substring(3, 5)) < 1 || Integer.parseInt(adminUpdateDate.getText().substring(3, 5)) > 30 || Integer.parseInt(adminUpdateDate.getText().substring(6, 8)) < 1 || Integer.parseInt(adminUpdateDate.getText().substring(6, 8)) > 99) {
+                            AlertBox.display("Date Invalid", 500, 200, "You did not enter a proper date (Must be in MM/DD/YY format).");
+                            return;
+                        } else if (adminUpdatePrice.getText().equals("") || adminUpdatePrice.getText().length() < 4 || !adminUpdatePrice.getText().contains(".") || !(Pattern.matches("[0-9]+", adminUpdatePrice.getText().substring(0, adminUpdatePrice.getText().indexOf(".")))) || !(Pattern.matches("[0-9]+", adminUpdatePrice.getText().substring(adminUpdatePrice.getText().indexOf(".") + 1))) || Integer.parseInt(adminUpdatePrice.getText().substring(0, adminUpdatePrice.getText().indexOf("."))) < 1 || Integer.parseInt(adminUpdatePrice.getText().substring(adminUpdatePrice.getText().indexOf(".") + 1)) > 99) {
+                            AlertBox.display("Price Invalid", 500, 200, "You did not enter a proper price (Must be two digits after the decimal).");
+                            return;
+                        } else {
+                            adminUpdateCheckSchedID.clear();
+                            adminUpdateDate.clear();
+                            adminUpdatePrice.clear();
+                            AlertBox.display("Update Ticket Successful", 500, 200, "Successfully updated a ticket!");
+                        }
                     }
                 }
             }
@@ -598,31 +842,61 @@ public class Main extends Application {
         VBox createCustDisplay = new VBox(20);
         createCustDisplay.getChildren().addAll(adminCreateCustName, adminCreateEmail, adminCreateUsername, adminCreatePassword, adminCreateConfirmPassword);
         createCustDisplay.setAlignment(Pos.CENTER);
+        createCustDisplay.setPadding(new Insets(0, 0, 45, 0));
+
+        VBox updateCustDisplay = new VBox(20);
+        updateCustDisplay.getChildren().addAll(adminUpdateCheckCustID, adminUpdateCustName, adminUpdateEmail, adminUpdateUsername, adminUpdatePassword, adminUpdateConfirmPassword);
+        updateCustDisplay.setAlignment(Pos.CENTER);
 
         VBox createTrainDisplay = new VBox(20);
         createTrainDisplay.getChildren().addAll(adminCreateTrainName, adminCreateModel, adminCreateNumOfSeats);
         createTrainDisplay.setAlignment(Pos.CENTER);
-        createTrainDisplay.setPadding(new Insets(0, 0, 90, 0));
+        createTrainDisplay.setPadding(new Insets(0, 0, 135, 0));
+
+        VBox updateTrainDisplay = new VBox(20);
+        updateTrainDisplay.getChildren().addAll(adminUpdateCheckTrainID, adminUpdateTrainName, adminUpdateModel, adminUpdateNumOfSeats);
+        updateTrainDisplay.setAlignment(Pos.CENTER);
+        updateTrainDisplay.setPadding(new Insets(0,0,90,0));
 
         VBox createTrainStationDisplay = new VBox(20);
         createTrainStationDisplay.getChildren().addAll(adminCreateTrainStationName, adminCreateLocation);
         createTrainStationDisplay.setAlignment(Pos.CENTER);
-        createTrainStationDisplay.setPadding(new Insets(0, 0, 135, 0));
+        createTrainStationDisplay.setPadding(new Insets(0, 0, 180, 0));
+
+        VBox updateTrainStationDisplay = new VBox(20);
+        updateTrainStationDisplay.getChildren().addAll(adminUpdateCheckTrainStationID, adminUpdateTrainStationName, adminUpdateLocation);
+        updateTrainStationDisplay.setAlignment(Pos.CENTER);
+        updateTrainStationDisplay.setPadding(new Insets(0, 0, 135, 0));
 
         VBox createSchedDisplay = new VBox(20);
         createSchedDisplay.getChildren().addAll(adminCheckTrainName, adminCheckTrackID, adminCreateSchedOut, adminCreateSchedIn);
         createSchedDisplay.setAlignment(Pos.CENTER);
-        createSchedDisplay.setPadding(new Insets(0, 0, 45, 0));
+        createSchedDisplay.setPadding(new Insets(0, 0, 90, 0));
+
+        VBox updateSchedDisplay = new VBox(20);
+        updateSchedDisplay.getChildren().addAll(adminUpdateSchedID, adminUpdateCheckTrainName, adminUpdateCheckTrackID, adminUpdateSchedOut, adminUpdateSchedIn);
+        updateSchedDisplay.setAlignment(Pos.CENTER);
+        updateSchedDisplay.setPadding(new Insets(0, 0, 45, 0));
 
         VBox createTrackDisplay = new VBox(20);
         createTrackDisplay.getChildren().addAll(adminCreateStationFrom, adminCreateStationTo, adminCreateLength);
         createTrackDisplay.setAlignment(Pos.CENTER);
-        createTrackDisplay.setPadding(new Insets(0, 0, 90, 0));
+        createTrackDisplay.setPadding(new Insets(0, 0, 135, 0));
+
+        VBox updateTrackDisplay = new VBox(20);
+        updateTrackDisplay.getChildren().addAll(adminUpdateTrackID, adminUpdateStationFrom, adminUpdateStationTo, adminUpdateLength);
+        updateTrackDisplay.setAlignment(Pos.CENTER);
+        updateTrackDisplay.setPadding(new Insets(0, 0, 90, 0));
 
         VBox createTicketDisplay = new VBox(20);
         createTicketDisplay.getChildren().addAll(adminCheckSchedID, adminCreateDate, adminCreatePrice);
         createTicketDisplay.setAlignment(Pos.CENTER);
-        createTicketDisplay.setPadding(new Insets(0, 0, 90, 0));
+        createTicketDisplay.setPadding(new Insets(0, 0, 135, 0));
+
+        VBox updateTicketDisplay = new VBox(20);
+        updateTicketDisplay.getChildren().addAll(adminUpdateCheckTicketID, adminUpdateCheckSchedID, adminUpdateDate, adminUpdatePrice);
+        updateTicketDisplay.setAlignment(Pos.CENTER);
+        updateTicketDisplay.setPadding(new Insets(0, 0, 90, 0));
 
         VBox adminOuterLayout = new VBox(20);
         VBox adminDirectionsLayout = new VBox();
@@ -665,6 +939,30 @@ public class Main extends Application {
                 adminOuterLayout.getChildren().clear();
                 adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, createTicketDisplay, adminButtonOuterLayout);
             }
+            else if(adminManipulateDropdownBox.getValue().equals("Update") && adminElementDropdownBox.getValue().equals("Customer")) {
+                adminOuterLayout.getChildren().clear();
+                adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, updateCustDisplay, adminButtonOuterLayout);
+            }
+            else if(adminManipulateDropdownBox.getValue().equals("Update") && adminElementDropdownBox.getValue().equals("Train")) {
+                adminOuterLayout.getChildren().clear();
+                adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, updateTrainDisplay, adminButtonOuterLayout);
+            }
+            else if(adminManipulateDropdownBox.getValue().equals("Update") && adminElementDropdownBox.getValue().equals("Train Station")) {
+                adminOuterLayout.getChildren().clear();
+                adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, updateTrainStationDisplay, adminButtonOuterLayout);
+            }
+            else if(adminManipulateDropdownBox.getValue().equals("Update") && adminElementDropdownBox.getValue().equals("Schedule Entry")) {
+                adminOuterLayout.getChildren().clear();
+                adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, updateSchedDisplay, adminButtonOuterLayout);
+            }
+            else if(adminManipulateDropdownBox.getValue().equals("Update") && adminElementDropdownBox.getValue().equals("Track")) {
+                adminOuterLayout.getChildren().clear();
+                adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, updateTrackDisplay, adminButtonOuterLayout);
+            }
+            else if(adminManipulateDropdownBox.getValue().equals("Update") && adminElementDropdownBox.getValue().equals("Ticket")) {
+                adminOuterLayout.getChildren().clear();
+                adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, updateTicketDisplay, adminButtonOuterLayout);
+            }
             else{
                 adminOuterLayout.getChildren().clear();
                 adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, adminButtonOuterLayout);
@@ -695,6 +993,30 @@ public class Main extends Application {
             else if(adminManipulateDropdownBox.getValue().equals("Create") && adminElementDropdownBox.getValue().equals("Ticket")) {
                 adminOuterLayout.getChildren().clear();
                 adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, createTicketDisplay, adminButtonOuterLayout);
+            }
+            else if(adminManipulateDropdownBox.getValue().equals("Update") && adminElementDropdownBox.getValue().equals("Customer")) {
+                adminOuterLayout.getChildren().clear();
+                adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, updateCustDisplay, adminButtonOuterLayout);
+            }
+            else if(adminManipulateDropdownBox.getValue().equals("Update") && adminElementDropdownBox.getValue().equals("Train")) {
+                adminOuterLayout.getChildren().clear();
+                adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, updateTrainDisplay, adminButtonOuterLayout);
+            }
+            else if(adminManipulateDropdownBox.getValue().equals("Update") && adminElementDropdownBox.getValue().equals("Train Station")) {
+                adminOuterLayout.getChildren().clear();
+                adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, updateTrainStationDisplay, adminButtonOuterLayout);
+            }
+            else if(adminManipulateDropdownBox.getValue().equals("Update") && adminElementDropdownBox.getValue().equals("Schedule Entry")) {
+                adminOuterLayout.getChildren().clear();
+                adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, updateSchedDisplay, adminButtonOuterLayout);
+            }
+            else if(adminManipulateDropdownBox.getValue().equals("Update") && adminElementDropdownBox.getValue().equals("Track")) {
+                adminOuterLayout.getChildren().clear();
+                adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, updateTrackDisplay, adminButtonOuterLayout);
+            }
+            else if(adminManipulateDropdownBox.getValue().equals("Update") && adminElementDropdownBox.getValue().equals("Ticket")) {
+                adminOuterLayout.getChildren().clear();
+                adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, updateTicketDisplay, adminButtonOuterLayout);
             }
             else{
                 adminOuterLayout.getChildren().clear();
