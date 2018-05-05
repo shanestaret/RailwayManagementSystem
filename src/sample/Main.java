@@ -30,13 +30,13 @@ import javax.mail.internet.AddressException;
 public class Main extends Application {
     Stage mainWindow, adminAuthorizationWindow; //the literal frame that pops up
     Scene loginUI, adminUI, custUI, createAccountUI, adminAuthorizationUI; //the different screens that we can get to within our "Stage" or frame
-    Button loginButton, signOutButton, signOutButton2, createAccountLoginButton, createAccountCreateButton, createAccountCancelButton, adminAuthorizationAuthorizeButton, adminAuthorizationCancelButton; //button that user can interact with
-    Label loginDirections, createAccountDirections1, createAccountDirections2, createAccountEmailWarning1, createAccountEmailWarning2, personalInfo, accountInfo, adminAuthorizationDirections; //String that will tell user how to login
-    TextField username, createAccountName, createAccountEmail, createAccountUsername; //Where user can input information
+    Button loginButton, signOutButton, signOutButton2, createAccountLoginButton, createAccountCreateButton, createAccountCancelButton, adminAuthorizationAuthorizeButton, adminAuthorizationCancelButton, adminSaveChangesButton; //button that user can interact with
+    Label loginDirections, createAccountDirections1, createAccountDirections2, createAccountEmailWarning1, createAccountEmailWarning2, personalInfo, accountInfo, adminDirections, adminAuthorizationDirections; //String that will tell user how to login
+    TextField username, createAccountName, createAccountEmail, createAccountUsername, adminCreateID, adminCreateName, adminCreateModel, adminCreateNumOfSeats, adminCreateLocation, adminCreateSchedIn, adminCreateSchedOut, adminCreateDate, adminCreateStationFrom, adminCreateStationTo, adminCreateLength,  adminCreateCustSeat, adminCreatePrice; //Where user can input information
     PasswordField password, createAccountPassword, createAccountConfirmPassword, adminUsername, adminPassword; //Where user password's will be entered
     CheckBox rememberUsernameBox; //Box user can check if it wants application to remember their username after signing out
-    ChoiceBox<String> accountTypeBox; //Dropdown menu for user to choose whether to create an admin or customer account
-    Separator horizontalSeparator1, horizontalSeparator2, horizontalSeparator3; //Horizontal Separators used to separate information in the window more clearly
+    ChoiceBox<String> accountTypeBox, adminManipulateDropdownBox, adminElementDropdownBox; //Dropdown menus
+    Separator horizontalSeparator1, horizontalSeparator2, horizontalSeparator3, horizontalSeparator4, horizontalSeparator5; //Horizontal Separators used to separate information in the window more clearly
     Image mainWindowIcon, adminAuthorizationWindowIcon; //icon for window
     String emailAddress; //email address user gives us
     boolean result, emailExists, invalidDomain;
@@ -69,6 +69,9 @@ public class Main extends Application {
         personalInfo = new Label("Personal Information");
         accountInfo = new Label("Account Information");
 
+        //label for admin view
+        adminDirections = new Label("As an administrator, you have the privileges of being able to create, update, and/or delete multiple elements from the Railway System. In order to do so, select how you want to manipulate an element and the specific element you want to manipulate in the dropdown boxes below.");
+
         //label for admin account authorization directions
         adminAuthorizationDirections = new Label("To create an admin account, enter a pre-existing admin username and password.");
 
@@ -81,10 +84,26 @@ public class Main extends Application {
         accountTypeBox.setTooltip(new Tooltip("Select Account Type"));
         accountTypeBox.getSelectionModel().select(0);
 
+        //dropdown menu for selecting what you want to do as an admin user
+        adminManipulateDropdownBox = new ChoiceBox<>();
+        adminManipulateDropdownBox.setPrefWidth(110);
+        adminManipulateDropdownBox.getItems().addAll("Create", "Update", "Delete");
+        adminManipulateDropdownBox.setTooltip(new Tooltip("Select whether you want to create, update, or delete certain elements."));
+        adminManipulateDropdownBox.getSelectionModel().select(0);
+
+        //dropdown menu for selecting what element you want to manipulate as an admin user
+        adminElementDropdownBox = new ChoiceBox<>();
+        adminElementDropdownBox.setPrefWidth(110);
+        adminElementDropdownBox.getItems().addAll("Customer", "Train", "Train Station", "Track", "Schedule Entry", "Ticket Order");
+        adminElementDropdownBox.setTooltip(new Tooltip("Select what element you want to manipulate."));
+        adminElementDropdownBox.getSelectionModel().select(0);
+
         //initializing horizontal separators
         horizontalSeparator1 = new Separator();
         horizontalSeparator2 = new Separator();
         horizontalSeparator3 = new Separator();
+        horizontalSeparator4 = new Separator();
+        horizontalSeparator5 = new Separator();
 
         //TextFields that hold user information on login screen
         username = new TextField();
@@ -120,6 +139,72 @@ public class Main extends Application {
         createAccountConfirmPassword.setMaxWidth(300);
         createAccountConfirmPassword.setPromptText("Confirm Password");
         createAccountConfirmPassword.setTooltip(new Tooltip("Confirm password"));
+
+        //TextFields that can appear on admin view
+        adminCreateID = new TextField();
+        adminCreateID.setMaxWidth(300);
+        adminCreateID.setPromptText("ID Number");
+        adminCreateID.setTooltip(new Tooltip("Enter ID Number"));
+
+        adminCreateName = new TextField();
+        adminCreateName.setMaxWidth(300);
+        adminCreateName.setPromptText("Name");
+        adminCreateName.setTooltip(new Tooltip("Enter Name"));
+
+        adminCreateModel = new TextField();
+        adminCreateModel.setMaxWidth(300);
+        adminCreateModel.setPromptText("Train Model");
+        adminCreateModel.setTooltip(new Tooltip("Enter Train Model"));
+
+        adminCreateNumOfSeats = new TextField();
+        adminCreateNumOfSeats.setMaxWidth(300);
+        adminCreateNumOfSeats.setPromptText("# of Seats");
+        adminCreateNumOfSeats.setTooltip(new Tooltip("Enter Capacity of Train"));
+
+        adminCreateLocation = new TextField();
+        adminCreateLocation.setMaxWidth(300);
+        adminCreateLocation.setPromptText("Location");
+        adminCreateLocation.setTooltip(new Tooltip("Enter Location of Train Station"));
+
+        adminCreateSchedOut = new TextField();
+        adminCreateSchedOut.setMaxWidth(300);
+        adminCreateSchedIn.setPromptText("Time of Departure");
+        adminCreateSchedIn.setTooltip(new Tooltip("Enter Time of Departure"));
+
+        adminCreateSchedIn = new TextField();
+        adminCreateSchedIn.setMaxWidth(300);
+        adminCreateSchedOut.setPromptText("Time of Arrival");
+        adminCreateSchedOut.setTooltip(new Tooltip("Enter Time of Arrival"));
+
+        adminCreateDate = new TextField();
+        adminCreateDate.setMaxWidth(300);
+        adminCreateDate.setPromptText("Date");
+        adminCreateDate.setTooltip(new Tooltip("Enter Date of Event"));
+
+        adminCreateStationFrom = new TextField();
+        adminCreateStationFrom.setMaxWidth(300);
+        adminCreateStationFrom.setPromptText("Station From");
+        adminCreateStationFrom.setTooltip(new Tooltip("Enter Station the Train is Leaving From"));
+
+        adminCreateStationTo = new TextField();
+        adminCreateStationTo.setMaxWidth(300);
+        adminCreateStationTo.setPromptText("Station To");
+        adminCreateStationTo.setTooltip(new Tooltip("Enter Station the Train is Going to"));
+
+        adminCreateLength = new TextField();
+        adminCreateLength.setMaxWidth(300);
+        adminCreateLength.setPromptText("Length of Track (miles)");
+        adminCreateLength.setTooltip(new Tooltip("Enter Length of Track in Miles"));
+
+        adminCreateCustSeat = new TextField();
+        adminCreateLength.setMaxWidth(300);
+        adminCreateLength.setPromptText("Customer Seat");
+        adminCreateLength.setTooltip(new Tooltip("Enter the Seat of the Customer"));
+
+        adminCreatePrice = new TextField();
+        adminCreatePrice.setMaxWidth(300);
+        adminCreatePrice.setPromptText("Price of Ticket");
+        adminCreatePrice.setTooltip(new Tooltip("Enter the Price of the Ticket"));
 
         //PasswordFields used to enter pre-existing admin info so new admin user can be created
         adminUsername = new PasswordField();
@@ -162,6 +247,7 @@ public class Main extends Application {
 
         //creating a button with text called "Sign out"; will prompt user if they actually want to sign out, then will if they hit "Yes"
         signOutButton = new Button("Sign Out");
+        signOutButton.setPrefWidth(100);
         signOutButton.setOnAction(e -> {
             result = ConfirmBox.display("Confirming Sign Out Request", 500, 200, "Are you sure you want to sign out of your account?");
             //if the user said "yes", then initiate popup dialogue saying logout was successful
@@ -176,6 +262,7 @@ public class Main extends Application {
 
         //creating a button with text called "Sign out"; will prompt user if they actually want to sign out, then will if they hit "Yes"
         signOutButton2 = new Button("Sign Out");
+        signOutButton.setPrefWidth(100);
         signOutButton2.setOnAction(e -> {
             result = ConfirmBox.display("Confirming Sign Out Request", 500, 200, "Are you sure you want to sign out of your account?");
             //if the user said "yes", then initiate popup dialogue saying logout was successful
@@ -270,6 +357,16 @@ public class Main extends Application {
             }
         });
 
+        //creating a new button called "Save Changes"; when clicked, it will save the changes an admin made to an element (creating, updating, or deleting)
+        adminSaveChangesButton = new Button("Save Changes");
+        adminSaveChangesButton.setPrefWidth(100);
+        adminSaveChangesButton.setDisable(true);
+        adminSaveChangesButton.setOnAction(e -> {
+            result = ConfirmBox.display("Confirm Changes", 500, 200, "Are you sure you want to make this change?");
+            if(result) {
+            }
+        });
+
         //creating a new button with text called "Authorize"; will open confirmation box confirming that the admin wants to add a new admin
         adminAuthorizationAuthorizeButton = new Button("Authorize");
         adminAuthorizationAuthorizeButton.setOnAction(e -> {
@@ -311,9 +408,23 @@ public class Main extends Application {
         loginOuterLayout.setPadding(new Insets(20, 30, 20, 30));
 
         //creating a layout for what will go on our admin Scene
-        StackPane adminLayout = new StackPane();
-        adminLayout.getChildren().add(signOutButton);
-        adminLayout.setAlignment(Pos.CENTER);
+        VBox createCustDisplay = new VBox(20);
+        VBox adminOuterLayout = new VBox(20);
+        HBox adminDropdownInnerLayout = new HBox(20);
+        VBox adminDropdownOuterLayout = new VBox(20);
+        HBox adminButtonInnerLayout = new HBox(20);
+        VBox adminButtonOuterLayout = new VBox(20);
+        adminDropdownInnerLayout.getChildren().addAll(adminManipulateDropdownBox, adminElementDropdownBox);
+        adminDropdownOuterLayout.getChildren().addAll(adminDirections, adminDropdownInnerLayout, horizontalSeparator4);
+        adminButtonInnerLayout.getChildren().addAll(adminSaveChangesButton, signOutButton);
+        adminButtonOuterLayout.getChildren().addAll(horizontalSeparator5, adminButtonInnerLayout);
+        adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, adminButtonOuterLayout);
+        adminDropdownInnerLayout.setAlignment(Pos.CENTER);
+        adminDropdownOuterLayout.setAlignment(Pos.CENTER);
+        adminButtonInnerLayout.setAlignment(Pos.CENTER);
+        adminButtonOuterLayout.setAlignment(Pos.CENTER);
+        adminOuterLayout.setAlignment(Pos.CENTER);
+        adminOuterLayout.setPadding(new Insets(20, 30, 20, 30));
 
         //creating a layout for what will go on our customer Scene
         StackPane custLayout = new StackPane();
@@ -354,7 +465,7 @@ public class Main extends Application {
         loginUI = new Scene(loginOuterLayout);
 
         //creating admin scene (fullscreen)
-        adminUI = new Scene(adminLayout, primScreenBounds.getWidth() - 10, primScreenBounds.getHeight() - 40);
+        adminUI = new Scene(adminOuterLayout, primScreenBounds.getWidth() - 10, primScreenBounds.getHeight() - 40);
 
         //creating customer scene (fullscreen)
         custUI = new Scene(custLayout, primScreenBounds.getWidth() - 10, primScreenBounds.getHeight() - 40);
