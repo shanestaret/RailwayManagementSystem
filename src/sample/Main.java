@@ -32,8 +32,8 @@ public class Main extends Application {
     Stage mainWindow, adminAuthorizationWindow; //the literal frame that pops up
     Scene loginUI, adminUI, custUI, createAccountUI, adminAuthorizationUI; //the different screens that we can get to within our "Stage" or frame
     Button loginButton, signOutButton, signOutButton2, createAccountLoginButton, createAccountCreateButton, createAccountCancelButton, adminAuthorizationAuthorizeButton, adminAuthorizationCancelButton, adminSaveChangesButton; //button that user can interact with
-    Label loginDirections, createAccountDirections1, createAccountDirections2, createAccountEmailWarning1, createAccountEmailWarning2, personalInfo, accountInfo, adminDirections, adminAuthorizationDirections; //String that will tell user how to login
-    TextField username, createAccountName, createAccountEmail, createAccountUsername, adminCheckTrackID, adminCheckSchedID, adminCreateCustName, adminCreateTrainName, adminCheckTrainName, adminCreateTrainStationName, adminCreateModel, adminCreateNumOfSeats, adminCreateLocation, adminCreateSchedIn, adminCreateSchedOut, adminCreateDate, adminCreateStationFrom, adminCreateStationTo, adminCreateLength,  adminCreateCustSeat, adminCreatePrice, adminCreateEmail, adminCreateUsername; //Where user can input information
+    Label loginDirections, createAccountDirections1, createAccountDirections2, createAccountEmailWarning1, createAccountEmailWarning2, personalInfo, accountInfo, adminDirections1, adminDirections2, adminAuthorizationDirections; //String that will tell user how to login
+    TextField username, createAccountName, createAccountEmail, createAccountUsername, adminCheckCustID, adminCheckTrackID, adminCheckSchedID, adminCreateCustName, adminCreateTrainName, adminCheckTrainName, adminCreateTrainStationName, adminCreateModel, adminCreateNumOfSeats, adminCreateLocation, adminCreateSchedIn, adminCreateSchedOut, adminCreateDate, adminCreateStationFrom, adminCreateStationTo, adminCreateLength,  adminCreateCustSeat, adminCreatePrice, adminCreateEmail, adminCreateUsername; //Where user can input information
     PasswordField password, createAccountPassword, createAccountConfirmPassword, adminUsername, adminPassword, adminCreatePassword, adminCreateConfirmPassword; //Where user password's will be entered
     CheckBox rememberUsernameBox; //Box user can check if it wants application to remember their username after signing out
     ChoiceBox<String> accountTypeBox, adminManipulateDropdownBox, adminElementDropdownBox; //Dropdown menus
@@ -71,7 +71,9 @@ public class Main extends Application {
         accountInfo = new Label("Account Information");
 
         //label for admin view
-        adminDirections = new Label("As an administrator, you have the privileges of being able to create, update, and/or delete multiple elements from the Railway System. In order to do so, select how you want to manipulate an element and the specific element you want to manipulate in the dropdown boxes below.");
+        adminDirections1 = new Label("As an administrator, you have the privileges of being able to create, update, and/or delete multiple elements from the Railway System.");
+        adminDirections2 = new Label("In order to do so, select how you want to manipulate an element and the specific element you want to manipulate in the dropdown boxes below.");
+
 
         //label for admin account authorization directions
         adminAuthorizationDirections = new Label("To create an admin account, enter a pre-existing admin username and password.");
@@ -148,10 +150,15 @@ public class Main extends Application {
         adminCheckTrackID.setPromptText("Track ID Number");
         adminCheckTrackID.setTooltip(new Tooltip("Enter Track ID Number"));
 
+        adminCheckCustID = new TextField();
+        adminCheckCustID.setMaxWidth(300);
+        adminCheckCustID.setPromptText("Pre-Existing Customer ID Number");
+        adminCheckCustID.setTooltip(new Tooltip("Enter Pre-Existing Customer ID Number"));
+
         adminCheckSchedID = new TextField();
         adminCheckSchedID.setMaxWidth(300);
-        adminCheckSchedID.setPromptText("Schedule Entry ID Number");
-        adminCheckSchedID.setTooltip(new Tooltip("Enter Schedule Entry ID Number"));
+        adminCheckSchedID.setPromptText("Pre-Existing Schedule Entry ID Number");
+        adminCheckSchedID.setTooltip(new Tooltip("Enter Pre-Existing Schedule Entry ID Number"));
 
         adminCreateCustName = new TextField();
         adminCreateCustName.setMaxWidth(300);
@@ -200,7 +207,7 @@ public class Main extends Application {
 
         adminCreateDate = new TextField();
         adminCreateDate.setMaxWidth(300);
-        adminCreateDate.setPromptText("Date (MM:DD:YY format)");
+        adminCreateDate.setPromptText("Date (MM/DD/YY format)");
         adminCreateDate.setTooltip(new Tooltip("Enter Date of Event"));
 
         adminCreateStationFrom = new TextField();
@@ -219,19 +226,19 @@ public class Main extends Application {
         adminCreateLength.setTooltip(new Tooltip("Enter Length of Track in Miles"));
 
         adminCreateCustSeat = new TextField();
-        adminCreateLength.setMaxWidth(300);
-        adminCreateLength.setPromptText("Customer Seat");
-        adminCreateLength.setTooltip(new Tooltip("Enter the Seat of the Customer"));
+        adminCreateCustSeat.setMaxWidth(300);
+        adminCreateCustSeat.setPromptText("Customer Seat #");
+        adminCreateCustSeat.setTooltip(new Tooltip("Enter the Seat of the Customer"));
 
         adminCreatePrice = new TextField();
         adminCreatePrice.setMaxWidth(300);
-        adminCreatePrice.setPromptText("Price of Ticket");
+        adminCreatePrice.setPromptText("Price of Ticket (Two Digits After Decimal)");
         adminCreatePrice.setTooltip(new Tooltip("Enter the Price of the Ticket"));
 
         adminCreateEmail = new TextField();
         adminCreateEmail.setMaxWidth(300);
         adminCreateEmail.setPromptText("Email");
-        adminCreatePrice.setTooltip(new Tooltip("Enter Email of the Customer"));
+        adminCreateEmail.setTooltip(new Tooltip("Enter Email of the Customer"));
 
         adminCreateUsername = new TextField();
         adminCreateUsername.setMaxWidth(300);
@@ -449,9 +456,11 @@ public class Main extends Application {
                     }
                     else if(adminCreateModel.getText().equals("")) {
                         AlertBox.display("Model Invalid", 500, 200, "You did not enter a proper train model.");
+                        return;
                     }
-                    else if(!(Pattern.matches("[a-zA-Z]+", adminCreateNumOfSeats.getText()) == false) || Integer.parseInt(adminCreateNumOfSeats.getText()) < 1) {
+                    else if(!(Pattern.matches("[0-9]+", adminCreateNumOfSeats.getText())) || Integer.parseInt(adminCreateNumOfSeats.getText()) < 1) {
                         AlertBox.display("Number of Seats Invalid", 500, 200, "You did not enter a proper number of seats");
+                        return;
                     }
                     else {
                         adminCreateTrainName.clear();
@@ -467,6 +476,7 @@ public class Main extends Application {
                     }
                     else if(adminCreateLocation.getText().equals("")) {
                         AlertBox.display("Location Invalid", 500, 200, "You did not enter a proper location.");
+                        return;
                     }
                     else {
                         adminCreateTrainStationName.clear();
@@ -481,12 +491,15 @@ public class Main extends Application {
                     }
                     else if(adminCheckTrackID.getText().equals("")) {
                         AlertBox.display("Track ID Invalid", 500, 200, "You did not enter a track ID that exists.");
+                        return;
                     }
-                    else if(adminCreateSchedOut.getText().equals("") || adminCreateSchedOut.getText().length() != 5 || !(Pattern.matches("[a-zA-Z]+", adminCreateSchedOut.getText().substring(0, 2)) == false) || !(Pattern.matches("[a-zA-Z]+", adminCreateSchedOut.getText().substring(3, 5)) == false) || !adminCreateSchedOut.getText().substring(2, 3).equals(":") || Integer.parseInt(adminCreateSchedOut.getText().substring(0, 2)) < 1 || Integer.parseInt(adminCreateSchedOut.getText().substring(0, 2)) > 23 || Integer.parseInt(adminCreateSchedOut.getText().substring(3, 5)) < 0 || Integer.parseInt(adminCreateSchedOut.getText().substring(3, 5)) > 59) {
+                    else if(adminCreateSchedOut.getText().equals("") || adminCreateSchedOut.getText().length() != 5 || !(Pattern.matches("[0-9]+", adminCreateSchedOut.getText().substring(0, 2))) || !(Pattern.matches("[0-9]+", adminCreateSchedOut.getText().substring(3, 5))) || !adminCreateSchedOut.getText().substring(2, 3).equals(":") || Integer.parseInt(adminCreateSchedOut.getText().substring(0, 2)) < 1 || Integer.parseInt(adminCreateSchedOut.getText().substring(0, 2)) > 23 || Integer.parseInt(adminCreateSchedOut.getText().substring(3, 5)) < 0 || Integer.parseInt(adminCreateSchedOut.getText().substring(3, 5)) > 59) {
                         AlertBox.display("Departure Time Invalid", 500, 200, "You did not enter a proper departure time (Must be in HH:MM format).");
+                        return;
                     }
-                    else if(adminCreateSchedIn.getText().equals("") || adminCreateSchedIn.getText().length() != 5 || !(Pattern.matches("[a-zA-Z]+", adminCreateSchedIn.getText().substring(0, 2)) == false) || !(Pattern.matches("[a-zA-Z]+", adminCreateSchedIn.getText().substring(3, 5)) == false) || !adminCreateSchedIn.getText().substring(2, 3).equals(":")|| Integer.parseInt(adminCreateSchedIn.getText().substring(0, 2)) < 1 || Integer.parseInt(adminCreateSchedIn.getText().substring(0, 2)) > 23 || Integer.parseInt(adminCreateSchedIn.getText().substring(3, 5)) < 0 || Integer.parseInt(adminCreateSchedIn.getText().substring(3, 5)) > 59) {
+                    else if(adminCreateSchedIn.getText().equals("") || adminCreateSchedIn.getText().length() != 5 || !(Pattern.matches("[0-9]+", adminCreateSchedIn.getText().substring(0, 2))) || !(Pattern.matches("[0-9]+", adminCreateSchedIn.getText().substring(3, 5))) || !adminCreateSchedIn.getText().substring(2, 3).equals(":")|| Integer.parseInt(adminCreateSchedIn.getText().substring(0, 2)) < 1 || Integer.parseInt(adminCreateSchedIn.getText().substring(0, 2)) > 23 || Integer.parseInt(adminCreateSchedIn.getText().substring(3, 5)) < 0 || Integer.parseInt(adminCreateSchedIn.getText().substring(3, 5)) > 59) {
                         AlertBox.display("Arrival Time Invalid", 500, 200, "You did not enter a proper arrival time (Must be in HH:MM format).");
+                        return;
                     }
                     else {
                         adminCheckTrainName.clear();
@@ -496,11 +509,62 @@ public class Main extends Application {
                         AlertBox.display("Create Schedule Entry Successful", 500, 200, "Successfully created a new Schedule Entry!");
                     }
                 }
+                else if(adminElementDropdownBox.getValue().equals("Track")) {
+                    if(adminCreateStationFrom.getText().equals("")) {
+                        AlertBox.display("Station From Invalid", 500, 200, "You did not enter a proper station to depart from.");
+                        return;
+                    }
+                    else if(adminCreateStationTo.getText().equals("")) {
+                        AlertBox.display("Station To Invalid", 500, 200, "You did not enter a proper station to arrive at.");
+                        return;
+                    }
+                    else if(adminCreateLength.getText().equals("") || !(Pattern.matches("[0-9]+", adminCreateLength.getText())) || Integer.parseInt(adminCreateLength.getText()) < 1) {
+                        AlertBox.display("Length Invalid", 500, 200, "You did not enter a proper length (Must be a whole number).");
+                        return;
+                    }
+                    else {
+                        adminCreateStationFrom.clear();
+                        adminCreateStationTo.clear();
+                        adminCreateLength.clear();
+                        AlertBox.display("Create Track Successful", 500, 200, "Successfully created a new track!");
+                    }
+                }
+                else if(adminElementDropdownBox.getValue().equals("Ticket Order")) {
+                    if(adminCheckSchedID.getText().equals("")) {
+                        AlertBox.display("Schedule Entry ID Invalid", 500, 200, "You did not enter a schedule entry that exists.");
+                        return;
+                    }
+                    else if(adminCreateDate.getText().equals("") || adminCreateDate.getText().length() != 8 || !adminCreateDate.getText().substring(2, 3).equals("/") || !adminCreateDate.getText().substring(5, 6).equals("/") || !(Pattern.matches("[0-9]+", adminCreateDate.getText().substring(0, 2))) || !(Pattern.matches("[0-9]+", adminCreateDate.getText().substring(3, 5))) || !(Pattern.matches("[0-9]+", adminCreateDate.getText().substring(6, 8))) || Integer.parseInt(adminCreateDate.getText().substring(0, 2)) < 1 || Integer.parseInt(adminCreateDate.getText().substring(0, 2)) > 12 || Integer.parseInt(adminCreateDate.getText().substring(3, 5)) < 1 || Integer.parseInt(adminCreateDate.getText().substring(3, 5)) > 30 || Integer.parseInt(adminCreateDate.getText().substring(6, 8)) < 1 || Integer.parseInt(adminCreateDate.getText().substring(6, 8)) > 99) {
+                        AlertBox.display("Date Invalid", 500, 200, "You did not enter a proper date (Must be in MM/DD/YY format).");
+                        return;
+                    }
+                    else if(adminCheckCustID.getText().equals("")) {
+                        AlertBox.display("Customer ID Invalid", 500, 200, "You did not enter a customer that exists.");
+                        return;
+                    }
+                    else if(adminCreateCustSeat.getText().equals("") || !(Pattern.matches("[0-9]+", adminCreateCustSeat.getText())) || Integer.parseInt(adminCreateCustSeat.getText()) < 1) {
+                        AlertBox.display("Customer Seat # Invalid", 500, 200, "You did not enter a proper customer seat number.");
+                        return;
+                    }
+                     if(adminCreatePrice.getText().equals("") || adminCreatePrice.getText().length() < 4 || !adminCreatePrice.getText().contains(".") || !(Pattern.matches("[0-9]+", adminCreatePrice.getText().substring(0, adminCreatePrice.getText().indexOf(".")))) || !(Pattern.matches("[0-9]+", adminCreatePrice.getText().substring(adminCreatePrice.getText().indexOf(".") + 1))) || Integer.parseInt(adminCreatePrice.getText().substring(0, adminCreatePrice.getText().indexOf("."))) < 1 || Integer.parseInt(adminCreatePrice.getText().substring(adminCreatePrice.getText().indexOf(".") + 1)) > 99) {
+                        AlertBox.display("Price Invalid", 500, 200, "You did not enter a proper price (Must be two digits after the decimal).");
+                        return;
+                    }
+                    else {
+                        adminCheckSchedID.clear();
+                        adminCreateDate.clear();
+                        adminCheckCustID.clear();
+                        adminCreateCustSeat.clear();
+                        adminCreatePrice.clear();
+                        AlertBox.display("Create Ticket Order Successful", 500, 200, "Successfully created a new ticket!");
+                    }
+                }
             }
         });
 
         //creating a new button with text called "Authorize"; will open confirmation box confirming that the admin wants to add a new admin
         adminAuthorizationAuthorizeButton = new Button("Authorize");
+        adminAuthorizationAuthorizeButton.setPrefWidth(80);
         adminAuthorizationAuthorizeButton.setOnAction(e -> {
             result = ConfirmBox.display("Authorize New Administrator User", 500, 200, "Are you sure you want to create a new Administrator user?");
             if(result) {
@@ -517,6 +581,7 @@ public class Main extends Application {
 
         //creating a new button with text called "Cancel"; will stop pre-existing admin from creating a new admin user
         adminAuthorizationCancelButton = new Button("Cancel");
+        adminAuthorizationCancelButton.setPrefWidth(80);
         adminAuthorizationCancelButton.setOnAction(e -> {
             result = ConfirmBox.display("Cancellation of New Adminstrator User", 500, 200, "Are you sure you do not want to create a new Administrator user?");
             if (result) {
@@ -547,25 +612,40 @@ public class Main extends Application {
         VBox createTrainDisplay = new VBox(20);
         createTrainDisplay.getChildren().addAll(adminCreateTrainName, adminCreateModel, adminCreateNumOfSeats);
         createTrainDisplay.setAlignment(Pos.CENTER);
+        createTrainDisplay.setPadding(new Insets(0, 0, 90, 0));
 
         VBox createTrainStationDisplay = new VBox(20);
         createTrainStationDisplay.getChildren().addAll(adminCreateTrainStationName, adminCreateLocation);
         createTrainStationDisplay.setAlignment(Pos.CENTER);
+        createTrainStationDisplay.setPadding(new Insets(0, 0, 135, 0));
 
         VBox createSchedDisplay = new VBox(20);
         createSchedDisplay.getChildren().addAll(adminCheckTrainName, adminCheckTrackID, adminCreateSchedOut, adminCreateSchedIn);
         createSchedDisplay.setAlignment(Pos.CENTER);
+        createSchedDisplay.setPadding(new Insets(0, 0, 45, 0));
+
+        VBox createTrackDisplay = new VBox(20);
+        createTrackDisplay.getChildren().addAll(adminCreateStationFrom, adminCreateStationTo, adminCreateLength);
+        createTrackDisplay.setAlignment(Pos.CENTER);
+        createTrackDisplay.setPadding(new Insets(0, 0, 90, 0));
+
+        VBox createTicketDisplay = new VBox(20);
+        createTicketDisplay.getChildren().addAll(adminCheckSchedID, adminCreateDate, adminCheckCustID, adminCreateCustSeat, adminCreatePrice);
+        createTicketDisplay.setAlignment(Pos.CENTER);
 
         VBox adminOuterLayout = new VBox(20);
+        VBox adminDirectionsLayout = new VBox();
         HBox adminDropdownInnerLayout = new HBox(20);
         VBox adminDropdownOuterLayout = new VBox(20);
         HBox adminButtonInnerLayout = new HBox(20);
         VBox adminButtonOuterLayout = new VBox(20);
+        adminDirectionsLayout.getChildren().addAll(adminDirections1, adminDirections2);
         adminDropdownInnerLayout.getChildren().addAll(adminManipulateDropdownBox, adminElementDropdownBox);
-        adminDropdownOuterLayout.getChildren().addAll(adminDirections, adminDropdownInnerLayout, horizontalSeparator4);
+        adminDropdownOuterLayout.getChildren().addAll(adminDirectionsLayout, adminDropdownInnerLayout, horizontalSeparator4);
         adminButtonInnerLayout.getChildren().addAll(adminSaveChangesButton, signOutButton);
         adminButtonOuterLayout.getChildren().addAll(horizontalSeparator5, adminButtonInnerLayout);
         adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, createCustDisplay, adminButtonOuterLayout);
+        adminDirectionsLayout.setAlignment(Pos.CENTER);
         adminDropdownInnerLayout.setAlignment(Pos.CENTER);
         adminDropdownOuterLayout.setAlignment(Pos.CENTER);
         adminButtonInnerLayout.setAlignment(Pos.CENTER);
@@ -585,6 +665,14 @@ public class Main extends Application {
             else if(adminManipulateDropdownBox.getValue().equals("Create") && adminElementDropdownBox.getValue().equals("Train Station")) {
                 adminOuterLayout.getChildren().clear();
                 adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, createTrainStationDisplay, adminButtonOuterLayout);
+            }
+            else if(adminManipulateDropdownBox.getValue().equals("Create") && adminElementDropdownBox.getValue().equals("Track")) {
+                adminOuterLayout.getChildren().clear();
+                adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, createTrackDisplay, adminButtonOuterLayout);
+            }
+            else if(adminManipulateDropdownBox.getValue().equals("Create") && adminElementDropdownBox.getValue().equals("Ticket Order")) {
+                adminOuterLayout.getChildren().clear();
+                adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, createTicketDisplay, adminButtonOuterLayout);
             }
             else{
                 adminOuterLayout.getChildren().clear();
@@ -608,6 +696,14 @@ public class Main extends Application {
             else if(adminManipulateDropdownBox.getValue().equals("Create") && adminElementDropdownBox.getValue().equals("Schedule Entry")) {
                 adminOuterLayout.getChildren().clear();
                 adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, createSchedDisplay, adminButtonOuterLayout);
+            }
+            else if(adminManipulateDropdownBox.getValue().equals("Create") && adminElementDropdownBox.getValue().equals("Track")) {
+                adminOuterLayout.getChildren().clear();
+                adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, createTrackDisplay, adminButtonOuterLayout);
+            }
+            else if(adminManipulateDropdownBox.getValue().equals("Create") && adminElementDropdownBox.getValue().equals("Ticket Order")) {
+                adminOuterLayout.getChildren().clear();
+                adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, createTicketDisplay, adminButtonOuterLayout);
             }
             else{
                 adminOuterLayout.getChildren().clear();
@@ -654,7 +750,7 @@ public class Main extends Application {
         loginUI = new Scene(loginOuterLayout);
 
         //creating admin scene (fullscreen)
-        adminUI = new Scene(adminOuterLayout, primScreenBounds.getWidth() - 10, primScreenBounds.getHeight() - 40);
+        adminUI = new Scene(adminOuterLayout);
 
         //creating customer scene (fullscreen)
         custUI = new Scene(custLayout, primScreenBounds.getWidth() - 10, primScreenBounds.getHeight() - 40);
