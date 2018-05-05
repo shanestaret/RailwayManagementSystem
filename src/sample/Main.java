@@ -98,7 +98,7 @@ public class Main extends Application {
         //dropdown menu for selecting what element you want to manipulate as an admin user
         adminElementDropdownBox = new ChoiceBox<>();
         adminElementDropdownBox.setPrefWidth(110);
-        adminElementDropdownBox.getItems().addAll("Customer", "Train", "Train Station", "Track", "Schedule Entry", "Ticket Order");
+        adminElementDropdownBox.getItems().addAll("Customer", "Train", "Train Station", "Track", "Schedule Entry", "Ticket");
         adminElementDropdownBox.setTooltip(new Tooltip("Select what element you want to manipulate."));
         adminElementDropdownBox.getSelectionModel().select(0);
 
@@ -529,7 +529,7 @@ public class Main extends Application {
                         AlertBox.display("Create Track Successful", 500, 200, "Successfully created a new track!");
                     }
                 }
-                else if(adminElementDropdownBox.getValue().equals("Ticket Order")) {
+                else if(adminElementDropdownBox.getValue().equals("Ticket")) {
                     if(adminCheckSchedID.getText().equals("")) {
                         AlertBox.display("Schedule Entry ID Invalid", 500, 200, "You did not enter a schedule entry that exists.");
                         return;
@@ -538,25 +538,15 @@ public class Main extends Application {
                         AlertBox.display("Date Invalid", 500, 200, "You did not enter a proper date (Must be in MM/DD/YY format).");
                         return;
                     }
-                    else if(adminCheckCustID.getText().equals("")) {
-                        AlertBox.display("Customer ID Invalid", 500, 200, "You did not enter a customer that exists.");
-                        return;
-                    }
-                    else if(adminCreateCustSeat.getText().equals("") || !(Pattern.matches("[0-9]+", adminCreateCustSeat.getText())) || Integer.parseInt(adminCreateCustSeat.getText()) < 1) {
-                        AlertBox.display("Customer Seat # Invalid", 500, 200, "You did not enter a proper customer seat number.");
-                        return;
-                    }
-                     if(adminCreatePrice.getText().equals("") || adminCreatePrice.getText().length() < 4 || !adminCreatePrice.getText().contains(".") || !(Pattern.matches("[0-9]+", adminCreatePrice.getText().substring(0, adminCreatePrice.getText().indexOf(".")))) || !(Pattern.matches("[0-9]+", adminCreatePrice.getText().substring(adminCreatePrice.getText().indexOf(".") + 1))) || Integer.parseInt(adminCreatePrice.getText().substring(0, adminCreatePrice.getText().indexOf("."))) < 1 || Integer.parseInt(adminCreatePrice.getText().substring(adminCreatePrice.getText().indexOf(".") + 1)) > 99) {
+                    else if(adminCreatePrice.getText().equals("") || adminCreatePrice.getText().length() < 4 || !adminCreatePrice.getText().contains(".") || !(Pattern.matches("[0-9]+", adminCreatePrice.getText().substring(0, adminCreatePrice.getText().indexOf(".")))) || !(Pattern.matches("[0-9]+", adminCreatePrice.getText().substring(adminCreatePrice.getText().indexOf(".") + 1))) || Integer.parseInt(adminCreatePrice.getText().substring(0, adminCreatePrice.getText().indexOf("."))) < 1 || Integer.parseInt(adminCreatePrice.getText().substring(adminCreatePrice.getText().indexOf(".") + 1)) > 99) {
                         AlertBox.display("Price Invalid", 500, 200, "You did not enter a proper price (Must be two digits after the decimal).");
                         return;
                     }
                     else {
                         adminCheckSchedID.clear();
                         adminCreateDate.clear();
-                        adminCheckCustID.clear();
-                        adminCreateCustSeat.clear();
                         adminCreatePrice.clear();
-                        AlertBox.display("Create Ticket Order Successful", 500, 200, "Successfully created a new ticket!");
+                        AlertBox.display("Create Ticket Successful", 500, 200, "Successfully created a new ticket!");
                     }
                 }
             }
@@ -630,8 +620,9 @@ public class Main extends Application {
         createTrackDisplay.setPadding(new Insets(0, 0, 90, 0));
 
         VBox createTicketDisplay = new VBox(20);
-        createTicketDisplay.getChildren().addAll(adminCheckSchedID, adminCreateDate, adminCheckCustID, adminCreateCustSeat, adminCreatePrice);
+        createTicketDisplay.getChildren().addAll(adminCheckSchedID, adminCreateDate, adminCreatePrice);
         createTicketDisplay.setAlignment(Pos.CENTER);
+        createTicketDisplay.setPadding(new Insets(0, 0, 90, 0));
 
         VBox adminOuterLayout = new VBox(20);
         VBox adminDirectionsLayout = new VBox();
@@ -670,7 +661,7 @@ public class Main extends Application {
                 adminOuterLayout.getChildren().clear();
                 adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, createTrackDisplay, adminButtonOuterLayout);
             }
-            else if(adminManipulateDropdownBox.getValue().equals("Create") && adminElementDropdownBox.getValue().equals("Ticket Order")) {
+            else if(adminManipulateDropdownBox.getValue().equals("Create") && adminElementDropdownBox.getValue().equals("Ticket")) {
                 adminOuterLayout.getChildren().clear();
                 adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, createTicketDisplay, adminButtonOuterLayout);
             }
@@ -701,7 +692,7 @@ public class Main extends Application {
                 adminOuterLayout.getChildren().clear();
                 adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, createTrackDisplay, adminButtonOuterLayout);
             }
-            else if(adminManipulateDropdownBox.getValue().equals("Create") && adminElementDropdownBox.getValue().equals("Ticket Order")) {
+            else if(adminManipulateDropdownBox.getValue().equals("Create") && adminElementDropdownBox.getValue().equals("Ticket")) {
                 adminOuterLayout.getChildren().clear();
                 adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, createTicketDisplay, adminButtonOuterLayout);
             }
