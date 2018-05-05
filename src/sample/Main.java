@@ -381,7 +381,7 @@ public class Main extends Application {
 
         //creating a new button called "Save Changes"; when clicked, it will save the changes an admin made to an element (creating, updating, or deleting)
         adminSaveChangesButton = new Button("Save Changes");
-        adminSaveChangesButton.setPrefWidth(100);
+        adminSaveChangesButton.setPrefWidth(100); //sets width to 100
         adminSaveChangesButton.setOnAction(e -> {
             result = ConfirmBox.display("Confirm Changes", 500, 200, "Are you sure you want to make this change?");
             if(result) {
