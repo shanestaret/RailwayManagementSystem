@@ -32,8 +32,8 @@ public class Main extends Application {
     Scene loginUI, adminUI, custUI, createAccountUI, adminAuthorizationUI; //the different screens that we can get to within our "Stage" or frame
     Button loginButton, signOutButton, signOutButton2, createAccountLoginButton, createAccountCreateButton, createAccountCancelButton, adminAuthorizationAuthorizeButton, adminAuthorizationCancelButton, adminSaveChangesButton; //button that user can interact with
     Label loginDirections, createAccountDirections1, createAccountDirections2, createAccountEmailWarning1, createAccountEmailWarning2, personalInfo, accountInfo, adminDirections, adminAuthorizationDirections; //String that will tell user how to login
-    TextField username, createAccountName, createAccountEmail, createAccountUsername, adminCreateID, adminCreateName, adminCreateModel, adminCreateNumOfSeats, adminCreateLocation, adminCreateSchedIn, adminCreateSchedOut, adminCreateDate, adminCreateStationFrom, adminCreateStationTo, adminCreateLength,  adminCreateCustSeat, adminCreatePrice; //Where user can input information
-    PasswordField password, createAccountPassword, createAccountConfirmPassword, adminUsername, adminPassword; //Where user password's will be entered
+    TextField username, createAccountName, createAccountEmail, createAccountUsername, adminCreateID, adminCreateName, adminCreateModel, adminCreateNumOfSeats, adminCreateLocation, adminCreateSchedIn, adminCreateSchedOut, adminCreateDate, adminCreateStationFrom, adminCreateStationTo, adminCreateLength,  adminCreateCustSeat, adminCreatePrice, adminCreateEmail, adminCreateUsername; //Where user can input information
+    PasswordField password, createAccountPassword, createAccountConfirmPassword, adminUsername, adminPassword, adminCreatePassword, adminCreateConfirmPassword; //Where user password's will be entered
     CheckBox rememberUsernameBox; //Box user can check if it wants application to remember their username after signing out
     ChoiceBox<String> accountTypeBox, adminManipulateDropdownBox, adminElementDropdownBox; //Dropdown menus
     Separator horizontalSeparator1, horizontalSeparator2, horizontalSeparator3, horizontalSeparator4, horizontalSeparator5; //Horizontal Separators used to separate information in the window more clearly
@@ -83,6 +83,7 @@ public class Main extends Application {
         accountTypeBox.getItems().addAll("Administrator", "Customer");
         accountTypeBox.setTooltip(new Tooltip("Select Account Type"));
         accountTypeBox.getSelectionModel().select(0);
+
 
         //dropdown menu for selecting what you want to do as an admin user
         adminManipulateDropdownBox = new ChoiceBox<>();
@@ -168,13 +169,13 @@ public class Main extends Application {
 
         adminCreateSchedOut = new TextField();
         adminCreateSchedOut.setMaxWidth(300);
-        adminCreateSchedIn.setPromptText("Time of Departure");
-        adminCreateSchedIn.setTooltip(new Tooltip("Enter Time of Departure"));
+        adminCreateSchedOut.setPromptText("Time of Departure");
+        adminCreateSchedOut.setTooltip(new Tooltip("Enter Time of Departure"));
 
         adminCreateSchedIn = new TextField();
         adminCreateSchedIn.setMaxWidth(300);
-        adminCreateSchedOut.setPromptText("Time of Arrival");
-        adminCreateSchedOut.setTooltip(new Tooltip("Enter Time of Arrival"));
+        adminCreateSchedIn.setPromptText("Time of Arrival");
+        adminCreateSchedIn.setTooltip(new Tooltip("Enter Time of Arrival"));
 
         adminCreateDate = new TextField();
         adminCreateDate.setMaxWidth(300);
@@ -205,6 +206,27 @@ public class Main extends Application {
         adminCreatePrice.setMaxWidth(300);
         adminCreatePrice.setPromptText("Price of Ticket");
         adminCreatePrice.setTooltip(new Tooltip("Enter the Price of the Ticket"));
+
+        adminCreateEmail = new TextField();
+        adminCreateEmail.setMaxWidth(300);
+        adminCreateEmail.setPromptText("Email");
+        adminCreatePrice.setTooltip(new Tooltip("Enter Email of the Customer"));
+
+        adminCreateUsername = new TextField();
+        adminCreateUsername.setMaxWidth(300);
+        adminCreateUsername.setPromptText("Username");
+        adminCreateUsername.setTooltip(new Tooltip("Enter Username of Customer"));
+
+        //PasswordFields used in admin view
+        adminCreatePassword = new PasswordField();
+        adminCreatePassword.setMaxWidth(300);
+        adminCreatePassword.setPromptText("Password");
+        adminCreatePassword.setTooltip(new Tooltip("Enter Password of Customer"));
+
+        adminCreateConfirmPassword = new PasswordField();
+        adminCreateConfirmPassword.setMaxWidth(300);
+        adminCreateConfirmPassword.setPromptText("Confirm Password");
+        adminCreateConfirmPassword.setTooltip(new Tooltip("Enter Password of Customer Again"));
 
         //PasswordFields used to enter pre-existing admin info so new admin user can be created
         adminUsername = new PasswordField();
@@ -304,7 +326,7 @@ public class Main extends Application {
                 AlertBox.display("Email Invalid", 500, 200, "You did not enter a proper email address.");
             }
             else if(createAccountUsername.getText().equals("")) {
-                AlertBox.display("Email Invalid", 500, 200, "You did not enter a proper username.");
+                AlertBox.display("Username Invalid", 500, 200, "You did not enter a proper username.");
             }
             else if(createAccountPassword.getText().equals("")) {
                 AlertBox.display("Password Invalid", 500, 200, "You did not enter a proper password.");
@@ -333,7 +355,7 @@ public class Main extends Application {
                         adminAuthorizationWindow.showAndWait();
                         return;
                     } else {
-                        SendEmail.send(createAccountEmail.getText());
+                        SendEmail.send(emailAddress);
                         adminAuthorizationWindow.close();
                         mainWindow.setScene(loginUI);
                         mainWindow.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
@@ -360,10 +382,38 @@ public class Main extends Application {
         //creating a new button called "Save Changes"; when clicked, it will save the changes an admin made to an element (creating, updating, or deleting)
         adminSaveChangesButton = new Button("Save Changes");
         adminSaveChangesButton.setPrefWidth(100);
-        adminSaveChangesButton.setDisable(true);
         adminSaveChangesButton.setOnAction(e -> {
             result = ConfirmBox.display("Confirm Changes", 500, 200, "Are you sure you want to make this change?");
             if(result) {
+                invalidDomain = SendEmail.readDomains(adminCreateEmail.getText());
+                if(adminManipulateDropdownBox.getValue().equals("Customer") && (adminCreateEmail.getText().equals("") || invalidDomain)) {
+                    AlertBox.display("Email Invalid", 500, 200, "You did not enter a proper email address.");
+                }
+                else if(adminManipulateDropdownBox.getValue().equals("Customer") && adminCreateName.getText().equals("")) {
+                    AlertBox.display("Name Invalid", 500, 200, "You did not enter a proper name.");
+                }
+                else if(adminManipulateDropdownBox.getValue().equals("Customer") && adminCreateUsername.getText().equals("")) {
+                    AlertBox.display("Username Invalid", 500, 200, "You did not enter a proper username.");
+                }
+                else if(adminManipulateDropdownBox.getValue().equals("Customer") && adminCreatePassword.getText().equals("")) {
+                    AlertBox.display("Password Invalid", 500, 200, "You did not enter a proper password.");
+                }
+                else if(adminManipulateDropdownBox.getValue().equals("Customer") && !adminCreatePassword.getText().equals(adminCreateConfirmPassword.getText())) {
+                    AlertBox.display("Password Confirmation Error", 500, 200, "Password and Confirmation do not match.");
+                }
+                else {
+                    emailAddress = adminCreateEmail.getText();
+                    if(SendEmail.isValidEmailAddress(emailAddress) && SendEmail.isValidRegex(emailAddress)) {
+                        SendEmail.send(emailAddress);
+                        adminCreateName.clear();
+                        adminCreateEmail.clear();
+                        adminCreateUsername.clear();
+                        adminCreatePassword.clear();
+                        adminCreateConfirmPassword.clear();
+                        AlertBox.display("Create Account Successful", 500, 200, "Successfully created new account! An email has been sent to the customer's email address.");
+
+                    }
+                }
             }
         });
 
@@ -409,6 +459,9 @@ public class Main extends Application {
 
         //creating a layout for what will go on our admin Scene
         VBox createCustDisplay = new VBox(20);
+        createCustDisplay.getChildren().addAll(adminCreateName, adminCreateEmail, adminCreateUsername, adminCreatePassword, adminCreateConfirmPassword);
+        createCustDisplay.setAlignment(Pos.CENTER);
+
         VBox adminOuterLayout = new VBox(20);
         HBox adminDropdownInnerLayout = new HBox(20);
         VBox adminDropdownOuterLayout = new VBox(20);
@@ -418,13 +471,35 @@ public class Main extends Application {
         adminDropdownOuterLayout.getChildren().addAll(adminDirections, adminDropdownInnerLayout, horizontalSeparator4);
         adminButtonInnerLayout.getChildren().addAll(adminSaveChangesButton, signOutButton);
         adminButtonOuterLayout.getChildren().addAll(horizontalSeparator5, adminButtonInnerLayout);
-        adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, adminButtonOuterLayout);
+        adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, createCustDisplay, adminButtonOuterLayout);
         adminDropdownInnerLayout.setAlignment(Pos.CENTER);
         adminDropdownOuterLayout.setAlignment(Pos.CENTER);
         adminButtonInnerLayout.setAlignment(Pos.CENTER);
         adminButtonOuterLayout.setAlignment(Pos.CENTER);
         adminOuterLayout.setAlignment(Pos.CENTER);
         adminOuterLayout.setPadding(new Insets(20, 30, 20, 30));
+
+        adminManipulateDropdownBox.setOnAction(e -> {
+            if(adminManipulateDropdownBox.getValue().equals("Create") && adminElementDropdownBox.getValue().equals("Customer")) {
+                adminOuterLayout.getChildren().clear();
+                adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, createCustDisplay, adminButtonOuterLayout);
+            }
+            else{
+                adminOuterLayout.getChildren().clear();
+                adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, adminButtonOuterLayout);
+            }
+        });
+
+        adminElementDropdownBox.setOnAction(event -> {
+            if(adminManipulateDropdownBox.getValue().equals("Create") && adminElementDropdownBox.getValue().equals("Customer")) {
+                adminOuterLayout.getChildren().clear();
+                adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, createCustDisplay, adminButtonOuterLayout);
+            }
+            else{
+                adminOuterLayout.getChildren().clear();
+                adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, adminButtonOuterLayout);
+            }
+        });
 
         //creating a layout for what will go on our customer Scene
         StackPane custLayout = new StackPane();
