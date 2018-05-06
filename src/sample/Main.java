@@ -41,7 +41,7 @@ public class Main extends Application {
     ChoiceBox<String> accountTypeBox, adminManipulateDropdownBox, adminElementDropdownBox, custDropdownBox; //Dropdown menus
     Separator horizontalSeparator1, horizontalSeparator2, horizontalSeparator3, horizontalSeparator4, horizontalSeparator5, horizontalSeparator6, horizontalSeparator7; //Horizontal Separators used to separate information in the window more clearly
     Image mainWindowIcon, adminAuthorizationWindowIcon; //icon for window
-    String emailAddress; //email address user gives us
+    String emailAddress, custUsername; //email address user gives us
     boolean result, emailExists, invalidDomain;
     ArrayList<String> sqlInfo = new ArrayList<>();
 
@@ -484,21 +484,23 @@ public class Main extends Application {
                     if(SQL.wentInLoop) {
                         SQL.wentInLoop = false;
                         if (password.getText().equals(sqlInfo.get(0)) && !rememberUsernameBox.isSelected()) {
+                            custUsername = username.getText();
                             sqlInfo.clear();
                             username.clear();
                             password.clear();
                             mainWindow.setScene(custUI);
                             mainWindow.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
                             mainWindow.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
-                            mainWindow.setTitle("Railway System Simulation: Admin View");
+                            mainWindow.setTitle("Railway System Simulation: Customer View");
                             return;
                         } else if (password.getText().equals(sqlInfo.get(0)) && rememberUsernameBox.isSelected()) {
+                            custUsername = username.getText();
                             sqlInfo.clear();
                             password.clear();
                             mainWindow.setScene(custUI);
                             mainWindow.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
                             mainWindow.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
-                            mainWindow.setTitle("Railway System Simulation: Admin View");
+                            mainWindow.setTitle("Railway System Simulation: Customer View");
                             return;
                         } else {
                             sqlInfo.clear();
@@ -1034,25 +1036,38 @@ public class Main extends Application {
         custSaveChangesButton.setOnAction(e -> {
             result = ConfirmBox.display("Confirm Changes", 500, 200, "Are you sure you want to make this change?");
             if(result) {
-                if(custDropdownBox.getValue().equals("Purchase")) {
-                    if(custTicketID.getText().equals("")) {
-                        AlertBox.display("Ticket ID Invalid", 500, 200, "You did not enter a proper ticket ID");
-                        return;
+                sqlInfo = SQL.getFromDatabase("select ID,OWNER_ID from TICKET where ID = " + custTicketID.getText() + ";");
+                if (SQL.wentInLoop) {
+                    SQL.wentInLoop = false;
+                    if (sqlInfo.get(1) == null) {
+                        if (custDropdownBox.getValue().equals("Purchase")) {
+                            SQL.sendToDatabase("Update TICKET set OWNER_ID = (select ID from CUSTOMER where USERNAME = '" + custUsername + "');");
+                            custTicketID.clear();
+                            AlertBox.display("Purchase Ticket Successful", 500, 200, "You have successfully purchased a ticket!");
+                            return;
+                        } else if (custDropdownBox.getValue().equals("Cancel")) {
+                            AlertBox.display("Invalid Ticket Cancel", 500, 200, "You are trying to cancel a ticket you don't own.");
+                            return;
+                        }
+                    } else {
+                        sqlInfo = SQL.getFromDatabase("select USERNAME from CUSTOMER where ID = '" + sqlInfo.get(1) + "';");
+                        if (SQL.wentInLoop) {
+                            SQL.wentInLoop = false;
+                            if (custDropdownBox.getValue().equals("Purchase") && (sqlInfo.get(0).equals(custUsername))) {
+                                custTicketID.clear();
+                                AlertBox.display("Invalid Ticket Purchase", 500, 200, "You already own this ticket.");
+                            } else if (custDropdownBox.getValue().equals("Purchase") && !(sqlInfo.get(0).equals(custUsername))) {
+                                custTicketID.clear();
+                                AlertBox.display("Invalid Ticket Purchase", 500, 200, "This ticket was already purchased by another user.");
+                            } else if (custDropdownBox.getValue().equals("Cancel") && (sqlInfo.get(0).equals(custUsername))) {
+                                custTicketID.clear();
+                                SQL.sendToDatabase("update TICKET set OWNER_ID = NULL;");
+                                AlertBox.display("Cancel Ticket Successful", 500, 200, "You have successfully cancelled a ticket!");
+                            }
+                        }
                     }
-                    else {
-                        custTicketID.clear();
-                        AlertBox.display("Purchase Ticket Successful", 500, 200, "You have successfully purchased a ticket!");
-                    }
-                }
-                else if(custDropdownBox.getValue().equals("Cancel")) {
-                    if(custTicketID.getText().equals("")) {
-                        AlertBox.display("Ticket ID Invalid", 500, 200, "You did not enter a proper ticket ID");
-                        return;
-                    }
-                    else {
-                        custTicketID.clear();
-                        AlertBox.display("Cancel Ticket Successful", 500, 200, "You have successfully cancelled a ticket!");
-                    }
+                } else {
+                    AlertBox.display("Ticket ID Does Not Exist", 500, 200, "You have entered a ticket ID that does not exist.");
                 }
             }
         });

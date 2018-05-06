@@ -47,7 +47,9 @@ public class SQL {
 
             while(rs.next()) {
                 wentInLoop = true;
-                info.add(rs.getString(columnNames[count]));
+                for(int i = 0; i < columnNames.length; i++) {
+                    info.add(rs.getString(columnNames[i]));
+                }
                 count++;
             }
 
