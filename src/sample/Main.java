@@ -584,31 +584,48 @@ public class Main extends Application {
                 emailAddress = createAccountEmail.getText();
                 if(SendEmail.isValidEmailAddress(emailAddress) && SendEmail.isValidRegex(emailAddress)) {
                     if (accountTypeBox.getValue().equals("Administrator")) {
-                        adminUsername.clear();
-                        adminPassword.clear();
-                        adminAuthorizationWindow = new Stage();
-                        adminAuthorizationWindowIcon = new Image(ConfirmBox.class.getResourceAsStream("ConfirmBoxIcon.png"));
-                        adminAuthorizationWindow.getIcons().add(adminAuthorizationWindowIcon);
-                        adminAuthorizationWindow.initModality(Modality.APPLICATION_MODAL);
-                        adminAuthorizationWindow.setTitle("Pre-Existing Administrator Information");
-                        adminAuthorizationWindow.setHeight(500);
-                        adminAuthorizationWindow.setWidth(200);
-                        adminAuthorizationWindow.setScene(adminAuthorizationUI);
-                        adminAuthorizationWindow.sizeToScene();
-                        adminAuthorizationWindow.setResizable(false);
-                        adminAuthorizationWindow.setX(primScreenBounds.getWidth() - (primScreenBounds.getWidth() / 1.7));
-                        adminAuthorizationWindow.setY(primScreenBounds.getHeight() - (primScreenBounds.getHeight() / 1.75));
-                        adminAuthorizationWindow.showAndWait();
-                        return;
+                        sqlInfo = SQL.getFromDatabase("select USERNAME from ADMIN where USERNAME = '" + createAccountUsername.getText() + "';");
+                        if (!SQL.wentInLoop) {
+                            adminUsername.clear();
+                            adminPassword.clear();
+                            adminAuthorizationWindow = new Stage();
+                            adminAuthorizationWindowIcon = new Image(ConfirmBox.class.getResourceAsStream("ConfirmBoxIcon.png"));
+                            adminAuthorizationWindow.getIcons().add(adminAuthorizationWindowIcon);
+                            adminAuthorizationWindow.initModality(Modality.APPLICATION_MODAL);
+                            adminAuthorizationWindow.setTitle("Pre-Existing Administrator Information");
+                            adminAuthorizationWindow.setHeight(500);
+                            adminAuthorizationWindow.setWidth(200);
+                            adminAuthorizationWindow.setScene(adminAuthorizationUI);
+                            adminAuthorizationWindow.sizeToScene();
+                            adminAuthorizationWindow.setResizable(false);
+                            adminAuthorizationWindow.setX(primScreenBounds.getWidth() - (primScreenBounds.getWidth() / 1.7));
+                            adminAuthorizationWindow.setY(primScreenBounds.getHeight() - (primScreenBounds.getHeight() / 1.75));
+                            adminAuthorizationWindow.showAndWait();
+                            return;
+                        }
+                        else {
+                            SQL.wentInLoop = false;
+                            AlertBox.display("Username Already Exists", 500, 200, "The username you entered already exists.");
+                        }
                     } else {
-                        SendEmail.send(emailAddress);
-                        SQL.sendToDatabase("insert into CUSTOMER (NAME, EMAIL, USERNAME, PASSWORD) values('" + createAccountName.getText() + "','" + createAccountEmail.getText() + "','" + createAccountUsername.getText() + "','" + createAccountPassword.getText() + "');");
-                        adminAuthorizationWindow.close();
-                        mainWindow.setScene(loginUI);
-                        mainWindow.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
-                        mainWindow.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
-                        mainWindow.setTitle("Railway System Simulation: Login");
-                        AlertBox.display("Create Account Successful", 500, 200, "Successfully created new account! An email has been sent to your email address.");
+                        sqlInfo = SQL.getFromDatabase("select USERNAME from CUSTOMER where USERNAME = '" + createAccountUsername.getText() + "';");
+                        if (!SQL.wentInLoop) {
+                            emailAddress = createAccountEmail.getText();
+                            if (SendEmail.isValidEmailAddress(emailAddress) && SendEmail.isValidRegex(emailAddress)) {
+                                SendEmail.send(emailAddress);
+                                SQL.sendToDatabase("insert into CUSTOMER (NAME, EMAIL, USERNAME, PASSWORD) values('" + createAccountName.getText() + "','" + createAccountEmail.getText() + "','" + createAccountUsername.getText() + "','" + createAccountPassword.getText() + "');");
+                                createAccountName.clear();
+                                createAccountEmail.clear();
+                                createAccountUsername.clear();
+                                createAccountPassword.clear();
+                                createAccountConfirmPassword.clear();
+                                AlertBox.display("Create Account Successful", 500, 200, "Successfully created new account! An email has been sent to the customer's email address.");
+                            }
+                        }
+                        else {
+                            SQL.wentInLoop = false;
+                            AlertBox.display("Username Already Exists", 500, 200, "The username you entered already exists.");
+                        }
                     }
                 }
             }
@@ -651,17 +668,23 @@ public class Main extends Application {
                             AlertBox.display("Password Confirmation Error", 500, 200, "Password and Confirmation do not match.");
                             return;
                         } else {
-                            emailAddress = adminCreateEmail.getText();
-                            if (SendEmail.isValidEmailAddress(emailAddress) && SendEmail.isValidRegex(emailAddress)) {
-                                SendEmail.send(emailAddress);
-                                SQL.sendToDatabase("insert into CUSTOMER (NAME, EMAIL, USERNAME, PASSWORD) values('" + adminCreateCustName.getText() + "','" + adminCreateEmail.getText() + "','" + adminCreateUsername.getText() + "','" + adminCreatePassword.getText() + "');");
-                                adminCreateCustName.clear();
-                                adminCreateEmail.clear();
-                                adminCreateUsername.clear();
-                                adminCreatePassword.clear();
-                                adminCreateConfirmPassword.clear();
-                                AlertBox.display("Create Account Successful", 500, 200, "Successfully created new account! An email has been sent to the customer's email address.");
-
+                            sqlInfo = SQL.getFromDatabase("select USERNAME from CUSTOMER where USERNAME = '" + adminCreateCustName.getText() + "';");
+                            if (!SQL.wentInLoop) {
+                                emailAddress = adminCreateEmail.getText();
+                                if (SendEmail.isValidEmailAddress(emailAddress) && SendEmail.isValidRegex(emailAddress)) {
+                                    SendEmail.send(emailAddress);
+                                    SQL.sendToDatabase("insert into CUSTOMER (NAME, EMAIL, USERNAME, PASSWORD) values('" + adminCreateCustName.getText() + "','" + adminCreateEmail.getText() + "','" + adminCreateUsername.getText() + "','" + adminCreatePassword.getText() + "');");
+                                    adminCreateCustName.clear();
+                                    adminCreateEmail.clear();
+                                    adminCreateUsername.clear();
+                                    adminCreatePassword.clear();
+                                    adminCreateConfirmPassword.clear();
+                                    AlertBox.display("Create Account Successful", 500, 200, "Successfully created new account! An email has been sent to the customer's email address.");
+                                }
+                            }
+                            else {
+                                SQL.wentInLoop = false;
+                                AlertBox.display("Username Already Exists", 500, 200, "The username you entered already exists.");
                             }
                         }
                     } else if (adminElementDropdownBox.getValue().equals("Train")) {
@@ -761,41 +784,47 @@ public class Main extends Application {
                 else if(adminManipulateDropdownBox.getValue().equals("Update")) {
                     if (adminElementDropdownBox.getValue().equals("Customer")) {
                         invalidDomain = SendEmail.readDomains(adminUpdateEmail.getText());
-                        if(adminUpdateCheckCustID.getText().equals("")) {
-                            AlertBox.display("Customer ID Invalid", 500, 200, "You did not enter a proper pre-existing customer ID.");
-                        }
-                        else if (adminUpdateEmail.getText().equals("") || invalidDomain) {
-                            AlertBox.display("Email Invalid", 500, 200, "You did not enter a proper email address.");
-                            return;
-                        } else if (adminUpdateCustName.getText().equals("")) {
-                            AlertBox.display("Name Invalid", 500, 200, "You did not enter a proper name.");
-                            return;
-                        } else if (adminUpdateUsername.getText().equals("")) {
-                            AlertBox.display("Username Invalid", 500, 200, "You did not enter a proper username.");
-                            return;
-                        } else if (adminUpdatePassword.getText().equals("")) {
-                            AlertBox.display("Password Invalid", 500, 200, "You did not enter a proper password.");
-                            return;
-                        } else if (!adminUpdatePassword.getText().equals(adminUpdateConfirmPassword.getText())) {
-                            AlertBox.display("Password Confirmation Error", 500, 200, "Password and Confirmation do not match.");
-                            return;
-                        } else {
-                            emailAddress = adminUpdateEmail.getText();
-                            if (SendEmail.isValidEmailAddress(emailAddress) && SendEmail.isValidRegex(emailAddress)) {
-                                SendEmail.send(emailAddress);
-                                if (adminManipulateDropdownBox.getValue().equals("Update")) {
-                                    adminUpdateCheckCustID.clear();
-                                }
-                                adminUpdateCustName.clear();
-                                adminUpdateEmail.clear();
-                                adminUpdateUsername.clear();
-                                adminUpdatePassword.clear();
-                                adminUpdateConfirmPassword.clear();
-                                AlertBox.display("Update Account Successful", 500, 200, "Successfully updated account! An email has been sent to the customer's email address.");
+                        sqlInfo = SQL.getFromDatabase("select ID from CUSTOMER where ID = '" + adminUpdateCheckCustID.getText() + "';");
+                        if (SQL.wentInLoop) {
+                            SQL.wentInLoop = false;
+                            if (adminUpdateCheckCustID.getText().equals("")) {
+                                AlertBox.display("Customer ID Invalid", 500, 200, "You did not enter a proper pre-existing customer ID.");
+                            } else if (adminUpdateEmail.getText().equals("") || invalidDomain) {
+                                AlertBox.display("Email Invalid", 500, 200, "You did not enter a proper email address.");
+                                return;
+                            } else if (adminUpdateCustName.getText().equals("")) {
+                                AlertBox.display("Name Invalid", 500, 200, "You did not enter a proper name.");
+                                return;
+                            } else if (adminUpdateUsername.getText().equals("")) {
+                                AlertBox.display("Username Invalid", 500, 200, "You did not enter a proper username.");
+                                return;
+                            } else if (adminUpdatePassword.getText().equals("")) {
+                                AlertBox.display("Password Invalid", 500, 200, "You did not enter a proper password.");
+                                return;
+                            } else if (!adminUpdatePassword.getText().equals(adminUpdateConfirmPassword.getText())) {
+                                AlertBox.display("Password Confirmation Error", 500, 200, "Password and Confirmation do not match.");
+                                return;
+                            } else {
+                                emailAddress = adminUpdateEmail.getText();
+                                if (SendEmail.isValidEmailAddress(emailAddress) && SendEmail.isValidRegex(emailAddress)) {
+                                    SendEmail.send(emailAddress);
+                                    if (adminManipulateDropdownBox.getValue().equals("Update")) {
+                                        adminUpdateCheckCustID.clear();
+                                    }
+                                    adminUpdateCustName.clear();
+                                    adminUpdateEmail.clear();
+                                    adminUpdateUsername.clear();
+                                    adminUpdatePassword.clear();
+                                    adminUpdateConfirmPassword.clear();
+                                    AlertBox.display("Update Account Successful", 500, 200, "Successfully updated account! An email has been sent to the customer's email address.");
 
+                                }
                             }
                         }
-                    } else if (adminElementDropdownBox.getValue().equals("Train")) {
+                        else {
+                            AlertBox.display("Customer ID Invalid", 500, 200, "You did not enter a proper pre-existing customer ID.");
+                        }
+                    }else if (adminElementDropdownBox.getValue().equals("Train")) {
                         if(adminUpdateCheckTrainID.getText().equals(" ")) {
                             AlertBox.display("Train ID Invalid", 500, 200, "You did not enter a proper pre-existing train ID.");
                         }
