@@ -1,5 +1,6 @@
 package sample;
 
+import java.sql.*;
 import com.sun.mail.smtp.SMTPAddressFailedException;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -29,6 +30,10 @@ import javax.mail.internet.AddressException;
 import java.util.regex.Pattern;
 
 public class Main extends Application {
+    String url = "jdbc:sqlserver://SQL2.cis245.mc3.edu:1433;databaseName=zz_CIS245_16;user=user16;password=JayHey99";
+    Connection myConn = null;
+    Statement myStmt = null;
+
     Stage mainWindow, adminAuthorizationWindow; //the literal frame that pops up
     Scene loginUI, adminUI, custUI, createAccountUI, adminAuthorizationUI; //the different screens that we can get to within our "Stage" or frame
     Button loginButton, signOutButton, signOutButton2, createAccountLoginButton, createAccountCreateButton, createAccountCancelButton, adminAuthorizationAuthorizeButton, adminAuthorizationCancelButton, adminSaveChangesButton, custSaveChangesButton; //button that user can interact with
@@ -165,8 +170,8 @@ public class Main extends Application {
         //TextFields that can appear on admin view
         adminCheckTrackID = new TextField();
         adminCheckTrackID.setMaxWidth(300);
-        adminCheckTrackID.setPromptText("Track ID Number");
-        adminCheckTrackID.setTooltip(new Tooltip("Enter Track ID Number"));
+        adminCheckTrackID.setPromptText("Pre-Existing Track ID Number");
+        adminCheckTrackID.setTooltip(new Tooltip("Enter Pre-Existing Track ID Number"));
 
         adminUpdateTrackID = new TextField();
         adminUpdateTrackID.setMaxWidth(300);
@@ -235,8 +240,8 @@ public class Main extends Application {
 
         adminCheckTrainName = new TextField();
         adminCheckTrainName.setMaxWidth(300);
-        adminCheckTrainName.setPromptText("Pre-Existing Train Name");
-        adminCheckTrainName.setTooltip(new Tooltip("Enter Pre-Existing Train Name"));
+        adminCheckTrainName.setPromptText("Pre-Existing Train ID Number");
+        adminCheckTrainName.setTooltip(new Tooltip("Enter Pre-Existing Train ID"));
 
         adminUpdateCheckTrainName = new TextField();
         adminUpdateCheckTrainName.setMaxWidth(300);
@@ -678,7 +683,7 @@ public class Main extends Application {
                         }
                     } else if (adminElementDropdownBox.getValue().equals("Schedule Entry")) {
                         if (adminCheckTrainName.getText().equals("")) {
-                            AlertBox.display("Name Invalid", 500, 200, "You did not enter a train name that exists.");
+                            AlertBox.display("Train ID Invalid", 500, 200, "You did not enter a train ID that exists.");
                             return;
                         } else if (adminCheckTrackID.getText().equals("")) {
                             AlertBox.display("Track ID Invalid", 500, 200, "You did not enter a track ID that exists.");
@@ -980,6 +985,21 @@ public class Main extends Application {
                     mainWindow.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
                     mainWindow.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
                     mainWindow.setTitle("Railway System Simulation: Login");
+                    try {
+                        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+                        myConn = DriverManager.getConnection(url);
+                        myStmt = myConn.createStatement();
+                        myStmt.executeUpdate("insert into ADMIN (NAME, EMAIL, USERNAME, PASSWORD) values('" + createAccountName.getText() + "','" + createAccountEmail.getText() + "','" + createAccountUsername.getText() + "','" + createAccountPassword.getText() + "');");
+                        myConn.close();
+                    }
+                    catch (Exception except) {
+                        except.printStackTrace();
+                    }
+                    finally
+                    {
+                        if(myStmt != null) try { myStmt.close(); } catch(Exception except) {}
+                        if(myConn != null) try { myConn.close(); } catch(Exception except) {}
+                    }
                     AlertBox.display("Create Account Successful", 500, 200, "Successfully created new account! An email has been sent to your email address.");
                     return;
                 }
@@ -1044,7 +1064,7 @@ public class Main extends Application {
         VBox createTrainStationDisplay = new VBox(20);
         createTrainStationDisplay.getChildren().addAll(adminCreateTrainStationName, adminCreateLocation);
         createTrainStationDisplay.setAlignment(Pos.CENTER);
-        createTrainStationDisplay.setPadding(new Insets(0, 0, 190, 0));
+        createTrainStationDisplay.setPadding(new Insets(0, 0, 180, 0));
 
         VBox updateTrainStationDisplay = new VBox(20);
         updateTrainStationDisplay.getChildren().addAll(adminUpdateCheckTrainStationID, adminUpdateTrainStationName, adminUpdateLocation);
