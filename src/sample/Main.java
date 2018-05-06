@@ -73,12 +73,12 @@ public class Main extends Application {
         //label for admin view
         adminDirections1 = new Label("As an administrator, you have the privileges of being able to create, update, and/or delete multiple elements from the Railway System.");
         adminDirections2 = new Label("In order to do so, select how you want to manipulate an element and the specific element you want to manipulate in the dropdown boxes below.");
-        adminDeleteDirections1 = new Label("IMPORTANT: Deleting an element PERMANENTLY deletes it from the system. Please be cautious.");
-        adminDeleteDirections2 = new Label("IMPORTANT: Deleting an element PERMANENTLY deletes it from the system. Please be cautious.");
-        adminDeleteDirections3 = new Label("IMPORTANT: Deleting an element PERMANENTLY deletes it from the system. Please be cautious.");
-        adminDeleteDirections4 = new Label("IMPORTANT: Deleting an element PERMANENTLY deletes it from the system. Please be cautious.");
-        adminDeleteDirections5 = new Label("IMPORTANT: Deleting an element PERMANENTLY deletes it from the system. Please be cautious.");
-        adminDeleteDirections6 = new Label("IMPORTANT: Deleting an element PERMANENTLY deletes it from the system. Please be cautious.");
+        adminDeleteDirections1 = new Label("IMPORTANT: Deleting a customer PERMANENTLY deletes them from the system. Please be cautious.");
+        adminDeleteDirections2 = new Label("IMPORTANT: Deleting a train PERMANENTLY deletes it from the system. Please be cautious.");
+        adminDeleteDirections3 = new Label("IMPORTANT: Deleting a train station PERMANENTLY deletes it from the system. Please be cautious.");
+        adminDeleteDirections4 = new Label("IMPORTANT: Deleting a schedule entry PERMANENTLY deletes it from the system. Please be cautious.");
+        adminDeleteDirections5 = new Label("IMPORTANT: Deleting a track PERMANENTLY deletes it from the system. Please be cautious.");
+        adminDeleteDirections6 = new Label("IMPORTANT: Deleting a ticket PERMANENTLY deletes it from the system. Please be cautious.");
 
 
         //label for admin account authorization directions
@@ -684,7 +684,12 @@ public class Main extends Application {
                         } else if (adminCreateDate.getText().equals("") || adminCreateDate.getText().length() != 8 || !adminCreateDate.getText().substring(2, 3).equals("/") || !adminCreateDate.getText().substring(5, 6).equals("/") || !(Pattern.matches("[0-9]+", adminCreateDate.getText().substring(0, 2))) || !(Pattern.matches("[0-9]+", adminCreateDate.getText().substring(3, 5))) || !(Pattern.matches("[0-9]+", adminCreateDate.getText().substring(6, 8))) || Integer.parseInt(adminCreateDate.getText().substring(0, 2)) < 1 || Integer.parseInt(adminCreateDate.getText().substring(0, 2)) > 12 || Integer.parseInt(adminCreateDate.getText().substring(3, 5)) < 1 || Integer.parseInt(adminCreateDate.getText().substring(3, 5)) > 30 || Integer.parseInt(adminCreateDate.getText().substring(6, 8)) < 1 || Integer.parseInt(adminCreateDate.getText().substring(6, 8)) > 99) {
                             AlertBox.display("Date Invalid", 500, 200, "You did not enter a proper date (Must be in MM/DD/YY format).");
                             return;
-                        } else if (adminCreatePrice.getText().equals("") || adminCreatePrice.getText().length() < 4 || !adminCreatePrice.getText().contains(".") || !(Pattern.matches("[0-9]+", adminCreatePrice.getText().substring(0, adminCreatePrice.getText().indexOf(".")))) || !(Pattern.matches("[0-9]+", adminCreatePrice.getText().substring(adminCreatePrice.getText().indexOf(".") + 1))) || Integer.parseInt(adminCreatePrice.getText().substring(0, adminCreatePrice.getText().indexOf("."))) < 1 || Integer.parseInt(adminCreatePrice.getText().substring(adminCreatePrice.getText().indexOf(".") + 1)) > 99) {
+                        }
+                        else if (!(Pattern.matches("[0-9]+", adminCreateCustSeat.getText())) || Integer.parseInt(adminCreateCustSeat.getText()) < 1) {
+                            AlertBox.display("Customer Seat # Invalid", 500, 200, "You did not enter a proper customer seat number.");
+                            return;
+                        }
+                        else if (adminCreatePrice.getText().equals("") || adminCreatePrice.getText().length() < 4 || !adminCreatePrice.getText().contains(".") || !(Pattern.matches("[0-9]+", adminCreatePrice.getText().substring(0, adminCreatePrice.getText().indexOf(".")))) || !(Pattern.matches("[0-9]+", adminCreatePrice.getText().substring(adminCreatePrice.getText().indexOf(".") + 1))) || Integer.parseInt(adminCreatePrice.getText().substring(0, adminCreatePrice.getText().indexOf("."))) < 1 || Integer.parseInt(adminCreatePrice.getText().substring(adminCreatePrice.getText().indexOf(".") + 1)) > 99) {
                             AlertBox.display("Price Invalid", 500, 200, "You did not enter a proper price (Must be two digits after the decimal).");
                             return;
                         } else {
@@ -818,7 +823,12 @@ public class Main extends Application {
                         } else if (adminUpdateDate.getText().equals("") || adminUpdateDate.getText().length() != 8 || !adminUpdateDate.getText().substring(2, 3).equals("/") || !adminUpdateDate.getText().substring(5, 6).equals("/") || !(Pattern.matches("[0-9]+", adminUpdateDate.getText().substring(0, 2))) || !(Pattern.matches("[0-9]+", adminUpdateDate.getText().substring(3, 5))) || !(Pattern.matches("[0-9]+", adminUpdateDate.getText().substring(6, 8))) || Integer.parseInt(adminUpdateDate.getText().substring(0, 2)) < 1 || Integer.parseInt(adminUpdateDate.getText().substring(0, 2)) > 12 || Integer.parseInt(adminUpdateDate.getText().substring(3, 5)) < 1 || Integer.parseInt(adminUpdateDate.getText().substring(3, 5)) > 30 || Integer.parseInt(adminUpdateDate.getText().substring(6, 8)) < 1 || Integer.parseInt(adminUpdateDate.getText().substring(6, 8)) > 99) {
                             AlertBox.display("Date Invalid", 500, 200, "You did not enter a proper date (Must be in MM/DD/YY format).");
                             return;
-                        } else if (adminUpdatePrice.getText().equals("") || adminUpdatePrice.getText().length() < 4 || !adminUpdatePrice.getText().contains(".") || !(Pattern.matches("[0-9]+", adminUpdatePrice.getText().substring(0, adminUpdatePrice.getText().indexOf(".")))) || !(Pattern.matches("[0-9]+", adminUpdatePrice.getText().substring(adminUpdatePrice.getText().indexOf(".") + 1))) || Integer.parseInt(adminUpdatePrice.getText().substring(0, adminUpdatePrice.getText().indexOf("."))) < 1 || Integer.parseInt(adminUpdatePrice.getText().substring(adminUpdatePrice.getText().indexOf(".") + 1)) > 99) {
+                        }
+                        else if (!(Pattern.matches("[0-9]+", adminUpdateCustSeat.getText())) || Integer.parseInt(adminUpdateCustSeat.getText()) < 1) {
+                            AlertBox.display("Customer Seat # Invalid", 500, 200, "You did not enter a proper customer seat number.");
+                            return;
+                        }
+                        else if (adminUpdatePrice.getText().equals("") || adminUpdatePrice.getText().length() < 4 || !adminUpdatePrice.getText().contains(".") || !(Pattern.matches("[0-9]+", adminUpdatePrice.getText().substring(0, adminUpdatePrice.getText().indexOf(".")))) || !(Pattern.matches("[0-9]+", adminUpdatePrice.getText().substring(adminUpdatePrice.getText().indexOf(".") + 1))) || Integer.parseInt(adminUpdatePrice.getText().substring(0, adminUpdatePrice.getText().indexOf("."))) < 1 || Integer.parseInt(adminUpdatePrice.getText().substring(adminUpdatePrice.getText().indexOf(".") + 1)) > 99) {
                             AlertBox.display("Price Invalid", 500, 200, "You did not enter a proper price (Must be two digits after the decimal).");
                             return;
                         } else {
@@ -970,7 +980,7 @@ public class Main extends Application {
         VBox createTrainStationDisplay = new VBox(20);
         createTrainStationDisplay.getChildren().addAll(adminCreateTrainStationName, adminCreateLocation);
         createTrainStationDisplay.setAlignment(Pos.CENTER);
-        createTrainStationDisplay.setPadding(new Insets(0, 0, 188, 0));
+        createTrainStationDisplay.setPadding(new Insets(0, 0, 190, 0));
 
         VBox updateTrainStationDisplay = new VBox(20);
         updateTrainStationDisplay.getChildren().addAll(adminUpdateCheckTrainStationID, adminUpdateTrainStationName, adminUpdateLocation);
@@ -1013,14 +1023,14 @@ public class Main extends Application {
         deleteTrackDisplay.setPadding(new Insets(0, 0, 188, 0));
 
         VBox createTicketDisplay = new VBox(20);
-        createTicketDisplay.getChildren().addAll(adminCheckSchedID, adminCreateDate, adminCreatePrice);
+        createTicketDisplay.getChildren().addAll(adminCheckSchedID, adminCreateDate, adminCreateCustSeat, adminCreatePrice);
         createTicketDisplay.setAlignment(Pos.CENTER);
-        createTicketDisplay.setPadding(new Insets(0, 0, 135, 0));
+        createTicketDisplay.setPadding(new Insets(0, 0, 90, 0));
 
         VBox updateTicketDisplay = new VBox(20);
-        updateTicketDisplay.getChildren().addAll(adminUpdateCheckTicketID, adminUpdateCheckSchedID, adminUpdateDate, adminUpdatePrice);
+        updateTicketDisplay.getChildren().addAll(adminUpdateCheckTicketID, adminUpdateCheckSchedID, adminUpdateCustSeat, adminUpdateDate, adminUpdatePrice);
         updateTicketDisplay.setAlignment(Pos.CENTER);
-        updateTicketDisplay.setPadding(new Insets(0, 0, 90, 0));
+        updateTicketDisplay.setPadding(new Insets(0, 0, 45, 0));
 
         VBox deleteTicketDisplay = new VBox(20);
         deleteTicketDisplay.getChildren().addAll(adminDeleteTicketID, adminDeleteDirections6);
@@ -1202,9 +1212,10 @@ public class Main extends Application {
         });
 
         //creating a layout for what will go on our customer Scene
-        StackPane custLayout = new StackPane();
-        custLayout.getChildren().add(signOutButton2);
-        custLayout.setAlignment(Pos.CENTER);
+        VBox custOuterLayout = new VBox(20);
+        custOuterLayout.getChildren().add(signOutButton2);
+        custOuterLayout.setAlignment(Pos.CENTER);
+        custOuterLayout.setPadding(new Insets(20, 30, 20, 30));
 
         //creating a layout for what will go on our create account Scene
         VBox createAccountOuterLayout = new VBox(20);
@@ -1243,7 +1254,7 @@ public class Main extends Application {
         adminUI = new Scene(adminOuterLayout);
 
         //creating customer scene (fullscreen)
-        custUI = new Scene(custLayout, primScreenBounds.getWidth() - 10, primScreenBounds.getHeight() - 40);
+        custUI = new Scene(custOuterLayout);
 
         //creating create account scene
         createAccountUI = new Scene(createAccountOuterLayout);
