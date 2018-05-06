@@ -30,10 +30,6 @@ import javax.mail.internet.AddressException;
 import java.util.regex.Pattern;
 
 public class Main extends Application {
-    String url = "jdbc:sqlserver://SQL2.cis245.mc3.edu:1433;databaseName=zz_CIS245_16;user=user16;password=JayHey99";
-    Connection myConn = null;
-    Statement myStmt = null;
-
     Stage mainWindow, adminAuthorizationWindow; //the literal frame that pops up
     Scene loginUI, adminUI, custUI, createAccountUI, adminAuthorizationUI; //the different screens that we can get to within our "Stage" or frame
     Button loginButton, signOutButton, signOutButton2, createAccountLoginButton, createAccountCreateButton, createAccountCancelButton, adminAuthorizationAuthorizeButton, adminAuthorizationCancelButton, adminSaveChangesButton, custSaveChangesButton; //button that user can interact with
@@ -310,12 +306,12 @@ public class Main extends Application {
 
         adminCreateDate = new TextField();
         adminCreateDate.setMaxWidth(300);
-        adminCreateDate.setPromptText("Date (MM/DD/YY format)");
+        adminCreateDate.setPromptText("Date (YYYY-MM-DD format)");
         adminCreateDate.setTooltip(new Tooltip("Enter Date of Event"));
 
         adminUpdateDate = new TextField();
         adminUpdateDate.setMaxWidth(300);
-        adminUpdateDate.setPromptText("Update Date (MM/DD/YY format)");
+        adminUpdateDate.setPromptText("Update Date (YYYY-MM-DD format)");
         adminUpdateDate.setTooltip(new Tooltip("Update Date of Event"));
 
         adminCreateStationFrom = new TextField();
@@ -590,6 +586,7 @@ public class Main extends Application {
                         return;
                     } else {
                         SendEmail.send(emailAddress);
+                        SQL.sendToDatabase("insert into CUSTOMER (NAME, EMAIL, USERNAME, PASSWORD) values('" + adminCreateCustName.getText() + "','" + adminCreateEmail.getText() + "','" + adminCreateUsername.getText() + "','" + adminCreatePassword.getText() + "');");
                         adminAuthorizationWindow.close();
                         mainWindow.setScene(loginUI);
                         mainWindow.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
@@ -641,9 +638,7 @@ public class Main extends Application {
                             emailAddress = adminCreateEmail.getText();
                             if (SendEmail.isValidEmailAddress(emailAddress) && SendEmail.isValidRegex(emailAddress)) {
                                 SendEmail.send(emailAddress);
-                                if (adminManipulateDropdownBox.getValue().equals("Update")) {
-                                    adminUpdateCheckCustID.clear();
-                                }
+                                SQL.sendToDatabase("insert into CUSTOMER (NAME, EMAIL, USERNAME, PASSWORD) values('" + adminCreateCustName.getText() + "','" + adminCreateEmail.getText() + "','" + adminCreateUsername.getText() + "','" + adminCreatePassword.getText() + "');");
                                 adminCreateCustName.clear();
                                 adminCreateEmail.clear();
                                 adminCreateUsername.clear();
@@ -664,6 +659,7 @@ public class Main extends Application {
                             AlertBox.display("Number of Seats Invalid", 500, 200, "You did not enter a proper number of seats");
                             return;
                         } else {
+                            SQL.sendToDatabase("insert into TRAIN (NAME, MODEL, NUM_OF_SEATS) values('" + adminCreateTrainName.getText() + "','" + adminCreateModel.getText() + "','" + adminCreateNumOfSeats.getText() + "');");
                             adminCreateTrainName.clear();
                             adminCreateModel.clear();
                             adminCreateNumOfSeats.clear();
@@ -677,6 +673,7 @@ public class Main extends Application {
                             AlertBox.display("Location Invalid", 500, 200, "You did not enter a proper location.");
                             return;
                         } else {
+                            SQL.sendToDatabase("insert into TRAIN_STATION (NAME, LOCATION) values('" + adminCreateTrainStationName.getText() + "','" + adminCreateLocation.getText() + "');");
                             adminCreateTrainStationName.clear();
                             adminCreateLocation.clear();
                             AlertBox.display("Create Train Station Successful", 500, 200, "Successfully created a new train station!");
@@ -695,6 +692,7 @@ public class Main extends Application {
                             AlertBox.display("Arrival Time Invalid", 500, 200, "You did not enter a proper arrival time (Must be in HH:MM format).");
                             return;
                         } else {
+                            SQL.sendToDatabase("insert into SCHEDULE (TRAIN_ID, TRACK_ID, DEPARTURE_TIME, ARRIVAL_TIME) values('" + adminCheckTrainName.getText() + "','" + adminCheckTrackID.getText() + "','" + adminCreateSchedOut.getText() + "'" + adminCreateSchedIn.getText() + "');");
                             adminCheckTrainName.clear();
                             adminCheckTrackID.clear();
                             adminCreateSchedOut.clear();
@@ -712,6 +710,7 @@ public class Main extends Application {
                             AlertBox.display("Length Invalid", 500, 200, "You did not enter a proper length (Must be a whole number).");
                             return;
                         } else {
+                            SQL.sendToDatabase("insert into TRACK (STATION_FROM_ID, STATION_TO_ID, LENGTH) values('" + adminCreateStationFrom.getText() + "','" + adminCreateStationTo.getText() + "','" + adminCreateLength.getText() + "');");
                             adminCreateStationFrom.clear();
                             adminCreateStationTo.clear();
                             adminCreateLength.clear();
@@ -721,8 +720,8 @@ public class Main extends Application {
                         if (adminCheckSchedID.getText().equals("")) {
                             AlertBox.display("Schedule Entry ID Invalid", 500, 200, "You did not enter a schedule entry that exists.");
                             return;
-                        } else if (adminCreateDate.getText().equals("") || adminCreateDate.getText().length() != 8 || !adminCreateDate.getText().substring(2, 3).equals("/") || !adminCreateDate.getText().substring(5, 6).equals("/") || !(Pattern.matches("[0-9]+", adminCreateDate.getText().substring(0, 2))) || !(Pattern.matches("[0-9]+", adminCreateDate.getText().substring(3, 5))) || !(Pattern.matches("[0-9]+", adminCreateDate.getText().substring(6, 8))) || Integer.parseInt(adminCreateDate.getText().substring(0, 2)) < 1 || Integer.parseInt(adminCreateDate.getText().substring(0, 2)) > 12 || Integer.parseInt(adminCreateDate.getText().substring(3, 5)) < 1 || Integer.parseInt(adminCreateDate.getText().substring(3, 5)) > 30 || Integer.parseInt(adminCreateDate.getText().substring(6, 8)) < 1 || Integer.parseInt(adminCreateDate.getText().substring(6, 8)) > 99) {
-                            AlertBox.display("Date Invalid", 500, 200, "You did not enter a proper date (Must be in MM/DD/YY format).");
+                        } else if (adminCreateDate.getText().equals("") || adminCreateDate.getText().length() != 10 || !adminCreateDate.getText().substring(4, 5).equals("-") || !adminCreateDate.getText().substring(7, 8).equals("-") || !(Pattern.matches("[0-9]+", adminCreateDate.getText().substring(0, 4))) || !(Pattern.matches("[0-9]+", adminCreateDate.getText().substring(5, 7))) || !(Pattern.matches("[0-9]+", adminCreateDate.getText().substring(8, 10))) || Integer.parseInt(adminCreateDate.getText().substring(0, 4)) < 1 || Integer.parseInt(adminCreateDate.getText().substring(5, 7)) > 12 || Integer.parseInt(adminCreateDate.getText().substring(5, 7)) < 1 || Integer.parseInt(adminCreateDate.getText().substring(8, 10)) > 30 || Integer.parseInt(adminCreateDate.getText().substring(8, 10)) < 1 || Integer.parseInt(adminCreateDate.getText().substring(0, 4)) > 9999) {
+                            AlertBox.display("Date Invalid", 500, 200, "You did not enter a proper date (Must be in YYYY-MM-DD format).");
                             return;
                         }
                         else if (!(Pattern.matches("[0-9]+", adminCreateCustSeat.getText())) || Integer.parseInt(adminCreateCustSeat.getText()) < 1) {
@@ -733,8 +732,11 @@ public class Main extends Application {
                             AlertBox.display("Price Invalid", 500, 200, "You did not enter a proper price (Must be two digits after the decimal).");
                             return;
                         } else {
+                            adminCreateDate.setText("");
+                            SQL.sendToDatabase("insert into TICKET (STATION_FROM_ID, STATION_TO_ID, LENGTH) values('" + adminCheckSchedID.getText() + "','" + adminCreateDate.getText() + "','" + adminCreateLength.getText() + "');");
                             adminCheckSchedID.clear();
                             adminCreateDate.clear();
+                            adminCreateCustSeat.clear();
                             adminCreatePrice.clear();
                             AlertBox.display("Create Ticket Successful", 500, 200, "Successfully created a new ticket!");
                         }
@@ -860,8 +862,8 @@ public class Main extends Application {
                         else if (adminCheckSchedID.getText().equals("")) {
                             AlertBox.display("Schedule Entry ID Invalid", 500, 200, "You did not enter a schedule entry that exists.");
                             return;
-                        } else if (adminUpdateDate.getText().equals("") || adminUpdateDate.getText().length() != 8 || !adminUpdateDate.getText().substring(2, 3).equals("/") || !adminUpdateDate.getText().substring(5, 6).equals("/") || !(Pattern.matches("[0-9]+", adminUpdateDate.getText().substring(0, 2))) || !(Pattern.matches("[0-9]+", adminUpdateDate.getText().substring(3, 5))) || !(Pattern.matches("[0-9]+", adminUpdateDate.getText().substring(6, 8))) || Integer.parseInt(adminUpdateDate.getText().substring(0, 2)) < 1 || Integer.parseInt(adminUpdateDate.getText().substring(0, 2)) > 12 || Integer.parseInt(adminUpdateDate.getText().substring(3, 5)) < 1 || Integer.parseInt(adminUpdateDate.getText().substring(3, 5)) > 30 || Integer.parseInt(adminUpdateDate.getText().substring(6, 8)) < 1 || Integer.parseInt(adminUpdateDate.getText().substring(6, 8)) > 99) {
-                            AlertBox.display("Date Invalid", 500, 200, "You did not enter a proper date (Must be in MM/DD/YY format).");
+                        } else if (adminUpdateDate.getText().equals("") || adminUpdateDate.getText().length() != 10 || !adminUpdateDate.getText().substring(4, 5).equals("-") || !adminUpdateDate.getText().substring(7, 8).equals("-") || !(Pattern.matches("[0-9]+", adminUpdateDate.getText().substring(0, 4))) || !(Pattern.matches("[0-9]+", adminUpdateDate.getText().substring(5, 7))) || !(Pattern.matches("[0-9]+", adminUpdateDate.getText().substring(8, 10))) || Integer.parseInt(adminUpdateDate.getText().substring(0, 4)) < 1 || Integer.parseInt(adminUpdateDate.getText().substring(5, 7)) > 12 || Integer.parseInt(adminUpdateDate.getText().substring(5, 7)) < 1 || Integer.parseInt(adminUpdateDate.getText().substring(8, 10)) > 30 || Integer.parseInt(adminUpdateDate.getText().substring(8, 10)) < 1 || Integer.parseInt(adminUpdateDate.getText().substring(0, 4)) > 9999) {
+                            AlertBox.display("Date Invalid", 500, 200, "You did not enter a proper date (Must be in YYYY-MM-DD format).");
                             return;
                         }
                         else if (!(Pattern.matches("[0-9]+", adminUpdateCustSeat.getText())) || Integer.parseInt(adminUpdateCustSeat.getText()) < 1) {
@@ -985,21 +987,7 @@ public class Main extends Application {
                     mainWindow.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
                     mainWindow.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
                     mainWindow.setTitle("Railway System Simulation: Login");
-                    try {
-                        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-                        myConn = DriverManager.getConnection(url);
-                        myStmt = myConn.createStatement();
-                        myStmt.executeUpdate("insert into ADMIN (NAME, EMAIL, USERNAME, PASSWORD) values('" + createAccountName.getText() + "','" + createAccountEmail.getText() + "','" + createAccountUsername.getText() + "','" + createAccountPassword.getText() + "');");
-                        myConn.close();
-                    }
-                    catch (Exception except) {
-                        except.printStackTrace();
-                    }
-                    finally
-                    {
-                        if(myStmt != null) try { myStmt.close(); } catch(Exception except) {}
-                        if(myConn != null) try { myConn.close(); } catch(Exception except) {}
-                    }
+                    SQL.sendToDatabase("insert into ADMIN (NAME, EMAIL, USERNAME, PASSWORD) values('" + createAccountName.getText() + "','" + createAccountEmail.getText() + "','" + createAccountUsername.getText() + "','" + createAccountPassword.getText() + "');");
                     AlertBox.display("Create Account Successful", 500, 200, "Successfully created new account! An email has been sent to your email address.");
                     return;
                 }
