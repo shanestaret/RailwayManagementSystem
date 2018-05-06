@@ -31,13 +31,13 @@ import java.util.regex.Pattern;
 public class Main extends Application {
     Stage mainWindow, adminAuthorizationWindow; //the literal frame that pops up
     Scene loginUI, adminUI, custUI, createAccountUI, adminAuthorizationUI; //the different screens that we can get to within our "Stage" or frame
-    Button loginButton, signOutButton, signOutButton2, createAccountLoginButton, createAccountCreateButton, createAccountCancelButton, adminAuthorizationAuthorizeButton, adminAuthorizationCancelButton, adminSaveChangesButton; //button that user can interact with
-    Label loginDirections, createAccountDirections1, createAccountDirections2, createAccountEmailWarning1, createAccountEmailWarning2, personalInfo, accountInfo, adminDirections1, adminDirections2, adminAuthorizationDirections, adminDeleteDirections1, adminDeleteDirections2, adminDeleteDirections3, adminDeleteDirections4, adminDeleteDirections5, adminDeleteDirections6; //String that will tell user how to login
-    TextField username, createAccountName, createAccountEmail, createAccountUsername, adminUpdateCheckCustID, adminCheckTrackID, adminUpdateCheckTrainID, adminUpdateTrackID, adminUpdateSchedID, adminUpdateCheckTrainStationID, adminUpdateCheckTicketID, adminUpdateCheckTrackID, adminCheckSchedID, adminUpdateCheckSchedID, adminCreateCustName, adminCreateTrainName, adminCheckTrainName, adminCreateTrainStationName, adminCreateModel, adminCreateNumOfSeats, adminCreateLocation, adminCreateSchedIn, adminCreateSchedOut, adminCreateDate, adminCreateStationFrom, adminCreateStationTo, adminCreateLength,  adminCreateCustSeat, adminCreatePrice, adminCreateEmail, adminCreateUsername, adminUpdateCustName, adminUpdateEmail, adminUpdateUsername, adminUpdatePassword, adminUpdateConfirmPassword, adminUpdateTrainName, adminUpdateCheckTrainName,adminUpdateTrainStationName, adminUpdateModel, adminUpdatePrice, adminUpdateDate, adminUpdateSchedIn, adminUpdateSchedOut, adminUpdateNumOfSeats, adminUpdateLocation, adminUpdateStationFrom, adminUpdateStationTo, adminUpdateLength, adminUpdateCustSeat, adminDeleteCustID, adminDeleteTrainID, adminDeleteTrainStationID, adminDeleteSchedID, adminDeleteTrackID, adminDeleteTicketID; //Where user can input information
+    Button loginButton, signOutButton, signOutButton2, createAccountLoginButton, createAccountCreateButton, createAccountCancelButton, adminAuthorizationAuthorizeButton, adminAuthorizationCancelButton, adminSaveChangesButton, custSaveChangesButton; //button that user can interact with
+    Label loginDirections, createAccountDirections1, createAccountDirections2, createAccountEmailWarning1, createAccountEmailWarning2, personalInfo, accountInfo, adminDirections1, adminDirections2, adminAuthorizationDirections, adminDeleteDirections1, adminDeleteDirections2, adminDeleteDirections3, adminDeleteDirections4, adminDeleteDirections5, adminDeleteDirections6, custDirections; //String that will tell user how to login
+    TextField username, createAccountName, createAccountEmail, createAccountUsername, adminUpdateCheckCustID, adminCheckTrackID, adminUpdateCheckTrainID, adminUpdateTrackID, adminUpdateSchedID, adminUpdateCheckTrainStationID, adminUpdateCheckTicketID, adminUpdateCheckTrackID, adminCheckSchedID, adminUpdateCheckSchedID, adminCreateCustName, adminCreateTrainName, adminCheckTrainName, adminCreateTrainStationName, adminCreateModel, adminCreateNumOfSeats, adminCreateLocation, adminCreateSchedIn, adminCreateSchedOut, adminCreateDate, adminCreateStationFrom, adminCreateStationTo, adminCreateLength,  adminCreateCustSeat, adminCreatePrice, adminCreateEmail, adminCreateUsername, adminUpdateCustName, adminUpdateEmail, adminUpdateUsername, adminUpdatePassword, adminUpdateConfirmPassword, adminUpdateTrainName, adminUpdateCheckTrainName,adminUpdateTrainStationName, adminUpdateModel, adminUpdatePrice, adminUpdateDate, adminUpdateSchedIn, adminUpdateSchedOut, adminUpdateNumOfSeats, adminUpdateLocation, adminUpdateStationFrom, adminUpdateStationTo, adminUpdateLength, adminUpdateCustSeat, adminDeleteCustID, adminDeleteTrainID, adminDeleteTrainStationID, adminDeleteSchedID, adminDeleteTrackID, adminDeleteTicketID, custTicketID; //Where user can input information
     PasswordField password, createAccountPassword, createAccountConfirmPassword, adminUsername, adminPassword, adminCreatePassword, adminCreateConfirmPassword; //Where user password's will be entered
     CheckBox rememberUsernameBox; //Box user can check if it wants application to remember their username after signing out
-    ChoiceBox<String> accountTypeBox, adminManipulateDropdownBox, adminElementDropdownBox; //Dropdown menus
-    Separator horizontalSeparator1, horizontalSeparator2, horizontalSeparator3, horizontalSeparator4, horizontalSeparator5; //Horizontal Separators used to separate information in the window more clearly
+    ChoiceBox<String> accountTypeBox, adminManipulateDropdownBox, adminElementDropdownBox, custDropdownBox; //Dropdown menus
+    Separator horizontalSeparator1, horizontalSeparator2, horizontalSeparator3, horizontalSeparator4, horizontalSeparator5, horizontalSeparator6, horizontalSeparator7; //Horizontal Separators used to separate information in the window more clearly
     Image mainWindowIcon, adminAuthorizationWindowIcon; //icon for window
     String emailAddress; //email address user gives us
     boolean result, emailExists, invalidDomain;
@@ -80,6 +80,9 @@ public class Main extends Application {
         adminDeleteDirections5 = new Label("IMPORTANT: Deleting a track PERMANENTLY deletes it from the system. Please be cautious.");
         adminDeleteDirections6 = new Label("IMPORTANT: Deleting a ticket PERMANENTLY deletes it from the system. Please be cautious.");
 
+        //label for customer view
+        custDirections = new Label("As a customer, you can purchase listed tickets or cancel a previously purchased ticket. Select what you want to do in the dropdown box below.");
+
 
         //label for admin account authorization directions
         adminAuthorizationDirections = new Label("To create an admin account, enter a pre-existing admin username and password.");
@@ -108,12 +111,21 @@ public class Main extends Application {
         adminElementDropdownBox.setTooltip(new Tooltip("Select what element you want to manipulate."));
         adminElementDropdownBox.getSelectionModel().select(0);
 
+        //dropdown menu for selecting whether you want to purchase or cancel a ticket as a customer user
+        custDropdownBox = new ChoiceBox<>();
+        custDropdownBox.setPrefWidth(100);
+        custDropdownBox.getItems().addAll("Purchase", "Cancel");
+        custDropdownBox.setTooltip(new Tooltip("Select whether you want to purchase or cancel a ticket."));
+        custDropdownBox.getSelectionModel().select(0);
+
         //initializing horizontal separators
         horizontalSeparator1 = new Separator();
         horizontalSeparator2 = new Separator();
         horizontalSeparator3 = new Separator();
         horizontalSeparator4 = new Separator();
         horizontalSeparator5 = new Separator();
+        horizontalSeparator6 = new Separator();
+        horizontalSeparator7 = new Separator();
 
         //TextFields that hold user information on login screen
         username = new TextField();
@@ -422,6 +434,12 @@ public class Main extends Application {
         adminUpdateConfirmPassword.setPromptText("Confirm New Password");
         adminUpdateConfirmPassword.setTooltip(new Tooltip("Enter New Password of Customer Again"));
 
+        //TextField used for purchasing/cancelling a customer ticket
+        custTicketID = new TextField();
+        custTicketID.setMaxWidth(300);
+        custTicketID.setPromptText("Enter Ticket ID");
+        custTicketID.setTooltip(new Tooltip("Enter the ticket ID of the ticket you want to purchase"));
+
         //PasswordFields used to enter pre-existing admin info so new admin user can be created
         adminUsername = new PasswordField();
         adminUsername.setMaxWidth(300);
@@ -451,6 +469,23 @@ public class Main extends Application {
                 mainWindow.setScene(adminUI);
                 mainWindow.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
                 mainWindow.setY(((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2));
+                mainWindow.setTitle("Railway System Simulation: Admin View");
+                return;
+            }
+            else if(username.getText().equalsIgnoreCase("cust") && password.getText().equals("pizza") && !rememberUsernameBox.isSelected()) {
+                username.clear();
+                password.clear();
+                mainWindow.setScene(custUI);
+                mainWindow.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
+                mainWindow.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
+                mainWindow.setTitle("Railway System Simulation: Admin View");
+                return;
+            }
+            else if(username.getText().equalsIgnoreCase("cust") && password.getText().equals("pizza") && rememberUsernameBox.isSelected()) {
+                password.clear();
+                mainWindow.setScene(custUI);
+                mainWindow.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
+                mainWindow.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
                 mainWindow.setTitle("Railway System Simulation: Admin View");
                 return;
             }
@@ -904,6 +939,35 @@ public class Main extends Application {
             }
         });
 
+        //creating a new button with text called "Save Changes"; will open confirmation box confirming customer actually wants to purchase/cancel a ticket
+        custSaveChangesButton = new Button("Save Changes");
+        custSaveChangesButton.setPrefWidth(100); //sets width to 100
+        custSaveChangesButton.setOnAction(e -> {
+            result = ConfirmBox.display("Confirm Changes", 500, 200, "Are you sure you want to make this change?");
+            if(result) {
+                if(custDropdownBox.getValue().equals("Purchase")) {
+                    if(custTicketID.getText().equals("")) {
+                        AlertBox.display("Ticket ID Invalid", 500, 200, "You did not enter a proper ticket ID");
+                        return;
+                    }
+                    else {
+                        custTicketID.clear();
+                        AlertBox.display("Purchase Ticket Successful", 500, 200, "You have successfully purchased a ticket!");
+                    }
+                }
+                else if(custDropdownBox.getValue().equals("Cancel")) {
+                    if(custTicketID.getText().equals("")) {
+                        AlertBox.display("Ticket ID Invalid", 500, 200, "You did not enter a proper ticket ID");
+                        return;
+                    }
+                    else {
+                        custTicketID.clear();
+                        AlertBox.display("Cancel Ticket Successful", 500, 200, "You have successfully cancelled a ticket!");
+                    }
+                }
+            }
+        });
+
         //creating a new button with text called "Authorize"; will open confirmation box confirming that the admin wants to add a new admin
         adminAuthorizationAuthorizeButton = new Button("Authorize");
         adminAuthorizationAuthorizeButton.setPrefWidth(80);
@@ -1212,8 +1276,16 @@ public class Main extends Application {
         });
 
         //creating a layout for what will go on our customer Scene
+        HBox custButtonLayout = new HBox(20);
+        custButtonLayout.getChildren().addAll(custSaveChangesButton, signOutButton2);
+        custButtonLayout.setAlignment(Pos.CENTER);
+
+        VBox custDirectionsLayout = new VBox(20);
+        custDirectionsLayout.getChildren().addAll(custDirections, custDropdownBox, horizontalSeparator6, custTicketID, horizontalSeparator7);
+        custDirectionsLayout.setAlignment(Pos.CENTER);
+
         VBox custOuterLayout = new VBox(20);
-        custOuterLayout.getChildren().add(signOutButton2);
+        custOuterLayout.getChildren().addAll(custDirectionsLayout, custButtonLayout);
         custOuterLayout.setAlignment(Pos.CENTER);
         custOuterLayout.setPadding(new Insets(20, 30, 20, 30));
 
