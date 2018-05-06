@@ -460,6 +460,7 @@ public class Main extends Application {
         loginButton.setOnAction(e -> {
             sqlInfo = SQL.getFromDatabase("select PASSWORD from ADMIN where USERNAME = '" + username.getText() + "';");
             if(SQL.wentInLoop) {
+                SQL.wentInLoop = false;
                 if (password.getText().equals(sqlInfo.get(0)) && !rememberUsernameBox.isSelected()) {
                     sqlInfo.clear();
                     username.clear();
@@ -481,6 +482,7 @@ public class Main extends Application {
             }
                     sqlInfo = SQL.getFromDatabase("select PASSWORD from CUSTOMER where USERNAME = '" + username.getText() + "';");
                     if(SQL.wentInLoop) {
+                        SQL.wentInLoop = false;
                         if (password.getText().equals(sqlInfo.get(0)) && !rememberUsernameBox.isSelected()) {
                             sqlInfo.clear();
                             username.clear();
@@ -503,6 +505,11 @@ public class Main extends Application {
                             AlertBox.display("Account Authentication Error", 500, 200, "Username or Password was incorrect. Try again.");
                             password.clear();
                         }
+                    }
+                    else {
+                        sqlInfo.clear();
+                        AlertBox.display("Account Authentication Error", 500, 200, "Username or Password was incorrect. Try again.");
+                        password.clear();
                     }
         });
 
@@ -595,7 +602,7 @@ public class Main extends Application {
                         return;
                     } else {
                         SendEmail.send(emailAddress);
-                        SQL.sendToDatabase("insert into CUSTOMER (NAME, EMAIL, USERNAME, PASSWORD) values('" + createAccountName.getText() + "','" + createAccountPassword.getText() + "','" + createAccountUsername.getText() + "','" + createAccountPassword.getText() + "');");
+                        SQL.sendToDatabase("insert into CUSTOMER (NAME, EMAIL, USERNAME, PASSWORD) values('" + createAccountName.getText() + "','" + createAccountEmail.getText() + "','" + createAccountUsername.getText() + "','" + createAccountPassword.getText() + "');");
                         adminAuthorizationWindow.close();
                         mainWindow.setScene(loginUI);
                         mainWindow.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
@@ -754,7 +761,7 @@ public class Main extends Application {
                 else if(adminManipulateDropdownBox.getValue().equals("Update")) {
                     if (adminElementDropdownBox.getValue().equals("Customer")) {
                         invalidDomain = SendEmail.readDomains(adminUpdateEmail.getText());
-                        if(adminUpdateCheckCustID.getText().equals(" ")) {
+                        if(adminUpdateCheckCustID.getText().equals("")) {
                             AlertBox.display("Customer ID Invalid", 500, 200, "You did not enter a proper pre-existing customer ID.");
                         }
                         else if (adminUpdateEmail.getText().equals("") || invalidDomain) {
@@ -897,6 +904,7 @@ public class Main extends Application {
                             return;
                         }
                         else {
+                            SQL.sendToDatabase("delete from CUSTOMER where ID = " + adminDeleteCustID.getText());
                             adminDeleteCustID.clear();
                             AlertBox.display("Delete Customer Successful", 500, 200, "Successfully deleted a customer!");
                         }
@@ -907,6 +915,7 @@ public class Main extends Application {
                             return;
                         }
                         else {
+                            SQL.sendToDatabase("delete from TRAIN where ID = " + adminDeleteTrainID.getText());
                             adminDeleteTrainID.clear();
                             AlertBox.display("Delete Train Successful", 500, 200, "Successfully deleted a train!");
                         }
@@ -917,6 +926,7 @@ public class Main extends Application {
                             return;
                         }
                         else {
+                            SQL.sendToDatabase("delete from TRAIN_STATION where ID = " + adminDeleteTrainStationID.getText());
                             adminDeleteTrainStationID.clear();
                             AlertBox.display("Delete Train Station Successful", 500, 200, "Successfully deleted a train station!");
                         }
@@ -927,6 +937,7 @@ public class Main extends Application {
                             return;
                         }
                         else {
+                            SQL.sendToDatabase("delete from SCHEDULE where ID = " + adminDeleteSchedID.getText());
                             adminDeleteSchedID.clear();
                             AlertBox.display("Delete Schedule Successful", 500, 200, "Successfully deleted a schedule entry!");
                         }
@@ -937,6 +948,7 @@ public class Main extends Application {
                             return;
                         }
                         else {
+                            SQL.sendToDatabase("delete from TRACK where ID = " + adminDeleteTrackID.getText());
                             adminDeleteTrackID.clear();
                             AlertBox.display("Delete Track Successful", 500, 200, "Successfully deleted a track!");
                         }
@@ -947,6 +959,7 @@ public class Main extends Application {
                             return;
                         }
                         else {
+                            SQL.sendToDatabase("delete from TICKET where ID = " + adminDeleteTicketID.getText());
                             adminDeleteTicketID.clear();
                             AlertBox.display("Delete Ticket Successful", 500, 200, "Successfully deleted a ticket!");
                         }

@@ -2,6 +2,7 @@ package sample;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class SQL {
     static String url = "jdbc:sqlserver://SQL2.cis245.mc3.edu:1433;databaseName=zz_CIS245_16;user=user16;password=JayHey99";
@@ -9,8 +10,9 @@ public class SQL {
     static Statement myStmt = null;
     static ResultSet rs = null;
     static ArrayList<String> info = new ArrayList<>();
-    static String columnName;
+    static String[] columnNames;
     static boolean wentInLoop = false;
+    static int count = 0;
 
     public static void sendToDatabase(String sqlString) {
             try {
@@ -34,16 +36,19 @@ public class SQL {
     }
 
     public static ArrayList<String> getFromDatabase(String sqlString) {
+        count = 0;
+        info.clear();
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             myConn = DriverManager.getConnection(url);
             myStmt = myConn.createStatement();
             rs = myStmt.executeQuery(sqlString);
-            columnName = sqlString.substring(7, sqlString.indexOf(" ", 7));
+            columnNames = sqlString.substring(7, sqlString.indexOf(" ", 7)).split(",");
 
             while(rs.next()) {
                 wentInLoop = true;
-                info.add(rs.getString(columnName));
+                info.add(rs.getString(columnNames[count]));
+                count++;
             }
 
             myConn.close();
