@@ -32,8 +32,8 @@ public class Main extends Application {
     Stage mainWindow, adminAuthorizationWindow; //the literal frame that pops up
     Scene loginUI, adminUI, custUI, createAccountUI, adminAuthorizationUI; //the different screens that we can get to within our "Stage" or frame
     Button loginButton, signOutButton, signOutButton2, createAccountLoginButton, createAccountCreateButton, createAccountCancelButton, adminAuthorizationAuthorizeButton, adminAuthorizationCancelButton, adminSaveChangesButton; //button that user can interact with
-    Label loginDirections, createAccountDirections1, createAccountDirections2, createAccountEmailWarning1, createAccountEmailWarning2, personalInfo, accountInfo, adminDirections1, adminDirections2, adminAuthorizationDirections; //String that will tell user how to login
-    TextField username, createAccountName, createAccountEmail, createAccountUsername, adminUpdateCheckCustID, adminCheckTrackID, adminUpdateCheckTrainID, adminUpdateTrackID, adminUpdateSchedID, adminUpdateCheckTrainStationID, adminUpdateCheckTicketID, adminUpdateCheckTrackID, adminCheckSchedID, adminUpdateCheckSchedID, adminCreateCustName, adminCreateTrainName, adminCheckTrainName, adminCreateTrainStationName, adminCreateModel, adminCreateNumOfSeats, adminCreateLocation, adminCreateSchedIn, adminCreateSchedOut, adminCreateDate, adminCreateStationFrom, adminCreateStationTo, adminCreateLength,  adminCreateCustSeat, adminCreatePrice, adminCreateEmail, adminCreateUsername, adminUpdateCustName, adminUpdateEmail, adminUpdateUsername, adminUpdatePassword, adminUpdateConfirmPassword, adminUpdateTrainName, adminUpdateCheckTrainName,adminUpdateTrainStationName, adminUpdateModel, adminUpdatePrice, adminUpdateDate, adminUpdateSchedIn, adminUpdateSchedOut, adminUpdateNumOfSeats, adminUpdateLocation, adminUpdateStationFrom, adminUpdateStationTo, adminUpdateLength, adminUpdateCustSeat; //Where user can input information
+    Label loginDirections, createAccountDirections1, createAccountDirections2, createAccountEmailWarning1, createAccountEmailWarning2, personalInfo, accountInfo, adminDirections1, adminDirections2, adminAuthorizationDirections, adminDeleteDirections1, adminDeleteDirections2, adminDeleteDirections3, adminDeleteDirections4, adminDeleteDirections5, adminDeleteDirections6; //String that will tell user how to login
+    TextField username, createAccountName, createAccountEmail, createAccountUsername, adminUpdateCheckCustID, adminCheckTrackID, adminUpdateCheckTrainID, adminUpdateTrackID, adminUpdateSchedID, adminUpdateCheckTrainStationID, adminUpdateCheckTicketID, adminUpdateCheckTrackID, adminCheckSchedID, adminUpdateCheckSchedID, adminCreateCustName, adminCreateTrainName, adminCheckTrainName, adminCreateTrainStationName, adminCreateModel, adminCreateNumOfSeats, adminCreateLocation, adminCreateSchedIn, adminCreateSchedOut, adminCreateDate, adminCreateStationFrom, adminCreateStationTo, adminCreateLength,  adminCreateCustSeat, adminCreatePrice, adminCreateEmail, adminCreateUsername, adminUpdateCustName, adminUpdateEmail, adminUpdateUsername, adminUpdatePassword, adminUpdateConfirmPassword, adminUpdateTrainName, adminUpdateCheckTrainName,adminUpdateTrainStationName, adminUpdateModel, adminUpdatePrice, adminUpdateDate, adminUpdateSchedIn, adminUpdateSchedOut, adminUpdateNumOfSeats, adminUpdateLocation, adminUpdateStationFrom, adminUpdateStationTo, adminUpdateLength, adminUpdateCustSeat, adminDeleteCustID, adminDeleteTrainID, adminDeleteTrainStationID, adminDeleteSchedID, adminDeleteTrackID, adminDeleteTicketID; //Where user can input information
     PasswordField password, createAccountPassword, createAccountConfirmPassword, adminUsername, adminPassword, adminCreatePassword, adminCreateConfirmPassword; //Where user password's will be entered
     CheckBox rememberUsernameBox; //Box user can check if it wants application to remember their username after signing out
     ChoiceBox<String> accountTypeBox, adminManipulateDropdownBox, adminElementDropdownBox; //Dropdown menus
@@ -73,6 +73,12 @@ public class Main extends Application {
         //label for admin view
         adminDirections1 = new Label("As an administrator, you have the privileges of being able to create, update, and/or delete multiple elements from the Railway System.");
         adminDirections2 = new Label("In order to do so, select how you want to manipulate an element and the specific element you want to manipulate in the dropdown boxes below.");
+        adminDeleteDirections1 = new Label("IMPORTANT: Deleting an element PERMANENTLY deletes it from the system. Please be cautious.");
+        adminDeleteDirections2 = new Label("IMPORTANT: Deleting an element PERMANENTLY deletes it from the system. Please be cautious.");
+        adminDeleteDirections3 = new Label("IMPORTANT: Deleting an element PERMANENTLY deletes it from the system. Please be cautious.");
+        adminDeleteDirections4 = new Label("IMPORTANT: Deleting an element PERMANENTLY deletes it from the system. Please be cautious.");
+        adminDeleteDirections5 = new Label("IMPORTANT: Deleting an element PERMANENTLY deletes it from the system. Please be cautious.");
+        adminDeleteDirections6 = new Label("IMPORTANT: Deleting an element PERMANENTLY deletes it from the system. Please be cautious.");
 
 
         //label for admin account authorization directions
@@ -364,6 +370,36 @@ public class Main extends Application {
         adminUpdateUsername.setMaxWidth(300);
         adminUpdateUsername.setPromptText("Update Username");
         adminUpdateUsername.setTooltip(new Tooltip("Update Username of Customer"));
+
+        adminDeleteCustID = new TextField();
+        adminDeleteCustID.setMaxWidth(300);
+        adminDeleteCustID.setPromptText("Delete Customer ID");
+        adminDeleteCustID.setTooltip(new Tooltip("Enter a customer ID to delete"));
+
+        adminDeleteTrainID = new TextField();
+        adminDeleteTrainID.setMaxWidth(300);
+        adminDeleteTrainID.setPromptText("Delete Train ID");
+        adminDeleteTrainID.setTooltip(new Tooltip("Enter a train ID to delete"));
+
+        adminDeleteTrainStationID = new TextField();
+        adminDeleteTrainStationID.setMaxWidth(300);
+        adminDeleteTrainStationID.setPromptText("Delete Train Station ID");
+        adminDeleteTrainStationID.setTooltip(new Tooltip("Enter a train station ID to delete"));
+
+        adminDeleteSchedID = new TextField();
+        adminDeleteSchedID.setMaxWidth(300);
+        adminDeleteSchedID.setPromptText("Delete Schedule Entry ID");
+        adminDeleteSchedID.setTooltip(new Tooltip("Enter a schedule entry ID to delete"));
+
+        adminDeleteTrackID = new TextField();
+        adminDeleteTrackID.setMaxWidth(300);
+        adminDeleteTrackID.setPromptText("Delete Track ID");
+        adminDeleteTrackID.setTooltip(new Tooltip("Enter a track ID to delete"));
+
+        adminDeleteTicketID = new TextField();
+        adminDeleteTicketID.setMaxWidth(300);
+        adminDeleteTicketID.setPromptText("Delete Ticket ID");
+        adminDeleteTicketID.setTooltip(new Tooltip("Enter a ticket ID to delete"));
 
         //PasswordFields used in admin view
         adminCreatePassword = new PasswordField();
@@ -659,7 +695,7 @@ public class Main extends Application {
                         }
                     }
                 }
-                if(adminManipulateDropdownBox.getValue().equals("Update")) {
+                else if(adminManipulateDropdownBox.getValue().equals("Update")) {
                     if (adminElementDropdownBox.getValue().equals("Customer")) {
                         invalidDomain = SendEmail.readDomains(adminUpdateEmail.getText());
                         if(adminUpdateCheckCustID.getText().equals(" ")) {
@@ -793,6 +829,68 @@ public class Main extends Application {
                         }
                     }
                 }
+                else if(adminManipulateDropdownBox.getValue().equals("Delete")) {
+                    if(adminElementDropdownBox.getValue().equals("Customer")) {
+                        if(adminDeleteCustID.getText().equals("")) {
+                            AlertBox.display("Customer ID Invalid", 500, 200, "You did not enter a proper pre-existing customer ID.");
+                            return;
+                        }
+                        else {
+                            adminDeleteCustID.clear();
+                            AlertBox.display("Delete Customer Successful", 500, 200, "Successfully deleted a customer!");
+                        }
+                    }
+                    else if(adminElementDropdownBox.getValue().equals("Train")) {
+                        if(adminDeleteTrainID.getText().equals("")) {
+                            AlertBox.display("Train ID Invalid", 500, 200, "You did not enter a proper pre-existing train ID.");
+                            return;
+                        }
+                        else {
+                            adminDeleteTrainID.clear();
+                            AlertBox.display("Delete Train Successful", 500, 200, "Successfully deleted a train!");
+                        }
+                    }
+                    else if(adminElementDropdownBox.getValue().equals("Train Station")) {
+                        if(adminDeleteTrainStationID.getText().equals("")) {
+                            AlertBox.display("Train Station ID Invalid", 500, 200, "You did not enter a proper pre-existing train station ID.");
+                            return;
+                        }
+                        else {
+                            adminDeleteTrainStationID.clear();
+                            AlertBox.display("Delete Train Station Successful", 500, 200, "Successfully deleted a train station!");
+                        }
+                    }
+                    else if(adminElementDropdownBox.getValue().equals("Schedule Entry")) {
+                        if(adminDeleteSchedID.getText().equals("")) {
+                            AlertBox.display("Schedule Entry ID Invalid", 500, 200, "You did not enter a proper pre-existing schedule entry ID.");
+                            return;
+                        }
+                        else {
+                            adminDeleteSchedID.clear();
+                            AlertBox.display("Delete Schedule Successful", 500, 200, "Successfully deleted a schedule entry!");
+                        }
+                    }
+                    else if(adminElementDropdownBox.getValue().equals("Track")) {
+                        if(adminDeleteTrackID.getText().equals("")) {
+                            AlertBox.display("Track ID Invalid", 500, 200, "You did not enter a proper pre-existing track ID.");
+                            return;
+                        }
+                        else {
+                            adminDeleteTrackID.clear();
+                            AlertBox.display("Delete Track Successful", 500, 200, "Successfully deleted a track!");
+                        }
+                    }
+                    else if(adminElementDropdownBox.getValue().equals("Ticket")) {
+                        if(adminDeleteTicketID.getText().equals("")) {
+                            AlertBox.display("Ticket ID Invalid", 500, 200, "You did not enter a proper pre-existing ticket ID.");
+                            return;
+                        }
+                        else {
+                            adminDeleteTicketID.clear();
+                            AlertBox.display("Delete Ticket Successful", 500, 200, "Successfully deleted a ticket!");
+                        }
+                    }
+                }
             }
         });
 
@@ -839,6 +937,7 @@ public class Main extends Application {
         loginOuterLayout.setPadding(new Insets(20, 30, 20, 30));
 
         //creating a layout for what will go on our admin Scene
+
         VBox createCustDisplay = new VBox(20);
         createCustDisplay.getChildren().addAll(adminCreateCustName, adminCreateEmail, adminCreateUsername, adminCreatePassword, adminCreateConfirmPassword);
         createCustDisplay.setAlignment(Pos.CENTER);
@@ -847,6 +946,11 @@ public class Main extends Application {
         VBox updateCustDisplay = new VBox(20);
         updateCustDisplay.getChildren().addAll(adminUpdateCheckCustID, adminUpdateCustName, adminUpdateEmail, adminUpdateUsername, adminUpdatePassword, adminUpdateConfirmPassword);
         updateCustDisplay.setAlignment(Pos.CENTER);
+
+        VBox deleteCustDisplay = new VBox(20);
+        deleteCustDisplay.getChildren().addAll(adminDeleteCustID, adminDeleteDirections1);
+        deleteCustDisplay.setAlignment(Pos.CENTER);
+        deleteCustDisplay.setPadding(new Insets(0, 0, 188, 0));
 
         VBox createTrainDisplay = new VBox(20);
         createTrainDisplay.getChildren().addAll(adminCreateTrainName, adminCreateModel, adminCreateNumOfSeats);
@@ -858,15 +962,25 @@ public class Main extends Application {
         updateTrainDisplay.setAlignment(Pos.CENTER);
         updateTrainDisplay.setPadding(new Insets(0,0,90,0));
 
+        VBox deleteTrainDisplay = new VBox(20);
+        deleteTrainDisplay.getChildren().addAll(adminDeleteTrainID, adminDeleteDirections2);
+        deleteTrainDisplay.setAlignment(Pos.CENTER);
+        deleteTrainDisplay.setPadding(new Insets(0, 0, 188, 0));
+
         VBox createTrainStationDisplay = new VBox(20);
         createTrainStationDisplay.getChildren().addAll(adminCreateTrainStationName, adminCreateLocation);
         createTrainStationDisplay.setAlignment(Pos.CENTER);
-        createTrainStationDisplay.setPadding(new Insets(0, 0, 180, 0));
+        createTrainStationDisplay.setPadding(new Insets(0, 0, 188, 0));
 
         VBox updateTrainStationDisplay = new VBox(20);
         updateTrainStationDisplay.getChildren().addAll(adminUpdateCheckTrainStationID, adminUpdateTrainStationName, adminUpdateLocation);
         updateTrainStationDisplay.setAlignment(Pos.CENTER);
         updateTrainStationDisplay.setPadding(new Insets(0, 0, 135, 0));
+
+        VBox deleteTrainStationDisplay = new VBox(20);
+        deleteTrainStationDisplay.getChildren().addAll(adminDeleteTrainStationID, adminDeleteDirections3);
+        deleteTrainStationDisplay.setAlignment(Pos.CENTER);
+        deleteTrainStationDisplay.setPadding(new Insets(0, 0, 188, 0));
 
         VBox createSchedDisplay = new VBox(20);
         createSchedDisplay.getChildren().addAll(adminCheckTrainName, adminCheckTrackID, adminCreateSchedOut, adminCreateSchedIn);
@@ -878,6 +992,11 @@ public class Main extends Application {
         updateSchedDisplay.setAlignment(Pos.CENTER);
         updateSchedDisplay.setPadding(new Insets(0, 0, 45, 0));
 
+        VBox deleteSchedDisplay = new VBox(20);
+        deleteSchedDisplay.getChildren().addAll(adminDeleteSchedID, adminDeleteDirections4);
+        deleteSchedDisplay.setAlignment(Pos.CENTER);
+        deleteSchedDisplay.setPadding(new Insets(0, 0, 188, 0));
+
         VBox createTrackDisplay = new VBox(20);
         createTrackDisplay.getChildren().addAll(adminCreateStationFrom, adminCreateStationTo, adminCreateLength);
         createTrackDisplay.setAlignment(Pos.CENTER);
@@ -888,6 +1007,11 @@ public class Main extends Application {
         updateTrackDisplay.setAlignment(Pos.CENTER);
         updateTrackDisplay.setPadding(new Insets(0, 0, 90, 0));
 
+        VBox deleteTrackDisplay = new VBox(20);
+        deleteTrackDisplay.getChildren().addAll(adminDeleteTrackID, adminDeleteDirections5);
+        deleteTrackDisplay.setAlignment(Pos.CENTER);
+        deleteTrackDisplay.setPadding(new Insets(0, 0, 188, 0));
+
         VBox createTicketDisplay = new VBox(20);
         createTicketDisplay.getChildren().addAll(adminCheckSchedID, adminCreateDate, adminCreatePrice);
         createTicketDisplay.setAlignment(Pos.CENTER);
@@ -897,6 +1021,11 @@ public class Main extends Application {
         updateTicketDisplay.getChildren().addAll(adminUpdateCheckTicketID, adminUpdateCheckSchedID, adminUpdateDate, adminUpdatePrice);
         updateTicketDisplay.setAlignment(Pos.CENTER);
         updateTicketDisplay.setPadding(new Insets(0, 0, 90, 0));
+
+        VBox deleteTicketDisplay = new VBox(20);
+        deleteTicketDisplay.getChildren().addAll(adminDeleteTicketID, adminDeleteDirections6);
+        deleteTicketDisplay.setAlignment(Pos.CENTER);
+        deleteTicketDisplay.setPadding(new Insets(0, 0, 188, 0));
 
         VBox adminOuterLayout = new VBox(20);
         VBox adminDirectionsLayout = new VBox();
@@ -963,6 +1092,30 @@ public class Main extends Application {
                 adminOuterLayout.getChildren().clear();
                 adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, updateTicketDisplay, adminButtonOuterLayout);
             }
+            else if(adminManipulateDropdownBox.getValue().equals("Delete") && adminElementDropdownBox.getValue().equals("Customer")) {
+                adminOuterLayout.getChildren().clear();
+                adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, deleteCustDisplay, adminButtonOuterLayout);
+            }
+            else if(adminManipulateDropdownBox.getValue().equals("Delete") && adminElementDropdownBox.getValue().equals("Train")) {
+                adminOuterLayout.getChildren().clear();
+                adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, deleteTrainDisplay, adminButtonOuterLayout);
+            }
+            else if(adminManipulateDropdownBox.getValue().equals("Delete") && adminElementDropdownBox.getValue().equals("Train Station")) {
+                adminOuterLayout.getChildren().clear();
+                adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, deleteTrainStationDisplay, adminButtonOuterLayout);
+            }
+            else if(adminManipulateDropdownBox.getValue().equals("Delete") && adminElementDropdownBox.getValue().equals("Schedule Entry")) {
+                adminOuterLayout.getChildren().clear();
+                adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, deleteSchedDisplay, adminButtonOuterLayout);
+            }
+            else if(adminManipulateDropdownBox.getValue().equals("Delete") && adminElementDropdownBox.getValue().equals("Track")) {
+                adminOuterLayout.getChildren().clear();
+                adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, deleteTrackDisplay, adminButtonOuterLayout);
+            }
+            else if(adminManipulateDropdownBox.getValue().equals("Delete") && adminElementDropdownBox.getValue().equals("Ticket")) {
+                adminOuterLayout.getChildren().clear();
+                adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, deleteTicketDisplay, adminButtonOuterLayout);
+            }
             else{
                 adminOuterLayout.getChildren().clear();
                 adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, adminButtonOuterLayout);
@@ -1017,6 +1170,30 @@ public class Main extends Application {
             else if(adminManipulateDropdownBox.getValue().equals("Update") && adminElementDropdownBox.getValue().equals("Ticket")) {
                 adminOuterLayout.getChildren().clear();
                 adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, updateTicketDisplay, adminButtonOuterLayout);
+            }
+            else if(adminManipulateDropdownBox.getValue().equals("Delete") && adminElementDropdownBox.getValue().equals("Customer")) {
+                adminOuterLayout.getChildren().clear();
+                adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, deleteCustDisplay, adminButtonOuterLayout);
+            }
+            else if(adminManipulateDropdownBox.getValue().equals("Delete") && adminElementDropdownBox.getValue().equals("Train")) {
+                adminOuterLayout.getChildren().clear();
+                adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, deleteTrainDisplay, adminButtonOuterLayout);
+            }
+            else if(adminManipulateDropdownBox.getValue().equals("Delete") && adminElementDropdownBox.getValue().equals("Train Station")) {
+                adminOuterLayout.getChildren().clear();
+                adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, deleteTrainStationDisplay, adminButtonOuterLayout);
+            }
+            else if(adminManipulateDropdownBox.getValue().equals("Delete") && adminElementDropdownBox.getValue().equals("Schedule Entry")) {
+                adminOuterLayout.getChildren().clear();
+                adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, deleteSchedDisplay, adminButtonOuterLayout);
+            }
+            else if(adminManipulateDropdownBox.getValue().equals("Delete") && adminElementDropdownBox.getValue().equals("Track")) {
+                adminOuterLayout.getChildren().clear();
+                adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, deleteTrackDisplay, adminButtonOuterLayout);
+            }
+            else if(adminManipulateDropdownBox.getValue().equals("Delete") && adminElementDropdownBox.getValue().equals("Ticket")) {
+                adminOuterLayout.getChildren().clear();
+                adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, deleteTicketDisplay, adminButtonOuterLayout);
             }
             else{
                 adminOuterLayout.getChildren().clear();
