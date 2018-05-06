@@ -27,6 +27,7 @@ import javafx.scene.control.*;
 
 import javax.mail.SendFailedException;
 import javax.mail.internet.AddressException;
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 public class Main extends Application {
@@ -42,6 +43,7 @@ public class Main extends Application {
     Image mainWindowIcon, adminAuthorizationWindowIcon; //icon for window
     String emailAddress; //email address user gives us
     boolean result, emailExists, invalidDomain;
+    ArrayList<String> sqlInfo = new ArrayList<>();
 
     @Override
     //allows GUI to load
@@ -456,45 +458,52 @@ public class Main extends Application {
         loginButton = new Button("Login");
         loginButton.setPrefWidth(100);
         loginButton.setOnAction(e -> {
-            if(username.getText().equalsIgnoreCase("admin") && password.getText().equals("password!") && !rememberUsernameBox.isSelected()) {
-                username.clear();
-                password.clear();
-                mainWindow.setScene(adminUI);
-                mainWindow.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
-                mainWindow.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
-                mainWindow.setTitle("Railway System Simulation: Admin View");
-                return;
+            sqlInfo = SQL.getFromDatabase("select PASSWORD from ADMIN where USERNAME = '" + username.getText() + "';");
+            if(SQL.wentInLoop) {
+                if (password.getText().equals(sqlInfo.get(0)) && !rememberUsernameBox.isSelected()) {
+                    sqlInfo.clear();
+                    username.clear();
+                    password.clear();
+                    mainWindow.setScene(adminUI);
+                    mainWindow.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
+                    mainWindow.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
+                    mainWindow.setTitle("Railway System Simulation: Admin View");
+                    return;
+                } else if (password.getText().equals(sqlInfo.get(0)) && rememberUsernameBox.isSelected()) {
+                    sqlInfo.clear();
+                    password.clear();
+                    mainWindow.setScene(adminUI);
+                    mainWindow.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
+                    mainWindow.setY(((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2));
+                    mainWindow.setTitle("Railway System Simulation: Admin View");
+                    return;
+                }
             }
-            else if(username.getText().equalsIgnoreCase("admin") && password.getText().equals("password!") && rememberUsernameBox.isSelected()) {
-                password.clear();
-                mainWindow.setScene(adminUI);
-                mainWindow.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
-                mainWindow.setY(((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2));
-                mainWindow.setTitle("Railway System Simulation: Admin View");
-                return;
-            }
-            else if(username.getText().equalsIgnoreCase("cust") && password.getText().equals("pizza") && !rememberUsernameBox.isSelected()) {
-                username.clear();
-                password.clear();
-                mainWindow.setScene(custUI);
-                mainWindow.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
-                mainWindow.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
-                mainWindow.setTitle("Railway System Simulation: Admin View");
-                return;
-            }
-            else if(username.getText().equalsIgnoreCase("cust") && password.getText().equals("pizza") && rememberUsernameBox.isSelected()) {
-                password.clear();
-                mainWindow.setScene(custUI);
-                mainWindow.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
-                mainWindow.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
-                mainWindow.setTitle("Railway System Simulation: Admin View");
-                return;
-            }
-            else {
-                AlertBox.display("Account Authentication Error", 500, 200, "Username or Password was incorrect. Try again.");
-                password.clear();
-            }
-
+                    sqlInfo = SQL.getFromDatabase("select PASSWORD from CUSTOMER where USERNAME = '" + username.getText() + "';");
+                    if(SQL.wentInLoop) {
+                        if (password.getText().equals(sqlInfo.get(0)) && !rememberUsernameBox.isSelected()) {
+                            sqlInfo.clear();
+                            username.clear();
+                            password.clear();
+                            mainWindow.setScene(custUI);
+                            mainWindow.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
+                            mainWindow.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
+                            mainWindow.setTitle("Railway System Simulation: Admin View");
+                            return;
+                        } else if (password.getText().equals(sqlInfo.get(0)) && rememberUsernameBox.isSelected()) {
+                            sqlInfo.clear();
+                            password.clear();
+                            mainWindow.setScene(custUI);
+                            mainWindow.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
+                            mainWindow.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
+                            mainWindow.setTitle("Railway System Simulation: Admin View");
+                            return;
+                        } else {
+                            sqlInfo.clear();
+                            AlertBox.display("Account Authentication Error", 500, 200, "Username or Password was incorrect. Try again.");
+                            password.clear();
+                        }
+                    }
         });
 
         //creating a button with text called "Sign out"; will prompt user if they actually want to sign out, then will if they hit "Yes"
@@ -586,7 +595,7 @@ public class Main extends Application {
                         return;
                     } else {
                         SendEmail.send(emailAddress);
-                        SQL.sendToDatabase("insert into CUSTOMER (NAME, EMAIL, USERNAME, PASSWORD) values('" + adminCreateCustName.getText() + "','" + adminCreateEmail.getText() + "','" + adminCreateUsername.getText() + "','" + adminCreatePassword.getText() + "');");
+                        SQL.sendToDatabase("insert into CUSTOMER (NAME, EMAIL, USERNAME, PASSWORD) values('" + createAccountName.getText() + "','" + createAccountPassword.getText() + "','" + createAccountUsername.getText() + "','" + createAccountPassword.getText() + "');");
                         adminAuthorizationWindow.close();
                         mainWindow.setScene(loginUI);
                         mainWindow.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
