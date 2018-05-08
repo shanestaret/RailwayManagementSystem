@@ -25,8 +25,12 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.scene.control.*;
 
+import java.text.ParseException;
+import java.util.Date;
+
 import javax.mail.SendFailedException;
 import javax.mail.internet.AddressException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
@@ -44,6 +48,10 @@ public class Main extends Application {
     String emailAddress, custUsername; //email address user gives us
     boolean result, emailExists, invalidDomain;
     ArrayList<String> sqlInfo = new ArrayList<>();
+    ArrayList<String> sqlInfo2 = new ArrayList<>();
+    Date currentDate;
+    Date inputDate;
+    SimpleDateFormat sqlFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
     //allows GUI to load
@@ -570,7 +578,7 @@ public class Main extends Application {
             if(createAccountName.getText().equals("")) {
                 AlertBox.display("Name Invalid", 500, 200, "You did not enter a proper name.");
             }
-            else if(createAccountEmail.getText().equals("") || invalidDomain) {
+            else if(createAccountEmail.getText().equals("") || invalidDomain || !SendEmail.isValidEmailAddress(createAccountEmail.getText()) || !SendEmail.isValidRegex(createAccountEmail.getText())) {
                 AlertBox.display("Email Invalid", 500, 200, "You did not enter a proper email address.");
             }
             else if(createAccountUsername.getText().equals("")) {
@@ -584,52 +592,62 @@ public class Main extends Application {
             }
             else {
                 emailAddress = createAccountEmail.getText();
-                if(SendEmail.isValidEmailAddress(emailAddress) && SendEmail.isValidRegex(emailAddress)) {
-                    if (accountTypeBox.getValue().equals("Administrator")) {
                         sqlInfo = SQL.getFromDatabase("select USERNAME from ADMIN where USERNAME = '" + createAccountUsername.getText() + "';");
                         if (!SQL.wentInLoop) {
-                            adminUsername.clear();
-                            adminPassword.clear();
-                            adminAuthorizationWindow = new Stage();
-                            adminAuthorizationWindowIcon = new Image(ConfirmBox.class.getResourceAsStream("ConfirmBoxIcon.png"));
-                            adminAuthorizationWindow.getIcons().add(adminAuthorizationWindowIcon);
-                            adminAuthorizationWindow.initModality(Modality.APPLICATION_MODAL);
-                            adminAuthorizationWindow.setTitle("Pre-Existing Administrator Information");
-                            adminAuthorizationWindow.setHeight(500);
-                            adminAuthorizationWindow.setWidth(200);
-                            adminAuthorizationWindow.setScene(adminAuthorizationUI);
-                            adminAuthorizationWindow.sizeToScene();
-                            adminAuthorizationWindow.setResizable(false);
-                            adminAuthorizationWindow.setX(primScreenBounds.getWidth() - (primScreenBounds.getWidth() / 1.7));
-                            adminAuthorizationWindow.setY(primScreenBounds.getHeight() - (primScreenBounds.getHeight() / 1.75));
-                            adminAuthorizationWindow.showAndWait();
-                            return;
+                            sqlInfo = SQL.getFromDatabase("select USERNAME from CUSTOMER where USERNAME = '" + createAccountUsername.getText() + "';");
+                                if(!SQL.wentInLoop) {
+                                    sqlInfo = SQL.getFromDatabase("select EMAIL from ADMIN where EMAIL = '" + createAccountEmail.getText() + "';");
+                                    if(!SQL.wentInLoop) {
+                                        sqlInfo = SQL.getFromDatabase("select EMAIL from CUSTOMER where EMAIL = '" + createAccountEmail.getText() + "';");
+                                        if(!SQL.wentInLoop) {
+                                            if(accountTypeBox.getValue().equals("Administrator")) {
+                                                adminUsername.clear();
+                                                adminPassword.clear();
+                                                adminAuthorizationWindow = new Stage();
+                                                adminAuthorizationWindowIcon = new Image(ConfirmBox.class.getResourceAsStream("ConfirmBoxIcon.png"));
+                                                adminAuthorizationWindow.getIcons().add(adminAuthorizationWindowIcon);
+                                                adminAuthorizationWindow.initModality(Modality.APPLICATION_MODAL);
+                                                adminAuthorizationWindow.setTitle("Pre-Existing Administrator Information");
+                                                adminAuthorizationWindow.setHeight(500);
+                                                adminAuthorizationWindow.setWidth(200);
+                                                adminAuthorizationWindow.setScene(adminAuthorizationUI);
+                                                adminAuthorizationWindow.sizeToScene();
+                                                adminAuthorizationWindow.setResizable(false);
+                                                adminAuthorizationWindow.setX(primScreenBounds.getWidth() - (primScreenBounds.getWidth() / 1.7));
+                                                adminAuthorizationWindow.setY(primScreenBounds.getHeight() - (primScreenBounds.getHeight() / 1.75));
+                                                adminAuthorizationWindow.showAndWait();
+                                                return;
+                                            }
+                                            else {
+                                                SendEmail.send(emailAddress);
+                                                SQL.sendToDatabase("insert into CUSTOMER (NAME, EMAIL, USERNAME, PASSWORD) values('" + createAccountName.getText() + "','" + createAccountEmail.getText() + "','" + createAccountUsername.getText() + "','" + createAccountPassword.getText() + "');");
+                                                createAccountName.clear();
+                                                createAccountEmail.clear();
+                                                createAccountUsername.clear();
+                                                createAccountPassword.clear();
+                                                createAccountConfirmPassword.clear();
+                                                AlertBox.display("Create Account Successful", 500, 200, "Successfully created new account! An email has been sent to the customer's email address.");
+                                            }
+                                        }
+                                        else {
+                                            SQL.wentInLoop = false;
+                                            AlertBox.display("Email Already Exists", 500, 200, "The email you entered already exists.");
+                                        }
+                                    }
+                                    else {
+                                        SQL.wentInLoop = false;
+                                        AlertBox.display("Email Already Exists", 500, 200, "The email you entered already exists.");
+                                    }
+                                }
+                                else {
+                                    SQL.wentInLoop = false;
+                                    AlertBox.display("Username Already Exists", 500, 200, "The username you entered already exists.");
+                                }
                         }
                         else {
                             SQL.wentInLoop = false;
                             AlertBox.display("Username Already Exists", 500, 200, "The username you entered already exists.");
                         }
-                    } else {
-                        sqlInfo = SQL.getFromDatabase("select USERNAME from CUSTOMER where USERNAME = '" + createAccountUsername.getText() + "';");
-                        if (!SQL.wentInLoop) {
-                            emailAddress = createAccountEmail.getText();
-                            if (SendEmail.isValidEmailAddress(emailAddress) && SendEmail.isValidRegex(emailAddress)) {
-                                SendEmail.send(emailAddress);
-                                SQL.sendToDatabase("insert into CUSTOMER (NAME, EMAIL, USERNAME, PASSWORD) values('" + createAccountName.getText() + "','" + createAccountEmail.getText() + "','" + createAccountUsername.getText() + "','" + createAccountPassword.getText() + "');");
-                                createAccountName.clear();
-                                createAccountEmail.clear();
-                                createAccountUsername.clear();
-                                createAccountPassword.clear();
-                                createAccountConfirmPassword.clear();
-                                AlertBox.display("Create Account Successful", 500, 200, "Successfully created new account! An email has been sent to the customer's email address.");
-                            }
-                        }
-                        else {
-                            SQL.wentInLoop = false;
-                            AlertBox.display("Username Already Exists", 500, 200, "The username you entered already exists.");
-                        }
-                    }
-                }
             }
         });
 
@@ -654,7 +672,7 @@ public class Main extends Application {
                 if(adminManipulateDropdownBox.getValue().equals("Create")) {
                     if (adminElementDropdownBox.getValue().equals("Customer")) {
                         invalidDomain = SendEmail.readDomains(adminCreateEmail.getText());
-                        if (adminCreateEmail.getText().equals("") || invalidDomain) {
+                        if (adminCreateEmail.getText().equals("") || invalidDomain || !SendEmail.isValidEmailAddress(adminCreateEmail.getText()) || !SendEmail.isValidRegex(adminCreateEmail.getText())) {
                             AlertBox.display("Email Invalid", 500, 200, "You did not enter a proper email address.");
                             return;
                         } else if (adminCreateCustName.getText().equals("")) {
@@ -670,31 +688,43 @@ public class Main extends Application {
                             AlertBox.display("Password Confirmation Error", 500, 200, "Password and Confirmation do not match.");
                             return;
                         } else {
-                            sqlInfo = SQL.getFromDatabase("select USERNAME from CUSTOMER where USERNAME = '" + adminCreateCustName.getText() + "';");
-                            if (!SQL.wentInLoop) {
-                                sqlInfo = SQL.getFromDatabase("select USERNAME from ADMIN where USERNAME = '" + adminCreateCustName.getText() + "';");
-                                if(!SQL.wentInLoop) {
-                                    emailAddress = adminCreateEmail.getText();
-                                    if (SendEmail.isValidEmailAddress(emailAddress) && SendEmail.isValidRegex(emailAddress)) {
-                                        SendEmail.send(emailAddress);
-                                        SQL.sendToDatabase("insert into CUSTOMER (NAME, EMAIL, USERNAME, PASSWORD) values('" + adminCreateCustName.getText() + "','" + adminCreateEmail.getText() + "','" + adminCreateUsername.getText() + "','" + adminCreatePassword.getText() + "');");
-                                        adminCreateCustName.clear();
-                                        adminCreateEmail.clear();
-                                        adminCreateUsername.clear();
-                                        adminCreatePassword.clear();
-                                        adminCreateConfirmPassword.clear();
-                                        AlertBox.display("Create Account Successful", 500, 200, "Successfully created new account! An email has been sent to the customer's email address.");
+                            emailAddress = adminCreateEmail.getText();
+                                sqlInfo = SQL.getFromDatabase("select USERNAME from ADMIN where USERNAME = '" + adminCreateUsername.getText() + "';");
+                                if (!SQL.wentInLoop) {
+                                    sqlInfo = SQL.getFromDatabase("select USERNAME from CUSTOMER where USERNAME = '" + adminCreateUsername.getText() + "';");
+                                    if(!SQL.wentInLoop) {
+                                        sqlInfo = SQL.getFromDatabase("select EMAIL from ADMIN where EMAIL = '" + adminCreateEmail.getText() + "';");
+                                        if(!SQL.wentInLoop) {
+                                            sqlInfo = SQL.getFromDatabase("select EMAIL from CUSTOMER where EMAIL = '" + adminCreateEmail.getText() + "';");
+                                            if(!SQL.wentInLoop) {
+                                                    SendEmail.send(emailAddress);
+                                                    SQL.sendToDatabase("insert into CUSTOMER (NAME, EMAIL, USERNAME, PASSWORD) values('" + adminCreateCustName.getText() + "','" + adminCreateEmail.getText() + "','" + adminCreateUsername.getText() + "','" + adminCreatePassword.getText() + "');");
+                                                    adminCreateCustName.clear();
+                                                    adminCreateEmail.clear();
+                                                    adminCreateUsername.clear();
+                                                    adminCreatePassword.clear();
+                                                    adminCreateConfirmPassword.clear();
+                                                    AlertBox.display("Create Account Successful", 500, 200, "Successfully created new account! An email has been sent to the customer's email address.");
+                                            }
+                                            else {
+                                                SQL.wentInLoop = false;
+                                                AlertBox.display("Email Already Exists", 500, 200, "The email you entered already exists.");
+                                            }
+                                        }
+                                        else {
+                                            SQL.wentInLoop = false;
+                                            AlertBox.display("Email Already Exists", 500, 200, "The email you entered already exists.");
+                                        }
+                                    }
+                                    else {
+                                        SQL.wentInLoop = false;
+                                        AlertBox.display("Username Already Exists", 500, 200, "The username you entered already exists.");
                                     }
                                 }
                                 else {
                                     SQL.wentInLoop = false;
                                     AlertBox.display("Username Already Exists", 500, 200, "The username you entered already exists.");
                                 }
-                            }
-                            else {
-                                SQL.wentInLoop = false;
-                                AlertBox.display("Username Already Exists", 500, 200, "The username you entered already exists.");
-                            }
                         }
                     } else if (adminElementDropdownBox.getValue().equals("Train")) {
                         if (adminCreateTrainName.getText().equals("")) {
@@ -727,10 +757,13 @@ public class Main extends Application {
                             AlertBox.display("Create Train Station Successful", 500, 200, "Successfully created a new train station!");
                         }
                     } else if (adminElementDropdownBox.getValue().equals("Schedule Entry")) {
-                        if (adminCheckTrainName.getText().equals("")) {
+                        sqlInfo = SQL.getFromDatabase("select TRAIN_ID from TRAIN where ID = " + adminCheckTrainName.getText() + ";");
+                        if (!SQL.wentInLoop) {
                             AlertBox.display("Train ID Invalid", 500, 200, "You did not enter a train ID that exists.");
                             return;
-                        } else if (adminCheckTrackID.getText().equals("")) {
+                        }
+                        sqlInfo2 = SQL.getFromDatabase("select TRACK_ID from TRACK where ID = " + adminCheckTrackID.getText() + ";");
+                        if (!SQL.wentInLoop) {
                             AlertBox.display("Track ID Invalid", 500, 200, "You did not enter a track ID that exists.");
                             return;
                         } else if (adminCreateSchedOut.getText().equals("") || adminCreateSchedOut.getText().length() != 5 || !(Pattern.matches("[0-9]+", adminCreateSchedOut.getText().substring(0, 2))) || !(Pattern.matches("[0-9]+", adminCreateSchedOut.getText().substring(3, 5))) || !adminCreateSchedOut.getText().substring(2, 3).equals(":") || Integer.parseInt(adminCreateSchedOut.getText().substring(0, 2)) < 1 || Integer.parseInt(adminCreateSchedOut.getText().substring(0, 2)) > 23 || Integer.parseInt(adminCreateSchedOut.getText().substring(3, 5)) < 0 || Integer.parseInt(adminCreateSchedOut.getText().substring(3, 5)) > 59) {
@@ -740,7 +773,7 @@ public class Main extends Application {
                             AlertBox.display("Arrival Time Invalid", 500, 200, "You did not enter a proper arrival time (Must be in HH:MM format).");
                             return;
                         } else {
-                            SQL.sendToDatabase("insert into SCHEDULE (TRAIN_ID, TRACK_ID, DEPARTURE_TIME, ARRIVAL_TIME) values('" + adminCheckTrainName.getText() + "','" + adminCheckTrackID.getText() + "','" + adminCreateSchedOut.getText() + "','" + adminCreateSchedIn.getText() + "');");
+                            SQL.sendToDatabase("insert into SCHEDULE (TRAIN_ID, TRACK_ID, DEPARTURE_TIME, ARRIVAL_TIME) values('" + sqlInfo.get(0) + "','" + sqlInfo2.get(0) + "','" + adminCreateSchedOut.getText() + "','" + adminCreateSchedIn.getText() + "');");
                             adminCheckTrainName.clear();
                             adminCheckTrackID.clear();
                             adminCreateSchedOut.clear();
@@ -748,57 +781,68 @@ public class Main extends Application {
                             AlertBox.display("Create Schedule Entry Successful", 500, 200, "Successfully created a new Schedule Entry!");
                         }
                     } else if (adminElementDropdownBox.getValue().equals("Track")) {
-                        if (adminCreateStationFrom.getText().equals("")) {
-                            AlertBox.display("Station From Invalid", 500, 200, "You did not enter a proper station to depart from.");
+                        sqlInfo = SQL.getFromDatabase("select TRAIN_STATION_ID from TRAIN_STATION where ID = " + adminCreateStationFrom.getText() + ";");
+                        if (!SQL.wentInLoop) {
+                            AlertBox.display("Train ID Invalid", 500, 200, "You did not enter a proper station ID to depart from.");
                             return;
-                        } else if (adminCreateStationTo.getText().equals("")) {
-                            AlertBox.display("Station To Invalid", 500, 200, "You did not enter a proper station to arrive at.");
+                        }
+                        sqlInfo2 = SQL.getFromDatabase("select TRAIN_STATION_ID from TRAIN_STATION where ID = " + adminCreateStationTo.getText() + ";");
+                        if (!SQL.wentInLoop) {
+                            AlertBox.display("Track ID Invalid", 500, 200, "You did not enter a proper station ID to arrive at.");
                             return;
-                        } else if (adminCreateLength.getText().equals("") || !(Pattern.matches("[0-9]+", adminCreateLength.getText())) || Integer.parseInt(adminCreateLength.getText()) < 1) {
+                        }
+                        else if (adminCreateLength.getText().equals("") || !(Pattern.matches("[0-9]+", adminCreateLength.getText())) || Integer.parseInt(adminCreateLength.getText()) < 1) {
                             AlertBox.display("Length Invalid", 500, 200, "You did not enter a proper length (Must be a whole number).");
                             return;
                         } else {
-                            SQL.sendToDatabase("insert into TRACK (STATION_FROM_ID, STATION_TO_ID, LENGTH) values('" + adminCreateStationFrom.getText() + "','" + adminCreateStationTo.getText() + "','" + adminCreateLength.getText() + "');");
+                            SQL.sendToDatabase("insert into TRACK (STATION_FROM_ID, STATION_TO_ID, LENGTH) values('" + sqlInfo.get(0) + "','" + sqlInfo2.get(0) + "','" + adminCreateLength.getText() + "');");
                             adminCreateStationFrom.clear();
                             adminCreateStationTo.clear();
                             adminCreateLength.clear();
                             AlertBox.display("Create Track Successful", 500, 200, "Successfully created a new track!");
                         }
                     } else if (adminElementDropdownBox.getValue().equals("Ticket")) {
-                        if (adminCheckSchedID.getText().equals("")) {
-                            AlertBox.display("Schedule Entry ID Invalid", 500, 200, "You did not enter a schedule entry that exists.");
-                            return;
-                        } else if (adminCreateDate.getText().equals("") || adminCreateDate.getText().length() != 10 || !adminCreateDate.getText().substring(4, 5).equals("-") || !adminCreateDate.getText().substring(7, 8).equals("-") || !(Pattern.matches("[0-9]+", adminCreateDate.getText().substring(0, 4))) || !(Pattern.matches("[0-9]+", adminCreateDate.getText().substring(5, 7))) || !(Pattern.matches("[0-9]+", adminCreateDate.getText().substring(8, 10))) || Integer.parseInt(adminCreateDate.getText().substring(0, 4)) < 1 || Integer.parseInt(adminCreateDate.getText().substring(5, 7)) > 12 || Integer.parseInt(adminCreateDate.getText().substring(5, 7)) < 1 || Integer.parseInt(adminCreateDate.getText().substring(8, 10)) > 30 || Integer.parseInt(adminCreateDate.getText().substring(8, 10)) < 1 || Integer.parseInt(adminCreateDate.getText().substring(0, 4)) > 9999) {
-                            AlertBox.display("Date Invalid", 500, 200, "You did not enter a proper date (Must be in YYYY-MM-DD format).");
-                            return;
+                        try {
+                            currentDate = sqlFormat.parse(sqlFormat.format(new Date()));
                         }
-                        else if (!(Pattern.matches("[0-9]+", adminCreateCustSeat.getText())) || Integer.parseInt(adminCreateCustSeat.getText()) < 1) {
-                            AlertBox.display("Customer Seat # Invalid", 500, 200, "You did not enter a proper customer seat number.");
-                            return;
+                        catch (ParseException excep) {
+                            excep.printStackTrace(System.out);
                         }
-                        else if (adminCreatePrice.getText().equals("") || adminCreatePrice.getText().length() < 4 || !adminCreatePrice.getText().contains(".") || !(Pattern.matches("[0-9]+", adminCreatePrice.getText().substring(0, adminCreatePrice.getText().indexOf(".")))) || !(Pattern.matches("[0-9]+", adminCreatePrice.getText().substring(adminCreatePrice.getText().indexOf(".") + 1))) || Integer.parseInt(adminCreatePrice.getText().substring(0, adminCreatePrice.getText().indexOf("."))) < 1 || Integer.parseInt(adminCreatePrice.getText().substring(adminCreatePrice.getText().indexOf(".") + 1)) > 99) {
-                            AlertBox.display("Price Invalid", 500, 200, "You did not enter a proper price (Must be two digits after the decimal).");
+                        sqlInfo = SQL.getFromDatabase("select SCHEDULE_ID from SCHEDULE where ID = " + adminCheckSchedID.getText() + ";");
+                        if (!SQL.wentInLoop) {
+                            AlertBox.display("Schedule Entry ID Invalid", 500, 200, "You did not enter a proper schedule entry ID.");
                             return;
                         } else {
-                            adminCreateDate.setText("");
-                            SQL.sendToDatabase("insert into TICKET (SCHEDULE_ID, EVENT_DATE, SEAT, PRICE) values('" + adminCheckSchedID.getText() + "','" + adminCreateDate.getText() + "','" + adminCreateCustSeat.getText() + "'," + adminCreatePrice.getText() + ");");
-                            adminCheckSchedID.clear();
-                            adminCreateDate.clear();
-                            adminCreateCustSeat.clear();
-                            adminCreatePrice.clear();
-                            AlertBox.display("Create Ticket Successful", 500, 200, "Successfully created a new ticket!");
+                            sqlInfo2 = SQL.getFromDatabase("select NUM_OF_SEATS from TRAIN where TRAIN_ID = (select TRAIN_ID from SCHEDULE where SCHEDULE_ID = " + sqlInfo.get(0) + ");");
+                            if (!(Pattern.matches("[0-9]+", adminCreateCustSeat.getText())) || Integer.parseInt(adminCreateCustSeat.getText()) < 1 || Integer.parseInt(adminCreateCustSeat.getText()) > Integer.parseInt(sqlInfo2.get(0))) {
+                                AlertBox.display("Customer Seat # Invalid", 500, 200, "You did not enter a proper customer seat number.");
+                                return;
+                            } else if (adminCreateDate.getText().equals("") || adminCreateDate.getText().length() != 10 || !adminCreateDate.getText().substring(4, 5).equals("-") || !adminCreateDate.getText().substring(7, 8).equals("-") || !(Pattern.matches("[0-9]+", adminCreateDate.getText().substring(0, 4))) || !(Pattern.matches("[0-9]+", adminCreateDate.getText().substring(5, 7))) || !(Pattern.matches("[0-9]+", adminCreateDate.getText().substring(8, 10))) || Integer.parseInt(adminCreateDate.getText().substring(0, 4)) < 1 || Integer.parseInt(adminCreateDate.getText().substring(5, 7)) > 12 || Integer.parseInt(adminCreateDate.getText().substring(5, 7)) < 1 || Integer.parseInt(adminCreateDate.getText().substring(8, 10)) > 30 || Integer.parseInt(adminCreateDate.getText().substring(8, 10)) < 1 || Integer.parseInt(adminCreateDate.getText().substring(0, 4)) > 9999 || Integer.parseInt(adminCreateDate.getText().substring(0, 4)) != Integer.parseInt(currentDate.toString().substring(0, 4)) || Integer.parseInt(adminCreateDate.getText().substring(5, 7)) != Integer.parseInt(currentDate.toString().substring(5, 7)) || Integer.parseInt(adminCreateDate.getText().substring(8, 10)) < Integer.parseInt(currentDate.toString().substring(8, 10))) {
+                                AlertBox.display("Date Invalid", 500, 200, "You did not enter a proper date (Must be in YYYY-MM-DD format) and must be a current or future date within this month.");
+                                return;
+                            } else if (adminCreatePrice.getText().equals("") || adminCreatePrice.getText().length() < 4 || !adminCreatePrice.getText().contains(".") || !(Pattern.matches("[0-9]+", adminCreatePrice.getText().substring(0, adminCreatePrice.getText().indexOf(".")))) || !(Pattern.matches("[0-9]+", adminCreatePrice.getText().substring(adminCreatePrice.getText().indexOf(".") + 1))) || Integer.parseInt(adminCreatePrice.getText().substring(0, adminCreatePrice.getText().indexOf("."))) < 1 || Integer.parseInt(adminCreatePrice.getText().substring(adminCreatePrice.getText().indexOf(".") + 1)) > 99) {
+                                AlertBox.display("Price Invalid", 500, 200, "You did not enter a proper price (Must be two digits after the decimal).");
+                                return;
+                            } else {
+                                SQL.sendToDatabase("insert into TICKET (SCHEDULE_ID, EVENT_DATE, SEAT, PRICE) values('" + sqlInfo.get(0) + "','" + adminCreateDate.getText() + "','" + adminCreateCustSeat.getText() + "'," + adminCreatePrice.getText() + ");");
+                                adminCheckSchedID.clear();
+                                adminCreateDate.clear();
+                                adminCreateCustSeat.clear();
+                                adminCreatePrice.clear();
+                                AlertBox.display("Create Ticket Successful", 500, 200, "Successfully created a new ticket!");
+                            }
                         }
                     }
                 }
                 else if(adminManipulateDropdownBox.getValue().equals("Update")) {
                     if (adminElementDropdownBox.getValue().equals("Customer")) {
                         invalidDomain = SendEmail.readDomains(adminUpdateEmail.getText());
-                        sqlInfo = SQL.getFromDatabase("select ID from CUSTOMER where ID = '" + adminUpdateCheckCustID.getText() + "';");
+                        sqlInfo = SQL.getFromDatabase("select CUST_ID from CUSTOMER where ID = '" + adminUpdateCheckCustID.getText() + "';");
                         if (SQL.wentInLoop) {
                             SQL.wentInLoop = false;
                             if (adminUpdateCheckCustID.getText().equals("")) {
                                 AlertBox.display("Customer ID Invalid", 500, 200, "You did not enter a proper pre-existing customer ID.");
-                            } else if (adminUpdateEmail.getText().equals("") || invalidDomain) {
+                            } else if (adminCreateEmail.getText().equals("") || invalidDomain || !SendEmail.isValidEmailAddress(createAccountEmail.getText()) || !SendEmail.isValidRegex(createAccountEmail.getText())) {
                                 AlertBox.display("Email Invalid", 500, 200, "You did not enter a proper email address.");
                                 return;
                             } else if (adminUpdateCustName.getText().equals("")) {
@@ -817,40 +861,45 @@ public class Main extends Application {
                                 sqlInfo = SQL.getFromDatabase("select USERNAME from CUSTOMER where USERNAME = '" + adminUpdateUsername.getText() + "';");
                                 if (!SQL.wentInLoop) {
                                     sqlInfo = SQL.getFromDatabase("select USERNAME from ADMIN where USERNAME = '" + adminUpdateUsername.getText() + "';");
-                                    if(!SQL.wentInLoop) {
-                                        emailAddress = adminUpdateEmail.getText();
-                                        if (SendEmail.isValidEmailAddress(emailAddress) && SendEmail.isValidRegex(emailAddress)) {
-                                            SQL.sendToDatabase("update CUSTOMER set NAME = '" + adminUpdateCustName.getText() + "', EMAIL = '" + adminUpdateEmail.getText() + "', USERNAME = '" + adminUpdateUsername.getText() + "', PASSWORD = '" + adminUpdatePassword.getText() + "' where ID = '" + adminUpdateCheckCustID.getText() + "';");
-                                            SendEmail.send(emailAddress);
-                                            adminUpdateCheckCustID.clear();
-                                            adminUpdateCustName.clear();
-                                            adminUpdateEmail.clear();
-                                            adminUpdateUsername.clear();
-                                            adminUpdatePassword.clear();
-                                            adminUpdateConfirmPassword.clear();
-                                            AlertBox.display("Update Account Successful", 500, 200, "Successfully updated account! An email has been sent to the customer's email address.");
-
+                                    if (!SQL.wentInLoop) {
+                                        sqlInfo = SQL.getFromDatabase("select EMAIL from CUSTOMER where EMAIL = '" + adminUpdateEmail.getText() + "';");
+                                        if (!SQL.wentInLoop) {
+                                            sqlInfo = SQL.getFromDatabase("select EMAIL from ADMIN where EMAIL = '" + adminUpdateEmail.getText() + "';");
+                                            if (!SQL.wentInLoop) {
+                                                emailAddress = adminUpdateEmail.getText();
+                                                SQL.sendToDatabase("update CUSTOMER set NAME = '" + adminUpdateCustName.getText() + "', EMAIL = '" + adminUpdateEmail.getText() + "', USERNAME = '" + adminUpdateUsername.getText() + "', PASSWORD = '" + adminUpdatePassword.getText() + "' where ID = '" + adminUpdateCheckCustID.getText() + "';");
+                                                SendEmail.send(emailAddress);
+                                                adminUpdateCheckCustID.clear();
+                                                adminUpdateCustName.clear();
+                                                adminUpdateEmail.clear();
+                                                adminUpdateUsername.clear();
+                                                adminUpdatePassword.clear();
+                                                adminUpdateConfirmPassword.clear();
+                                                AlertBox.display("Update Account Successful", 500, 200, "Successfully updated account! An email has been sent to the customer's email address.");
+                                            } else {
+                                                SQL.wentInLoop = false;
+                                                AlertBox.display("Email Already Exists", 500, 200, "The email you entered already exists.");
+                                            }
+                                        } else {
+                                            SQL.wentInLoop = false;
+                                            AlertBox.display("Email Already Exists", 500, 200, "The email you entered already exists.");
                                         }
-                                    }
-                                    else {
+                                    } else {
                                         SQL.wentInLoop = false;
                                         AlertBox.display("Username Already Exists", 500, 200, "The username you entered already exists.");
                                     }
-                                }
-                                else {
+                                } else {
                                     SQL.wentInLoop = false;
                                     AlertBox.display("Username Already Exists", 500, 200, "The username you entered already exists.");
                                 }
                             }
-                        }
-                        else {
+                        } else {
                             AlertBox.display("Customer ID Invalid", 500, 200, "You did not enter a proper pre-existing customer ID.");
                         }
-                    }else if (adminElementDropdownBox.getValue().equals("Train")) {
-                        if(adminUpdateCheckTrainID.getText().equals(" ")) {
+                    } else if (adminElementDropdownBox.getValue().equals("Train")) {
+                        if (adminUpdateCheckTrainID.getText().equals(" ")) {
                             AlertBox.display("Train ID Invalid", 500, 200, "You did not enter a proper pre-existing train ID.");
-                        }
-                        else if (adminUpdateTrainName.getText().equals("")) {
+                        } else if (adminUpdateTrainName.getText().equals("")) {
                             AlertBox.display("Name Invalid", 500, 200, "You did not enter a proper name.");
                             return;
                         } else if (adminUpdateModel.getText().equals("")) {
@@ -868,10 +917,9 @@ public class Main extends Application {
                             AlertBox.display("Update Train Successful", 500, 200, "Successfully updated train!");
                         }
                     } else if (adminElementDropdownBox.getValue().equals("Train Station")) {
-                        if(adminUpdateCheckTrainStationID.getText().equals(" ")) {
+                        if (adminUpdateCheckTrainStationID.getText().equals(" ")) {
                             AlertBox.display("Train Station ID Invalid", 500, 200, "You did not enter a proper pre-existing train station ID.");
-                        }
-                        else if (adminUpdateTrainStationName.getText().equals("")) {
+                        } else if (adminUpdateTrainStationName.getText().equals("")) {
                             AlertBox.display("Name Invalid", 500, 200, "You did not enter a proper name.");
                             return;
                         } else if (adminUpdateLocation.getText().equals("")) {
@@ -885,13 +933,16 @@ public class Main extends Application {
                             AlertBox.display("Update Train Station Successful", 500, 200, "Successfully updated a train station!");
                         }
                     } else if (adminElementDropdownBox.getValue().equals("Schedule Entry")) {
-                        if(adminUpdateSchedID.getText().equals(" ")) {
+                        if (adminUpdateSchedID.getText().equals(" ")) {
                             AlertBox.display("Schedule Entry ID Invalid", 500, 200, "You did not enter a proper pre-existing schedule entry ID.");
                         }
-                        else if (adminUpdateCheckTrainName.getText().equals("")) {
-                            AlertBox.display("Name Invalid", 500, 200, "You did not enter a train name that exists.");
+                        sqlInfo = SQL.getFromDatabase("select TRAIN_ID from TRAIN where ID = " + adminUpdateCheckTrainName.getText() + ";");
+                        if (!SQL.wentInLoop) {
+                            AlertBox.display("Train ID Invalid", 500, 200, "You did not enter a train ID that exists.");
                             return;
-                        } else if (adminUpdateCheckTrackID.getText().equals("")) {
+                        }
+                        sqlInfo2 = SQL.getFromDatabase("select TRACK_ID from TRACK where ID = " + adminUpdateCheckTrackID.getText() + ";");
+                        if (!SQL.wentInLoop) {
                             AlertBox.display("Track ID Invalid", 500, 200, "You did not enter a track ID that exists.");
                             return;
                         } else if (adminUpdateSchedOut.getText().equals("") || adminUpdateSchedOut.getText().length() != 5 || !(Pattern.matches("[0-9]+", adminUpdateSchedOut.getText().substring(0, 2))) || !(Pattern.matches("[0-9]+", adminUpdateSchedOut.getText().substring(3, 5))) || !adminUpdateSchedOut.getText().substring(2, 3).equals(":") || Integer.parseInt(adminUpdateSchedOut.getText().substring(0, 2)) < 1 || Integer.parseInt(adminUpdateSchedOut.getText().substring(0, 2)) > 23 || Integer.parseInt(adminUpdateSchedOut.getText().substring(3, 5)) < 0 || Integer.parseInt(adminUpdateSchedOut.getText().substring(3, 5)) > 59) {
@@ -901,7 +952,7 @@ public class Main extends Application {
                             AlertBox.display("Arrival Time Invalid", 500, 200, "You did not enter a proper arrival time (Must be in HH:MM format).");
                             return;
                         } else {
-                            SQL.sendToDatabase("update SCHEDULE set TRAIN_ID = '" + adminUpdateCheckTrainName.getText() + "', TRACK_ID = '" + adminUpdateCheckTrackID.getText() + "', DEPARTURE_TIME = '" + adminUpdateSchedOut.getText() + "', ARRIVAL_TIME = '" + adminUpdateSchedIn.getText() + "' where ID = " + adminUpdateSchedID.getText() + ";");
+                            SQL.sendToDatabase("update SCHEDULE set TRAIN_ID = '" + sqlInfo.get(0) + "', TRACK_ID = '" + sqlInfo2.get(0) + "', DEPARTURE_TIME = '" + adminUpdateSchedOut.getText() + "', ARRIVAL_TIME = '" + adminUpdateSchedIn.getText() + "' where ID = " + adminUpdateSchedID.getText() + ";");
                             adminUpdateSchedID.clear();
                             adminUpdateCheckTrainName.clear();
                             adminUpdateCheckTrackID.clear();
@@ -910,20 +961,23 @@ public class Main extends Application {
                             AlertBox.display("Update Schedule Entry Successful", 500, 200, "Successfully updated a Schedule Entry!");
                         }
                     } else if (adminElementDropdownBox.getValue().equals("Track")) {
-                        if(adminUpdateTrackID.getText().equals(" ")) {
+                        if (adminUpdateTrackID.getText().equals(" ")) {
                             AlertBox.display("Schedule Entry ID Invalid", 500, 200, "You did not enter a proper pre-existing track ID.");
                         }
-                        else if (adminUpdateStationFrom.getText().equals("")) {
-                            AlertBox.display("Station From Invalid", 500, 200, "You did not enter a proper station to depart from.");
+                        sqlInfo = SQL.getFromDatabase("select TRAIN_STATION_ID from TRAIN_STATION where ID = " + adminUpdateStationFrom.getText() + ";");
+                        if (!SQL.wentInLoop) {
+                            AlertBox.display("Train ID Invalid", 500, 200, "You did not enter a proper station ID to depart from.");
                             return;
-                        } else if (adminUpdateStationTo.getText().equals("")) {
-                            AlertBox.display("Station To Invalid", 500, 200, "You did not enter a proper station to arrive at.");
+                        }
+                        sqlInfo2 = SQL.getFromDatabase("select TRAIN_STATION_ID from TRAIN_STATION where ID = " + adminUpdateStationTo.getText() + ";");
+                        if (!SQL.wentInLoop) {
+                            AlertBox.display("Track ID Invalid", 500, 200, "You did not enter a proper station ID to arrive at.");
                             return;
                         } else if (adminUpdateLength.getText().equals("") || !(Pattern.matches("[0-9]+", adminUpdateLength.getText())) || Integer.parseInt(adminUpdateLength.getText()) < 1) {
                             AlertBox.display("Length Invalid", 500, 200, "You did not enter a proper length (Must be a whole number).");
                             return;
                         } else {
-                            SQL.sendToDatabase("update TRACK set STATION_FROM_ID = '" + adminUpdateStationFrom.getText() + "', STATION_TO_ID = '" + adminUpdateStationTo.getText() + "', LENGTH = " + adminUpdateLength.getText() + " where ID = " + adminUpdateTrackID.getText() + ";");
+                            SQL.sendToDatabase("update TRACK set STATION_FROM_ID = '" + sqlInfo.get(0) + "', STATION_TO_ID = '" + sqlInfo2.get(0) + "', LENGTH = " + adminUpdateLength.getText() + " where ID = " + adminUpdateTrackID.getText() + ";");
                             adminUpdateTrackID.clear();
                             adminUpdateStationFrom.clear();
                             adminUpdateStationTo.clear();
@@ -931,31 +985,33 @@ public class Main extends Application {
                             AlertBox.display("Update Track Successful", 500, 200, "Successfully updated a track!");
                         }
                     } else if (adminElementDropdownBox.getValue().equals("Ticket")) {
-                        if(adminUpdateCheckTicketID.getText().equals(" ")) {
+                        if (adminUpdateCheckTicketID.getText().equals(" ")) {
                             AlertBox.display("Ticket ID Invalid", 500, 200, "You did not enter a proper pre-existing ticket ID.");
                         }
-                        else if (adminUpdateCheckSchedID.getText().equals("")) {
-                            AlertBox.display("Schedule Entry ID Invalid", 500, 200, "You did not enter a schedule entry that exists.");
-                            return;
-                        } else if (adminUpdateDate.getText().equals("") || adminUpdateDate.getText().length() != 10 || !adminUpdateDate.getText().substring(4, 5).equals("-") || !adminUpdateDate.getText().substring(7, 8).equals("-") || !(Pattern.matches("[0-9]+", adminUpdateDate.getText().substring(0, 4))) || !(Pattern.matches("[0-9]+", adminUpdateDate.getText().substring(5, 7))) || !(Pattern.matches("[0-9]+", adminUpdateDate.getText().substring(8, 10))) || Integer.parseInt(adminUpdateDate.getText().substring(0, 4)) < 1 || Integer.parseInt(adminUpdateDate.getText().substring(5, 7)) > 12 || Integer.parseInt(adminUpdateDate.getText().substring(5, 7)) < 1 || Integer.parseInt(adminUpdateDate.getText().substring(8, 10)) > 30 || Integer.parseInt(adminUpdateDate.getText().substring(8, 10)) < 1 || Integer.parseInt(adminUpdateDate.getText().substring(0, 4)) > 9999) {
-                            AlertBox.display("Date Invalid", 500, 200, "You did not enter a proper date (Must be in YYYY-MM-DD format).");
-                            return;
-                        }
-                        else if (!(Pattern.matches("[0-9]+", adminUpdateCustSeat.getText())) || Integer.parseInt(adminUpdateCustSeat.getText()) < 1) {
-                            AlertBox.display("Customer Seat # Invalid", 500, 200, "You did not enter a proper customer seat number.");
-                            return;
-                        }
-                        else if (adminUpdatePrice.getText().equals("") || adminUpdatePrice.getText().length() < 4 || !adminUpdatePrice.getText().contains(".") || !(Pattern.matches("[0-9]+", adminUpdatePrice.getText().substring(0, adminUpdatePrice.getText().indexOf(".")))) || !(Pattern.matches("[0-9]+", adminUpdatePrice.getText().substring(adminUpdatePrice.getText().indexOf(".") + 1))) || Integer.parseInt(adminUpdatePrice.getText().substring(0, adminUpdatePrice.getText().indexOf("."))) < 1 || Integer.parseInt(adminUpdatePrice.getText().substring(adminUpdatePrice.getText().indexOf(".") + 1)) > 99) {
-                            AlertBox.display("Price Invalid", 500, 200, "You did not enter a proper price (Must be two digits after the decimal).");
+                        sqlInfo = SQL.getFromDatabase("select SCHEDULE_ID from SCHEDULE where ID = " + adminUpdateCheckSchedID.getText() + ";");
+                        if (!SQL.wentInLoop) {
+                            AlertBox.display("Schedule Entry ID Invalid", 500, 200, "You did not enter a proper schedule entry ID.");
                             return;
                         } else {
-                            SQL.sendToDatabase("update TICKET set SCHEDULE_ID = '" + adminUpdateCheckSchedID.getText() + "', EVENT_DATE = '" + adminUpdateDate.getText() + "', SEAT = " + adminUpdateCustSeat.getText() + ", PRICE = '" + adminUpdatePrice.getText() + "' where ID = " + adminUpdateCheckTicketID.getText() + ";");
-                            adminUpdateCheckTicketID.clear();
-                            adminUpdateCheckSchedID.clear();
-                            adminUpdateCustSeat.clear();
-                            adminUpdateDate.clear();
-                            adminUpdatePrice.clear();
-                            AlertBox.display("Update Ticket Successful", 500, 200, "Successfully updated a ticket!");
+                            sqlInfo2 = SQL.getFromDatabase("select NUM_OF_SEATS from TRAIN where TRAIN_ID = (select TRAIN_ID from SCHEDULE where SCHEDULE_ID = " + sqlInfo.get(0) + ");");
+                            if (!(Pattern.matches("[0-9]+", adminUpdateCustSeat.getText())) || Integer.parseInt(adminUpdateCustSeat.getText()) < 1 || Integer.parseInt(adminUpdateCustSeat.getText()) > Integer.parseInt(sqlInfo2.get(0))) {
+                                AlertBox.display("Customer Seat # Invalid", 500, 200, "You did not enter a proper customer seat number.");
+                                return;
+                            } else if (adminUpdateDate.getText().equals("") || adminUpdateDate.getText().length() != 10 || !adminUpdateDate.getText().substring(4, 5).equals("-") || !adminUpdateDate.getText().substring(7, 8).equals("-") || !(Pattern.matches("[0-9]+", adminUpdateDate.getText().substring(0, 4))) || !(Pattern.matches("[0-9]+", adminUpdateDate.getText().substring(5, 7))) || !(Pattern.matches("[0-9]+", adminUpdateDate.getText().substring(8, 10))) || Integer.parseInt(adminUpdateDate.getText().substring(0, 4)) < 1 || Integer.parseInt(adminUpdateDate.getText().substring(5, 7)) > 12 || Integer.parseInt(adminUpdateDate.getText().substring(5, 7)) < 1 || Integer.parseInt(adminUpdateDate.getText().substring(8, 10)) > 30 || Integer.parseInt(adminUpdateDate.getText().substring(8, 10)) < 1 || Integer.parseInt(adminUpdateDate.getText().substring(0, 4)) > 9999) {
+                                AlertBox.display("Date Invalid", 500, 200, "You did not enter a proper date (Must be in YYYY-MM-DD format).");
+                                return;
+                            } else if (adminUpdatePrice.getText().equals("") || adminUpdatePrice.getText().length() < 4 || !adminUpdatePrice.getText().contains(".") || !(Pattern.matches("[0-9]+", adminUpdatePrice.getText().substring(0, adminUpdatePrice.getText().indexOf(".")))) || !(Pattern.matches("[0-9]+", adminUpdatePrice.getText().substring(adminUpdatePrice.getText().indexOf(".") + 1))) || Integer.parseInt(adminUpdatePrice.getText().substring(0, adminUpdatePrice.getText().indexOf("."))) < 1 || Integer.parseInt(adminUpdatePrice.getText().substring(adminUpdatePrice.getText().indexOf(".") + 1)) > 99) {
+                                AlertBox.display("Price Invalid", 500, 200, "You did not enter a proper price (Must be two digits after the decimal).");
+                                return;
+                            } else {
+                                SQL.sendToDatabase("update TICKET set SCHEDULE_ID = '" + sqlInfo.get(0) + "', EVENT_DATE = '" + adminUpdateDate.getText() + "', SEAT = " + adminUpdateCustSeat.getText() + ", PRICE = '" + adminUpdatePrice.getText() + "' where ID = " + adminUpdateCheckTicketID.getText() + ";");
+                                adminUpdateCheckTicketID.clear();
+                                adminUpdateCheckSchedID.clear();
+                                adminUpdateCustSeat.clear();
+                                adminUpdateDate.clear();
+                                adminUpdatePrice.clear();
+                                AlertBox.display("Update Ticket Successful", 500, 200, "Successfully updated a ticket!");
+                            }
                         }
                     }
                 }
@@ -1036,12 +1092,12 @@ public class Main extends Application {
         custSaveChangesButton.setOnAction(e -> {
             result = ConfirmBox.display("Confirm Changes", 500, 200, "Are you sure you want to make this change?");
             if(result) {
-                sqlInfo = SQL.getFromDatabase("select ID,OWNER_ID from TICKET where ID = " + custTicketID.getText() + ";");
+                sqlInfo = SQL.getFromDatabase("select TICKET_ID,OWNER_ID from TICKET where ID = " + custTicketID.getText() + ";");
                 if (SQL.wentInLoop) {
                     SQL.wentInLoop = false;
                     if (sqlInfo.get(1) == null) {
                         if (custDropdownBox.getValue().equals("Purchase")) {
-                            SQL.sendToDatabase("Update TICKET set OWNER_ID = (select ID from CUSTOMER where USERNAME = '" + custUsername + "');");
+                            SQL.sendToDatabase("Update TICKET set OWNER_ID = (select CUST_ID from CUSTOMER where USERNAME = '" + custUsername + "');");
                             custTicketID.clear();
                             AlertBox.display("Purchase Ticket Successful", 500, 200, "You have successfully purchased a ticket!");
                             return;
@@ -1050,7 +1106,7 @@ public class Main extends Application {
                             return;
                         }
                     } else {
-                        sqlInfo = SQL.getFromDatabase("select USERNAME from CUSTOMER where ID = '" + sqlInfo.get(1) + "';");
+                        sqlInfo = SQL.getFromDatabase("select USERNAME from CUSTOMER where CUST_ID = '" + sqlInfo.get(1) + "';");
                         if (SQL.wentInLoop) {
                             SQL.wentInLoop = false;
                             if (custDropdownBox.getValue().equals("Purchase") && (sqlInfo.get(0).equals(custUsername))) {
