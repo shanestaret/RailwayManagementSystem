@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="DatabaseProject:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/DatabaseProject_jar</output-path>
+    <root id="archive" name="DatabaseProject.jar">
+      <element id="module-output" name="DatabaseProject" />
+      <element id="extracted-dir" path="$USER_HOME$/Documents/Downloads/javax.mail.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Documents/Downloads/activation.jar" path-in-jar="/" />
+      <element id="library" level="project" name="example" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/sqljdbc4-4.0.2206.100.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

@@ -2,7 +2,6 @@ package sample;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class SQL {
     static String url = "jdbc:sqlserver://SQL2.cis245.mc3.edu:1433;databaseName=zz_CIS245_16;user=xx;password=xx";

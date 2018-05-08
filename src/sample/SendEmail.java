@@ -5,7 +5,6 @@ import java.util.*;
 import java.util.regex.Pattern;
 import javax.mail.*;
 import javax.mail.internet.*;
-import javax.activation.*;
 
 public class SendEmail {
     private static final String u = "railwaysimulationtest@gmail.com";

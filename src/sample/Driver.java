@@ -1,60 +1,47 @@
 package sample;
 
-import java.sql.*;
-import com.sun.mail.smtp.SMTPAddressFailedException;
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.scene.control.*;
-
 import java.text.ParseException;
 import java.util.Date;
-
-import javax.mail.SendFailedException;
-import javax.mail.internet.AddressException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-public class Main extends Application {
+//main class that holds all of the UI
+public class Driver extends Application {
     Stage mainWindow, adminAuthorizationWindow; //the literal frame that pops up
     Scene loginUI, adminUI, custUI, createAccountUI, adminAuthorizationUI; //the different screens that we can get to within our "Stage" or frame
-    Button loginButton, signOutButton, signOutButton2, createAccountLoginButton, createAccountCreateButton, createAccountCancelButton, adminAuthorizationAuthorizeButton, adminAuthorizationCancelButton, adminSaveChangesButton, custSaveChangesButton; //button that user can interact with
-    Label loginDirections, createAccountDirections1, createAccountDirections2, createAccountEmailWarning1, createAccountEmailWarning2, personalInfo, accountInfo, adminDirections1, adminDirections2, adminAuthorizationDirections, adminDeleteDirections1, adminDeleteDirections2, adminDeleteDirections3, adminDeleteDirections4, adminDeleteDirections5, adminDeleteDirections6, custDirections; //String that will tell user how to login
+    Button loginButton, adminSignOutButton, CustSignOutButton, createAccountLoginButton, createAccountCreateButton, createAccountCancelButton, adminAuthorizationAuthorizeButton, adminAuthorizationCancelButton, adminSaveChangesButton, custSaveChangesButton; //button that user can interact with
+    Label loginDirections, createAccountDirections1, createAccountDirections2, createAccountEmailWarning1, createAccountEmailWarning2, personalInfo, accountInfo, adminDirections1, adminDirections2, adminAuthorizationDirections, adminDeleteDirections1, adminDeleteDirections2, adminDeleteDirections3, adminDeleteDirections4, adminDeleteDirections5, adminDeleteDirections6, custDirections; //String that will will appear on screen within Stage
     TextField username, createAccountName, createAccountEmail, createAccountUsername, adminUpdateCheckCustID, adminCheckTrackID, adminUpdateCheckTrainID, adminUpdateTrackID, adminUpdateSchedID, adminUpdateCheckTrainStationID, adminUpdateCheckTicketID, adminUpdateCheckTrackID, adminCheckSchedID, adminUpdateCheckSchedID, adminCreateCustName, adminCreateTrainName, adminCheckTrainName, adminCreateTrainStationName, adminCreateModel, adminCreateNumOfSeats, adminCreateLocation, adminCreateSchedIn, adminCreateSchedOut, adminCreateDate, adminCreateStationFrom, adminCreateStationTo, adminCreateLength,  adminCreateCustSeat, adminCreatePrice, adminCreateEmail, adminCreateUsername, adminUpdateCustName, adminUpdateEmail, adminUpdateUsername, adminUpdatePassword, adminUpdateConfirmPassword, adminUpdateTrainName, adminUpdateCheckTrainName,adminUpdateTrainStationName, adminUpdateModel, adminUpdatePrice, adminUpdateDate, adminUpdateSchedIn, adminUpdateSchedOut, adminUpdateNumOfSeats, adminUpdateLocation, adminUpdateStationFrom, adminUpdateStationTo, adminUpdateLength, adminUpdateCustSeat, adminDeleteCustID, adminDeleteTrainID, adminDeleteTrainStationID, adminDeleteSchedID, adminDeleteTrackID, adminDeleteTicketID, custTicketID; //Where user can input information
     PasswordField password, createAccountPassword, createAccountConfirmPassword, adminUsername, adminPassword, adminCreatePassword, adminCreateConfirmPassword; //Where user password's will be entered
     CheckBox rememberUsernameBox; //Box user can check if it wants application to remember their username after signing out
     ChoiceBox<String> accountTypeBox, adminManipulateDropdownBox, adminElementDropdownBox, custDropdownBox; //Dropdown menus
     Separator horizontalSeparator1, horizontalSeparator2, horizontalSeparator3, horizontalSeparator4, horizontalSeparator5, horizontalSeparator6, horizontalSeparator7; //Horizontal Separators used to separate information in the window more clearly
     Image mainWindowIcon, adminAuthorizationWindowIcon; //icon for window
-    String emailAddress, custUsername; //email address user gives us
-    boolean result, emailExists, invalidDomain;
-    ArrayList<String> sqlInfo = new ArrayList<>();
-    ArrayList<String> sqlInfo2 = new ArrayList<>();
-    Date currentDate;
-    Date inputDate;
-    SimpleDateFormat sqlFormat = new SimpleDateFormat("yyyy-MM-dd");
+    String emailAddress, custUsername; //email address user gives us and the username that a user inputs
+    boolean result, invalidDomain; //result of ConfirmBox prompt (true means they selected "Yes") and invalidDomain is true if user input an email without a proper domain
+    ArrayList<String> sqlInfo = new ArrayList<>(); //first ArrayList that holds information retrieved from SQL Database
+    ArrayList<String> sqlInfo2 = new ArrayList<>(); //second ArrayList that holds information retrieved from SQL Database when we need to save info from first ArrayList
+    Date currentDate; //date that will be used to determine the current date when creating a ticket
+    SimpleDateFormat sqlFormat = new SimpleDateFormat("yyyy-MM-dd"); //the date format we need to be compatible with SQL
 
     @Override
-    //allows GUI to load
+    //allows GUI to load and controls what is shown at what periods and what events happen based on user input
     public void start(Stage primaryStage) throws Exception{
         mainWindow = primaryStage;
 
@@ -70,10 +57,10 @@ public class Main extends Application {
         //giving title to our frame
         mainWindow.setTitle("Railway System Simulation: Login");
 
-        //label for login directions
+        //labels for login directions
         loginDirections = new Label("Welcome to Shane's Railway System Simulation! To Login, enter your username and password.");
 
-        //label for create account
+        //labels for create account
         createAccountDirections1 = new Label("To create an account, select the account type in the dropdown menu below and enter your information.");
         createAccountDirections2 = new Label("NOTE: If you are creating an admin account, another admin must put in their information to confirm the new admin account.");
         createAccountEmailWarning1 = new Label("IMPORTANT: Entering your email address will result in an email being sent to that address stating you registered");
@@ -81,7 +68,7 @@ public class Main extends Application {
         personalInfo = new Label("Personal Information");
         accountInfo = new Label("Account Information");
 
-        //label for admin view
+        //labels for admin view
         adminDirections1 = new Label("As an administrator, you have the privileges of being able to create, update, and/or delete multiple elements from the Railway System.");
         adminDirections2 = new Label("In order to do so, select how you want to manipulate an element and the specific element you want to manipulate in the dropdown boxes below.");
         adminDeleteDirections1 = new Label("IMPORTANT: Deleting a customer PERMANENTLY deletes them from the system. Please be cautious.");
@@ -91,11 +78,11 @@ public class Main extends Application {
         adminDeleteDirections5 = new Label("IMPORTANT: Deleting a track PERMANENTLY deletes it from the system. Please be cautious.");
         adminDeleteDirections6 = new Label("IMPORTANT: Deleting a ticket PERMANENTLY deletes it from the system. Please be cautious.");
 
-        //label for customer view
+        //labels for customer view
         custDirections = new Label("As a customer, you can purchase listed tickets or cancel a previously purchased ticket. Select what you want to do in the dropdown box below.");
 
 
-        //label for admin account authorization directions
+        //labels for admin account authorization directions
         adminAuthorizationDirections = new Label("To create an admin account, enter a pre-existing admin username and password.");
 
         //checkbox that user can click if they want their username remembered
@@ -163,6 +150,7 @@ public class Main extends Application {
         createAccountUsername.setPromptText("Username");
         createAccountUsername.setTooltip(new Tooltip("Enter desired username"));
 
+        //Password Fields that hold the passwords of user creating account of screen
         createAccountPassword = new PasswordField();
         createAccountPassword.setMaxWidth(300);
         createAccountPassword.setPromptText("Password");
@@ -465,10 +453,14 @@ public class Main extends Application {
         //creating new button with text called "Login"; this button will log a user into the system if they are actually a user
         loginButton = new Button("Login");
         loginButton.setPrefWidth(100);
+
+        //on button click...
         loginButton.setOnAction(e -> {
             sqlInfo = SQL.getFromDatabase("select PASSWORD from ADMIN where USERNAME = '" + username.getText() + "';");
+            //if there was a password associated with that username within the admin table
             if(SQL.wentInLoop) {
                 SQL.wentInLoop = false;
+                //if password in database equals the password the user entered then allow them in; if they checked the "remember me" box then their username is not cleared
                 if (password.getText().equals(sqlInfo.get(0)) && !rememberUsernameBox.isSelected()) {
                     sqlInfo.clear();
                     username.clear();
@@ -478,6 +470,7 @@ public class Main extends Application {
                     mainWindow.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
                     mainWindow.setTitle("Railway System Simulation: Admin View");
                     return;
+                    //if password in database equals the password the user entered then allow them in; clear username box
                 } else if (password.getText().equals(sqlInfo.get(0)) && rememberUsernameBox.isSelected()) {
                     sqlInfo.clear();
                     password.clear();
@@ -487,48 +480,61 @@ public class Main extends Application {
                     mainWindow.setTitle("Railway System Simulation: Admin View");
                     return;
                 }
+                //if password in database does not equal the password the user entered, then don't allow them in
+                else {
+                    sqlInfo.clear();
+                    AlertBox.display("Account Authentication Error", 500, 200, "Username or Password was incorrect. Try again.");
+                    password.clear();
+                }
             }
-                    sqlInfo = SQL.getFromDatabase("select PASSWORD from CUSTOMER where USERNAME = '" + username.getText() + "';");
-                    if(SQL.wentInLoop) {
-                        SQL.wentInLoop = false;
-                        if (password.getText().equals(sqlInfo.get(0)) && !rememberUsernameBox.isSelected()) {
-                            custUsername = username.getText();
-                            sqlInfo.clear();
-                            username.clear();
-                            password.clear();
-                            mainWindow.setScene(custUI);
-                            mainWindow.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
-                            mainWindow.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
-                            mainWindow.setTitle("Railway System Simulation: Customer View");
-                            return;
-                        } else if (password.getText().equals(sqlInfo.get(0)) && rememberUsernameBox.isSelected()) {
-                            custUsername = username.getText();
-                            sqlInfo.clear();
-                            password.clear();
-                            mainWindow.setScene(custUI);
-                            mainWindow.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
-                            mainWindow.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
-                            mainWindow.setTitle("Railway System Simulation: Customer View");
-                            return;
-                        } else {
-                            sqlInfo.clear();
-                            AlertBox.display("Account Authentication Error", 500, 200, "Username or Password was incorrect. Try again.");
-                            password.clear();
-                        }
-                    }
-                    else {
-                        sqlInfo.clear();
-                        AlertBox.display("Account Authentication Error", 500, 200, "Username or Password was incorrect. Try again.");
-                        password.clear();
-                    }
+            sqlInfo = SQL.getFromDatabase("select PASSWORD from CUSTOMER where USERNAME = '" + username.getText() + "';");
+            //if there was a password associated with that username within the customer table
+            if(SQL.wentInLoop) {
+                SQL.wentInLoop = false;
+                //if password in database equals the password the user entered then allow them in; if they checked the "remember me" box then their username is not cleared
+                if (password.getText().equals(sqlInfo.get(0)) && !rememberUsernameBox.isSelected()) {
+                    custUsername = username.getText();
+                    sqlInfo.clear();
+                    username.clear();
+                    password.clear();
+                    mainWindow.setScene(custUI);
+                    mainWindow.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
+                    mainWindow.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
+                    mainWindow.setTitle("Railway System Simulation: Customer View");
+                    return;
+                    //if password in database equals the password the user entered then allow them in; clear username box
+                } else if (password.getText().equals(sqlInfo.get(0)) && rememberUsernameBox.isSelected()) {
+                    custUsername = username.getText();
+                    sqlInfo.clear();
+                    password.clear();
+                    mainWindow.setScene(custUI);
+                    mainWindow.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
+                    mainWindow.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
+                    mainWindow.setTitle("Railway System Simulation: Customer View");
+                    return;
+                }
+                //if password in database does not equal the password the user entered, then don't allow them in
+                else {
+                    sqlInfo.clear();
+                    AlertBox.display("Account Authentication Error", 500, 200, "Username or Password was incorrect. Try again.");
+                    password.clear();
+                }
+            }
+            //if the username the user entered is not recognized, then don't let allow them in
+            else {
+                sqlInfo.clear();
+                AlertBox.display("Account Authentication Error", 500, 200, "Username or Password was incorrect. Try again.");
+                password.clear();
+            }
         });
 
-        //creating a button with text called "Sign out"; will prompt user if they actually want to sign out, then will if they hit "Yes"
-        signOutButton = new Button("Sign Out");
-        signOutButton.setPrefWidth(100);
-        signOutButton.setOnAction(e -> {
+        //creating a button with text called "Sign out"; will prompt user if they actually want to sign out, then will if they hit "Yes"; appears in admin view
+        adminSignOutButton = new Button("Sign Out");
+        adminSignOutButton.setPrefWidth(100);
+        //on button click...
+        adminSignOutButton.setOnAction(e -> {
             result = ConfirmBox.display("Confirming Sign Out Request", 500, 200, "Are you sure you want to sign out of your account?");
-            //if the user said "yes", then initiate popup dialogue saying logout was successful
+            //if the user said "yes", then initiate popup dialogue saying logout was successful and return to login screen
             if(result) {
                 mainWindow.setTitle("Railway System Simulation: Login");
                 mainWindow.setScene(loginUI);
@@ -538,12 +544,13 @@ public class Main extends Application {
             }
         });
 
-        //creating a button with text called "Sign out"; will prompt user if they actually want to sign out, then will if they hit "Yes"
-        signOutButton2 = new Button("Sign Out");
-        signOutButton.setPrefWidth(100);
-        signOutButton2.setOnAction(e -> {
+        //creating a button with text called "Sign out"; will prompt user if they actually want to sign out, then will if they hit "Yes"; appears in customer view
+        CustSignOutButton = new Button("Sign Out");
+        adminSignOutButton.setPrefWidth(100);
+        //on button click...
+        CustSignOutButton.setOnAction(e -> {
             result = ConfirmBox.display("Confirming Sign Out Request", 500, 200, "Are you sure you want to sign out of your account?");
-            //if the user said "yes", then initiate popup dialogue saying logout was successful
+            //if the user said "yes", then initiate popup dialogue saying logout was successful and return to login screen
             if(result) {
                 mainWindow.setTitle("Railway System Simulation: Login");
                 mainWindow.setScene(loginUI);
@@ -553,11 +560,11 @@ public class Main extends Application {
             }
         });
 
-        //creating a button with text called "Create Account"; will prompt user to enter in an email, username, and password so that they can get an account
+        //creating a button with text called "Create Account"; will prompt user to enter in a name, email, username, and password so that they can get an account
         createAccountLoginButton = new Button("Create Account");
+        //on button click...
         createAccountLoginButton.setOnAction(e -> {
-            if(!rememberUsernameBox.isSelected())
-                username.clear();
+            //brings up create account view where user can create an account
             password.clear();
             createAccountName.clear();
             createAccountEmail.clear();
@@ -572,9 +579,11 @@ public class Main extends Application {
 
         //creating a button with text called "Create"; will actually create a user account
         createAccountCreateButton = new Button("Create");
+        //on button click...
         createAccountCreateButton.setOnAction(e -> {
-            invalidDomain = SendEmail.readDomains(createAccountEmail.getText());
+            invalidDomain = SendEmail.readDomains(createAccountEmail.getText()); //checking if the domain is invalid
 
+            //checking if all fields are completed by the user and have the right kind of data and formatting
             if(createAccountName.getText().equals("")) {
                 AlertBox.display("Name Invalid", 500, 200, "You did not enter a proper name.");
             }
@@ -592,67 +601,74 @@ public class Main extends Application {
             }
             else {
                 emailAddress = createAccountEmail.getText();
-                        sqlInfo = SQL.getFromDatabase("select USERNAME from ADMIN where USERNAME = '" + createAccountUsername.getText() + "';");
-                        if (!SQL.wentInLoop) {
-                            sqlInfo = SQL.getFromDatabase("select USERNAME from CUSTOMER where USERNAME = '" + createAccountUsername.getText() + "';");
-                                if(!SQL.wentInLoop) {
-                                    sqlInfo = SQL.getFromDatabase("select EMAIL from ADMIN where EMAIL = '" + createAccountEmail.getText() + "';");
-                                    if(!SQL.wentInLoop) {
-                                        sqlInfo = SQL.getFromDatabase("select EMAIL from CUSTOMER where EMAIL = '" + createAccountEmail.getText() + "';");
-                                        if(!SQL.wentInLoop) {
-                                            if(accountTypeBox.getValue().equals("Administrator")) {
-                                                adminUsername.clear();
-                                                adminPassword.clear();
-                                                adminAuthorizationWindow = new Stage();
-                                                adminAuthorizationWindowIcon = new Image(ConfirmBox.class.getResourceAsStream("ConfirmBoxIcon.png"));
-                                                adminAuthorizationWindow.getIcons().add(adminAuthorizationWindowIcon);
-                                                adminAuthorizationWindow.initModality(Modality.APPLICATION_MODAL);
-                                                adminAuthorizationWindow.setTitle("Pre-Existing Administrator Information");
-                                                adminAuthorizationWindow.setHeight(500);
-                                                adminAuthorizationWindow.setWidth(200);
-                                                adminAuthorizationWindow.setScene(adminAuthorizationUI);
-                                                adminAuthorizationWindow.sizeToScene();
-                                                adminAuthorizationWindow.setResizable(false);
-                                                adminAuthorizationWindow.setX(primScreenBounds.getWidth() - (primScreenBounds.getWidth() / 1.7));
-                                                adminAuthorizationWindow.setY(primScreenBounds.getHeight() - (primScreenBounds.getHeight() / 1.75));
-                                                adminAuthorizationWindow.showAndWait();
-                                                return;
-                                            }
-                                            else {
-                                                SendEmail.send(emailAddress);
-                                                SQL.sendToDatabase("insert into CUSTOMER (NAME, EMAIL, USERNAME, PASSWORD) values('" + createAccountName.getText() + "','" + createAccountEmail.getText() + "','" + createAccountUsername.getText() + "','" + createAccountPassword.getText() + "');");
-                                                createAccountName.clear();
-                                                createAccountEmail.clear();
-                                                createAccountUsername.clear();
-                                                createAccountPassword.clear();
-                                                createAccountConfirmPassword.clear();
-                                                AlertBox.display("Create Account Successful", 500, 200, "Successfully created new account! An email has been sent to the customer's email address.");
-                                            }
-                                        }
-                                        else {
-                                            SQL.wentInLoop = false;
-                                            AlertBox.display("Email Already Exists", 500, 200, "The email you entered already exists.");
-                                        }
-                                    }
-                                    else {
-                                        SQL.wentInLoop = false;
-                                        AlertBox.display("Email Already Exists", 500, 200, "The email you entered already exists.");
-                                    }
+                sqlInfo = SQL.getFromDatabase("select USERNAME from ADMIN where USERNAME = '" + createAccountUsername.getText() + "';");
+                //checking if username is already an admin username
+                if (!SQL.wentInLoop) {
+                    sqlInfo = SQL.getFromDatabase("select USERNAME from CUSTOMER where USERNAME = '" + createAccountUsername.getText() + "';");
+                    //checking if username is already a customer username
+                    if(!SQL.wentInLoop) {
+                        sqlInfo = SQL.getFromDatabase("select EMAIL from ADMIN where EMAIL = '" + createAccountEmail.getText() + "';");
+                        //checking if email is already an admin email
+                        if(!SQL.wentInLoop) {
+                            sqlInfo = SQL.getFromDatabase("select EMAIL from CUSTOMER where EMAIL = '" + createAccountEmail.getText() + "';");
+                            //checking if email is already a customer email
+                            if(!SQL.wentInLoop) {
+                                //if no information is already in the system and this is an admin creation, then prompt pre-existing admin information
+                                if(accountTypeBox.getValue().equals("Administrator")) {
+                                    adminUsername.clear();
+                                    adminPassword.clear();
+                                    adminAuthorizationWindow = new Stage();
+                                    adminAuthorizationWindowIcon = new Image(ConfirmBox.class.getResourceAsStream("ConfirmBoxIcon.png"));
+                                    adminAuthorizationWindow.getIcons().add(adminAuthorizationWindowIcon);
+                                    adminAuthorizationWindow.initModality(Modality.APPLICATION_MODAL);
+                                    adminAuthorizationWindow.setTitle("Pre-Existing Administrator Information");
+                                    adminAuthorizationWindow.setHeight(500);
+                                    adminAuthorizationWindow.setWidth(200);
+                                    adminAuthorizationWindow.setScene(adminAuthorizationUI);
+                                    adminAuthorizationWindow.sizeToScene();
+                                    adminAuthorizationWindow.setResizable(false);
+                                    adminAuthorizationWindow.setX(primScreenBounds.getWidth() - (primScreenBounds.getWidth() / 1.7));
+                                    adminAuthorizationWindow.setY(primScreenBounds.getHeight() - (primScreenBounds.getHeight() / 1.75));
+                                    adminAuthorizationWindow.showAndWait();
+                                    return;
                                 }
+                                ////if no information is already in the system and this is a customer creation, then send the customer's information to the database, creating a new customer and send an email to the email address provided
                                 else {
-                                    SQL.wentInLoop = false;
-                                    AlertBox.display("Username Already Exists", 500, 200, "The username you entered already exists.");
+                                    SendEmail.send(emailAddress);
+                                    SQL.sendToDatabase("insert into CUSTOMER (NAME, EMAIL, USERNAME, PASSWORD) values('" + createAccountName.getText() + "','" + createAccountEmail.getText() + "','" + createAccountUsername.getText() + "','" + createAccountPassword.getText() + "');");
+                                    createAccountName.clear();
+                                    createAccountEmail.clear();
+                                    createAccountUsername.clear();
+                                    createAccountPassword.clear();
+                                    createAccountConfirmPassword.clear();
+                                    AlertBox.display("Create Account Successful", 500, 200, "Successfully created new account! An email has been sent to the customer's email address.");
                                 }
+                            }
+                            else {
+                                SQL.wentInLoop = false;
+                                AlertBox.display("Email Already Exists", 500, 200, "The email you entered already exists.");
+                            }
                         }
                         else {
                             SQL.wentInLoop = false;
-                            AlertBox.display("Username Already Exists", 500, 200, "The username you entered already exists.");
+                            AlertBox.display("Email Already Exists", 500, 200, "The email you entered already exists.");
                         }
+                    }
+                    else {
+                        SQL.wentInLoop = false;
+                        AlertBox.display("Username Already Exists", 500, 200, "The username you entered already exists.");
+                    }
+                }
+                else {
+                    SQL.wentInLoop = false;
+                    AlertBox.display("Username Already Exists", 500, 200, "The username you entered already exists.");
+                }
             }
         });
 
         //creating a button with text called "Cancel"; will stop user from creating account and bring them back to login screen
         createAccountCancelButton = new Button("Cancel");
+        //on button click...
         createAccountCancelButton.setOnAction(e -> {
             result = ConfirmBox.display("Confirming Cancellation of Account Creation", 500, 200, "Are you sure you want to cancel creating an account?");
             if(result) {
@@ -666,10 +682,12 @@ public class Main extends Application {
         //creating a new button called "Save Changes"; when clicked, it will save the changes an admin made to an element (creating, updating, or deleting)
         adminSaveChangesButton = new Button("Save Changes");
         adminSaveChangesButton.setPrefWidth(100); //sets width to 100
+        //on button click...
         adminSaveChangesButton.setOnAction(e -> {
             result = ConfirmBox.display("Confirm Changes", 500, 200, "Are you sure you want to make this change?");
             if(result) {
                 if(adminManipulateDropdownBox.getValue().equals("Create")) {
+                    //if an admin wants to create a customer
                     if (adminElementDropdownBox.getValue().equals("Customer")) {
                         invalidDomain = SendEmail.readDomains(adminCreateEmail.getText());
                         if (adminCreateEmail.getText().equals("") || invalidDomain || !SendEmail.isValidEmailAddress(adminCreateEmail.getText()) || !SendEmail.isValidRegex(adminCreateEmail.getText())) {
@@ -689,27 +707,22 @@ public class Main extends Application {
                             return;
                         } else {
                             emailAddress = adminCreateEmail.getText();
-                                sqlInfo = SQL.getFromDatabase("select USERNAME from ADMIN where USERNAME = '" + adminCreateUsername.getText() + "';");
-                                if (!SQL.wentInLoop) {
-                                    sqlInfo = SQL.getFromDatabase("select USERNAME from CUSTOMER where USERNAME = '" + adminCreateUsername.getText() + "';");
+                            sqlInfo = SQL.getFromDatabase("select USERNAME from ADMIN where USERNAME = '" + adminCreateUsername.getText() + "';");
+                            if (!SQL.wentInLoop) {
+                                sqlInfo = SQL.getFromDatabase("select USERNAME from CUSTOMER where USERNAME = '" + adminCreateUsername.getText() + "';");
+                                if(!SQL.wentInLoop) {
+                                    sqlInfo = SQL.getFromDatabase("select EMAIL from ADMIN where EMAIL = '" + adminCreateEmail.getText() + "';");
                                     if(!SQL.wentInLoop) {
-                                        sqlInfo = SQL.getFromDatabase("select EMAIL from ADMIN where EMAIL = '" + adminCreateEmail.getText() + "';");
+                                        sqlInfo = SQL.getFromDatabase("select EMAIL from CUSTOMER where EMAIL = '" + adminCreateEmail.getText() + "';");
                                         if(!SQL.wentInLoop) {
-                                            sqlInfo = SQL.getFromDatabase("select EMAIL from CUSTOMER where EMAIL = '" + adminCreateEmail.getText() + "';");
-                                            if(!SQL.wentInLoop) {
-                                                    SendEmail.send(emailAddress);
-                                                    SQL.sendToDatabase("insert into CUSTOMER (NAME, EMAIL, USERNAME, PASSWORD) values('" + adminCreateCustName.getText() + "','" + adminCreateEmail.getText() + "','" + adminCreateUsername.getText() + "','" + adminCreatePassword.getText() + "');");
-                                                    adminCreateCustName.clear();
-                                                    adminCreateEmail.clear();
-                                                    adminCreateUsername.clear();
-                                                    adminCreatePassword.clear();
-                                                    adminCreateConfirmPassword.clear();
-                                                    AlertBox.display("Create Account Successful", 500, 200, "Successfully created new account! An email has been sent to the customer's email address.");
-                                            }
-                                            else {
-                                                SQL.wentInLoop = false;
-                                                AlertBox.display("Email Already Exists", 500, 200, "The email you entered already exists.");
-                                            }
+                                            SendEmail.send(emailAddress);
+                                            SQL.sendToDatabase("insert into CUSTOMER (NAME, EMAIL, USERNAME, PASSWORD) values('" + adminCreateCustName.getText() + "','" + adminCreateEmail.getText() + "','" + adminCreateUsername.getText() + "','" + adminCreatePassword.getText() + "');");
+                                            adminCreateCustName.clear();
+                                            adminCreateEmail.clear();
+                                            adminCreateUsername.clear();
+                                            adminCreatePassword.clear();
+                                            adminCreateConfirmPassword.clear();
+                                            AlertBox.display("Create Account Successful", 500, 200, "Successfully created new account! An email has been sent to the customer's email address.");
                                         }
                                         else {
                                             SQL.wentInLoop = false;
@@ -718,15 +731,22 @@ public class Main extends Application {
                                     }
                                     else {
                                         SQL.wentInLoop = false;
-                                        AlertBox.display("Username Already Exists", 500, 200, "The username you entered already exists.");
+                                        AlertBox.display("Email Already Exists", 500, 200, "The email you entered already exists.");
                                     }
                                 }
                                 else {
                                     SQL.wentInLoop = false;
                                     AlertBox.display("Username Already Exists", 500, 200, "The username you entered already exists.");
                                 }
+                            }
+                            else {
+                                SQL.wentInLoop = false;
+                                AlertBox.display("Username Already Exists", 500, 200, "The username you entered already exists.");
+                            }
                         }
-                    } else if (adminElementDropdownBox.getValue().equals("Train")) {
+                    }
+                    //if an admin wants to create a train
+                    else if (adminElementDropdownBox.getValue().equals("Train")) {
                         if (adminCreateTrainName.getText().equals("")) {
                             AlertBox.display("Name Invalid", 500, 200, "You did not enter a proper name.");
                             return;
@@ -743,7 +763,9 @@ public class Main extends Application {
                             adminCreateNumOfSeats.clear();
                             AlertBox.display("Create Train Successful", 500, 200, "Successfully created new train!");
                         }
-                    } else if (adminElementDropdownBox.getValue().equals("Train Station")) {
+                    }
+                    //if an admin wants to create a train station
+                    else if (adminElementDropdownBox.getValue().equals("Train Station")) {
                         if (adminCreateTrainStationName.getText().equals("")) {
                             AlertBox.display("Name Invalid", 500, 200, "You did not enter a proper name.");
                             return;
@@ -756,7 +778,9 @@ public class Main extends Application {
                             adminCreateLocation.clear();
                             AlertBox.display("Create Train Station Successful", 500, 200, "Successfully created a new train station!");
                         }
-                    } else if (adminElementDropdownBox.getValue().equals("Schedule Entry")) {
+                    }
+                    //if an admin wants to create a schedule entry
+                    else if (adminElementDropdownBox.getValue().equals("Schedule Entry")) {
                         sqlInfo = SQL.getFromDatabase("select TRAIN_ID from TRAIN where ID = " + adminCheckTrainName.getText() + ";");
                         if (!SQL.wentInLoop) {
                             AlertBox.display("Train ID Invalid", 500, 200, "You did not enter a train ID that exists.");
@@ -780,7 +804,9 @@ public class Main extends Application {
                             adminCreateSchedIn.clear();
                             AlertBox.display("Create Schedule Entry Successful", 500, 200, "Successfully created a new Schedule Entry!");
                         }
-                    } else if (adminElementDropdownBox.getValue().equals("Track")) {
+                    }
+                    //if an admin wants to create a track
+                    else if (adminElementDropdownBox.getValue().equals("Track")) {
                         sqlInfo = SQL.getFromDatabase("select TRAIN_STATION_ID from TRAIN_STATION where ID = " + adminCreateStationFrom.getText() + ";");
                         if (!SQL.wentInLoop) {
                             AlertBox.display("Train ID Invalid", 500, 200, "You did not enter a proper station ID to depart from.");
@@ -801,7 +827,9 @@ public class Main extends Application {
                             adminCreateLength.clear();
                             AlertBox.display("Create Track Successful", 500, 200, "Successfully created a new track!");
                         }
-                    } else if (adminElementDropdownBox.getValue().equals("Ticket")) {
+                    }
+                    //if an admin wants to create a ticket
+                    else if (adminElementDropdownBox.getValue().equals("Ticket")) {
                         try {
                             currentDate = sqlFormat.parse(sqlFormat.format(new Date()));
                         }
@@ -835,6 +863,7 @@ public class Main extends Application {
                     }
                 }
                 else if(adminManipulateDropdownBox.getValue().equals("Update")) {
+                    //if an admin wants to update an already existing customer
                     if (adminElementDropdownBox.getValue().equals("Customer")) {
                         invalidDomain = SendEmail.readDomains(adminUpdateEmail.getText());
                         sqlInfo = SQL.getFromDatabase("select CUST_ID from CUSTOMER where ID = '" + adminUpdateCheckCustID.getText() + "';");
@@ -896,7 +925,9 @@ public class Main extends Application {
                         } else {
                             AlertBox.display("Customer ID Invalid", 500, 200, "You did not enter a proper pre-existing customer ID.");
                         }
-                    } else if (adminElementDropdownBox.getValue().equals("Train")) {
+                    }
+                    //if an admin wants to update an already existing train
+                    else if (adminElementDropdownBox.getValue().equals("Train")) {
                         if (adminUpdateCheckTrainID.getText().equals(" ")) {
                             AlertBox.display("Train ID Invalid", 500, 200, "You did not enter a proper pre-existing train ID.");
                         } else if (adminUpdateTrainName.getText().equals("")) {
@@ -916,7 +947,9 @@ public class Main extends Application {
                             adminUpdateNumOfSeats.clear();
                             AlertBox.display("Update Train Successful", 500, 200, "Successfully updated train!");
                         }
-                    } else if (adminElementDropdownBox.getValue().equals("Train Station")) {
+                    }
+                    //if an admin wants to update an already existing train station
+                    else if (adminElementDropdownBox.getValue().equals("Train Station")) {
                         if (adminUpdateCheckTrainStationID.getText().equals(" ")) {
                             AlertBox.display("Train Station ID Invalid", 500, 200, "You did not enter a proper pre-existing train station ID.");
                         } else if (adminUpdateTrainStationName.getText().equals("")) {
@@ -932,7 +965,9 @@ public class Main extends Application {
                             adminUpdateLocation.clear();
                             AlertBox.display("Update Train Station Successful", 500, 200, "Successfully updated a train station!");
                         }
-                    } else if (adminElementDropdownBox.getValue().equals("Schedule Entry")) {
+                    }
+                    //if an admin wants to update an already existing schedule entry
+                    else if (adminElementDropdownBox.getValue().equals("Schedule Entry")) {
                         if (adminUpdateSchedID.getText().equals(" ")) {
                             AlertBox.display("Schedule Entry ID Invalid", 500, 200, "You did not enter a proper pre-existing schedule entry ID.");
                         }
@@ -960,7 +995,9 @@ public class Main extends Application {
                             adminUpdateSchedIn.clear();
                             AlertBox.display("Update Schedule Entry Successful", 500, 200, "Successfully updated a Schedule Entry!");
                         }
-                    } else if (adminElementDropdownBox.getValue().equals("Track")) {
+                    }
+                    //if an admin wants to update an already existing track
+                    else if (adminElementDropdownBox.getValue().equals("Track")) {
                         if (adminUpdateTrackID.getText().equals(" ")) {
                             AlertBox.display("Schedule Entry ID Invalid", 500, 200, "You did not enter a proper pre-existing track ID.");
                         }
@@ -984,7 +1021,9 @@ public class Main extends Application {
                             adminUpdateLength.clear();
                             AlertBox.display("Update Track Successful", 500, 200, "Successfully updated a track!");
                         }
-                    } else if (adminElementDropdownBox.getValue().equals("Ticket")) {
+                    }
+                    //if an admin wants to update an already existing ticket
+                    else if (adminElementDropdownBox.getValue().equals("Ticket")) {
                         if (adminUpdateCheckTicketID.getText().equals(" ")) {
                             AlertBox.display("Ticket ID Invalid", 500, 200, "You did not enter a proper pre-existing ticket ID.");
                         }
@@ -1015,6 +1054,7 @@ public class Main extends Application {
                         }
                     }
                 }
+                //if user wants to delete elements
                 else if(adminManipulateDropdownBox.getValue().equals("Delete")) {
                     if(adminElementDropdownBox.getValue().equals("Customer")) {
                         if(adminDeleteCustID.getText().equals("")) {
@@ -1089,6 +1129,7 @@ public class Main extends Application {
         //creating a new button with text called "Save Changes"; will open confirmation box confirming customer actually wants to purchase/cancel a ticket
         custSaveChangesButton = new Button("Save Changes");
         custSaveChangesButton.setPrefWidth(100); //sets width to 100
+        //on button click...
         custSaveChangesButton.setOnAction(e -> {
             result = ConfirmBox.display("Confirm Changes", 500, 200, "Are you sure you want to make this change?");
             if(result) {
@@ -1131,24 +1172,27 @@ public class Main extends Application {
         //creating a new button with text called "Authorize"; will open confirmation box confirming that the admin wants to add a new admin
         adminAuthorizationAuthorizeButton = new Button("Authorize");
         adminAuthorizationAuthorizeButton.setPrefWidth(80);
+        //on button click...
         adminAuthorizationAuthorizeButton.setOnAction(e -> {
             result = ConfirmBox.display("Authorize New Administrator User", 500, 200, "Are you sure you want to create a new Administrator user?");
+            //if no information is duplicated and the pre-existing admin said they wanted to create another admin, then create the admin account and send an email
             if(result) {
-                    SendEmail.send(createAccountEmail.getText());
-                    adminAuthorizationWindow.close();
-                    mainWindow.setScene(loginUI);
-                    mainWindow.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
-                    mainWindow.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
-                    mainWindow.setTitle("Railway System Simulation: Login");
-                    SQL.sendToDatabase("insert into ADMIN (NAME, EMAIL, USERNAME, PASSWORD) values('" + createAccountName.getText() + "','" + createAccountEmail.getText() + "','" + createAccountUsername.getText() + "','" + createAccountPassword.getText() + "');");
-                    AlertBox.display("Create Account Successful", 500, 200, "Successfully created new account! An email has been sent to your email address.");
-                    return;
-                }
+                SendEmail.send(createAccountEmail.getText());
+                adminAuthorizationWindow.close();
+                mainWindow.setScene(loginUI);
+                mainWindow.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
+                mainWindow.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
+                mainWindow.setTitle("Railway System Simulation: Login");
+                SQL.sendToDatabase("insert into ADMIN (NAME, EMAIL, USERNAME, PASSWORD) values('" + createAccountName.getText() + "','" + createAccountEmail.getText() + "','" + createAccountUsername.getText() + "','" + createAccountPassword.getText() + "');");
+                AlertBox.display("Create Account Successful", 500, 200, "Successfully created new account! An email has been sent to your email address.");
+                return;
+            }
         });
 
         //creating a new button with text called "Cancel"; will stop pre-existing admin from creating a new admin user
         adminAuthorizationCancelButton = new Button("Cancel");
         adminAuthorizationCancelButton.setPrefWidth(80);
+        //on button click...
         adminAuthorizationCancelButton.setOnAction(e -> {
             result = ConfirmBox.display("Cancellation of New Adminstrator User", 500, 200, "Are you sure you do not want to create a new Administrator user?");
             if (result) {
@@ -1172,7 +1216,6 @@ public class Main extends Application {
         loginOuterLayout.setPadding(new Insets(20, 30, 20, 30));
 
         //creating a layout for what will go on our admin Scene
-
         VBox createCustDisplay = new VBox(20);
         createCustDisplay.getChildren().addAll(adminCreateCustName, adminCreateEmail, adminCreateUsername, adminCreatePassword, adminCreateConfirmPassword);
         createCustDisplay.setAlignment(Pos.CENTER);
@@ -1271,7 +1314,7 @@ public class Main extends Application {
         adminDirectionsLayout.getChildren().addAll(adminDirections1, adminDirections2);
         adminDropdownInnerLayout.getChildren().addAll(adminManipulateDropdownBox, adminElementDropdownBox);
         adminDropdownOuterLayout.getChildren().addAll(adminDirectionsLayout, adminDropdownInnerLayout, horizontalSeparator4);
-        adminButtonInnerLayout.getChildren().addAll(adminSaveChangesButton, signOutButton);
+        adminButtonInnerLayout.getChildren().addAll(adminSaveChangesButton, adminSignOutButton);
         adminButtonOuterLayout.getChildren().addAll(horizontalSeparator5, adminButtonInnerLayout);
         adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, createCustDisplay, adminButtonOuterLayout);
         adminDirectionsLayout.setAlignment(Pos.CENTER);
@@ -1282,6 +1325,7 @@ public class Main extends Application {
         adminOuterLayout.setAlignment(Pos.CENTER);
         adminOuterLayout.setPadding(new Insets(20, 30, 20, 30));
 
+        //when dropdown menu selection changes...
         adminManipulateDropdownBox.setOnAction(e -> {
             if(adminManipulateDropdownBox.getValue().equals("Create") && adminElementDropdownBox.getValue().equals("Customer")) {
                 adminOuterLayout.getChildren().clear();
@@ -1357,6 +1401,7 @@ public class Main extends Application {
             }
         });
 
+        //on dropdown menu selection changes...
         adminElementDropdownBox.setOnAction(event -> {
             if(adminManipulateDropdownBox.getValue().equals("Create") && adminElementDropdownBox.getValue().equals("Customer")) {
                 adminOuterLayout.getChildren().clear();
@@ -1438,7 +1483,7 @@ public class Main extends Application {
 
         //creating a layout for what will go on our customer Scene
         HBox custButtonLayout = new HBox(20);
-        custButtonLayout.getChildren().addAll(custSaveChangesButton, signOutButton2);
+        custButtonLayout.getChildren().addAll(custSaveChangesButton, CustSignOutButton);
         custButtonLayout.setAlignment(Pos.CENTER);
 
         VBox custDirectionsLayout = new VBox(20);
