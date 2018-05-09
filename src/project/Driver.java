@@ -1281,12 +1281,13 @@ public class Driver extends Application {
             result = ConfirmBox.display("Authorize New Administrator User", 500, 200, "Are you sure you want to create a new Administrator user?");
             //if no information is duplicated and the pre-existing admin said they wanted to create another admin, then create the admin account and send an email
             if(result) {
-                SendEmail.send(createAccountEmail.getText());
+                SendEmail.send(createAccountEmail.getText()); //send email to the new admin
                 adminAuthorizationWindow.close();
                 mainWindow.setScene(loginUI);
                 mainWindow.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
                 mainWindow.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
                 mainWindow.setTitle("Railway System Simulation: Login");
+                //create the new admin within the database
                 SQL.sendToDatabase("insert into ADMIN (NAME, EMAIL, USERNAME, PASSWORD) values('" + createAccountName.getText() + "','" + createAccountEmail.getText() + "','" + createAccountUsername.getText() + "','" + createAccountPassword.getText() + "');");
                 AlertBox.display("Create Account Successful", 500, 200, "Successfully created new account! An email has been sent to your email address.");
                 return;
@@ -1299,6 +1300,7 @@ public class Driver extends Application {
         //on button click...
         adminAuthorizationCancelButton.setOnAction(e -> {
             result = ConfirmBox.display("Cancellation of New Adminstrator User", 500, 200, "Are you sure you do not want to create a new Administrator user?");
+            //if admin confirms they don't want to create another admin
             if (result) {
                 adminAuthorizationWindow.close();
             }
@@ -1319,7 +1321,7 @@ public class Driver extends Application {
         loginOuterLayout.setAlignment(Pos.CENTER);
         loginOuterLayout.setPadding(new Insets(20, 30, 20, 30));
 
-        //creating a layout for what will go on our admin Scene
+        //creating a layout for what CAN appear on our admin Scene
         VBox createCustDisplay = new VBox(20);
         createCustDisplay.getChildren().addAll(adminCreateCustName, adminCreateEmail, adminCreateUsername, adminCreatePassword, adminCreateConfirmPassword);
         createCustDisplay.setAlignment(Pos.CENTER);
@@ -1431,10 +1433,12 @@ public class Driver extends Application {
 
         //when dropdown menu selection changes...
         adminManipulateDropdownBox.setOnAction(e -> {
+            //if the first dropdown menu is "Create" and the second is "Customer"
             if(adminManipulateDropdownBox.getValue().equals("Create") && adminElementDropdownBox.getValue().equals("Customer")) {
                 adminOuterLayout.getChildren().clear();
                 adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, createCustDisplay, adminButtonOuterLayout);
             }
+            //...
             else if(adminManipulateDropdownBox.getValue().equals("Create") && adminElementDropdownBox.getValue().equals("Train")) {
                 adminOuterLayout.getChildren().clear();
                 adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, createTrainDisplay, adminButtonOuterLayout);
@@ -1509,12 +1513,14 @@ public class Driver extends Application {
             }
         });
 
-        //on dropdown menu selection changes...
+        //on dropdown menu selection changes; important to note that we need two of these because if we don't then the Scene will only update when the first dropdown menu is changed
         adminElementDropdownBox.setOnAction(event -> {
+            //if the first dropdown menu is "Create" and the second is "Customer"
             if(adminManipulateDropdownBox.getValue().equals("Create") && adminElementDropdownBox.getValue().equals("Customer")) {
                 adminOuterLayout.getChildren().clear();
                 adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, createCustDisplay, adminButtonOuterLayout);
             }
+            //...
             else if(adminManipulateDropdownBox.getValue().equals("Create") && adminElementDropdownBox.getValue().equals("Train")) {
                 adminOuterLayout.getChildren().clear();
                 adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, createTrainDisplay, adminButtonOuterLayout);
