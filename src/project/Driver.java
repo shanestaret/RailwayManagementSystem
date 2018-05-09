@@ -27,7 +27,7 @@ public class Driver extends Application {
     Stage mainWindow, adminAuthorizationWindow; //the literal frame that pops up
     Scene loginUI, adminUI, custUI, createAccountUI, adminAuthorizationUI; //the different screens that we can get to within our "Stage" or frame
     Button loginButton, adminSignOutButton, CustSignOutButton, createAccountLoginButton, createAccountCreateButton, createAccountCancelButton, adminAuthorizationAuthorizeButton, adminAuthorizationCancelButton, adminSaveChangesButton, custSaveChangesButton; //button that user can interact with
-    Label loginDirections, createAccountDirections1, createAccountDirections2, createAccountEmailWarning1, createAccountEmailWarning2, personalInfo, accountInfo, adminDirections1, adminDirections2, adminAuthorizationDirections, adminDeleteDirections1, adminDeleteDirections2, adminDeleteDirections3, adminDeleteDirections4, adminDeleteDirections5, adminDeleteDirections6, custDirections; //String that will will appear on screen within Stage
+    Label loginDirections, createAccountDirections1, createAccountDirections2, createAccountEmailWarning1, createAccountEmailWarning2, createAccountPersonalInfo, createAccountAccountInfo, adminDirections1, adminDirections2, adminAuthorizationDirections, adminDeleteDirections1, adminDeleteDirections2, adminDeleteDirections3, adminDeleteDirections4, adminDeleteDirections5, adminDeleteDirections6, custDirections; //String that will will appear on screen within Stage
     TextField username, createAccountName, createAccountEmail, createAccountUsername, adminUpdateCheckCustID, adminCheckTrackID, adminUpdateCheckTrainID, adminUpdateTrackID, adminUpdateSchedID, adminUpdateCheckTrainStationID, adminUpdateCheckTicketID, adminUpdateCheckTrackID, adminCheckSchedID, adminUpdateCheckSchedID, adminCreateCustName, adminCreateTrainName, adminCheckTrainName, adminCreateTrainStationName, adminCreateModel, adminCreateNumOfSeats, adminCreateLocation, adminCreateSchedIn, adminCreateSchedOut, adminCreateDate, adminCreateStationFrom, adminCreateStationTo, adminCreateLength,  adminCreateCustSeat, adminCreatePrice, adminCreateEmail, adminCreateUsername, adminUpdateCustName, adminUpdateEmail, adminUpdateUsername, adminUpdatePassword, adminUpdateConfirmPassword, adminUpdateTrainName, adminUpdateCheckTrainName,adminUpdateTrainStationName, adminUpdateModel, adminUpdatePrice, adminUpdateDate, adminUpdateSchedIn, adminUpdateSchedOut, adminUpdateNumOfSeats, adminUpdateLocation, adminUpdateStationFrom, adminUpdateStationTo, adminUpdateLength, adminUpdateCustSeat, adminDeleteCustID, adminDeleteTrainID, adminDeleteTrainStationID, adminDeleteSchedID, adminDeleteTrackID, adminDeleteTicketID, custTicketID; //Where user can input information
     PasswordField password, createAccountPassword, createAccountConfirmPassword, adminUsername, adminPassword, adminCreatePassword, adminCreateConfirmPassword; //Where user password's will be entered
     CheckBox rememberUsernameBox; //Box user can check if it wants application to remember their username after signing out
@@ -40,7 +40,7 @@ public class Driver extends Application {
     ArrayList<String> sqlInfo2 = new ArrayList<>(); //second ArrayList that holds information retrieved from SQL Database when we need to save info from first ArrayList
     Date currentDate; //date that will be used to determine the current date when creating a ticket
     SimpleDateFormat sqlFormat = new SimpleDateFormat("yyyy-MM-dd"); //the date format we need to be compatible with SQL
-    String trainId; //string that will hold the train ID
+    String tempSQL; //string that will hold the temporary information from SQL
 
     @Override
     //allows GUI to load and controls what is shown at what periods and what events happen based on user input
@@ -67,8 +67,8 @@ public class Driver extends Application {
         createAccountDirections2 = new Label("NOTE: If you are creating an admin account, another admin must put in their information to confirm the new admin account.");
         createAccountEmailWarning1 = new Label("IMPORTANT: Entering your email address will result in an email being sent to that address stating you registered");
         createAccountEmailWarning2 = new Label("for this simulation. You may only use your email address for one account.");
-        personalInfo = new Label("Personal Information");
-        accountInfo = new Label("Account Information");
+        createAccountPersonalInfo = new Label("Personal Information");
+        createAccountAccountInfo = new Label("Account Information");
 
         //labels for admin view
         adminDirections1 = new Label("As an administrator, you have the privileges of being able to create, update, and/or delete multiple elements from the Railway System.");
@@ -811,7 +811,7 @@ public class Driver extends Application {
                         //check that all information entered is valid
                         //sqlInfo equals the train id of the train given, if it doesn't exist then sqlInfo is empty and the id is invalid
                         sqlInfo = SQL.getFromDatabase("select TRAIN_ID from TRAIN where ID = " + adminCheckTrainName.getText() + ";");
-                        trainId = sqlInfo.get(0);
+                        tenpSQL = sqlInfo.get(0);
                         if (!SQL.wentInLoop) {
                             AlertBox.display("Train ID Invalid", 500, 200, "You did not enter a train ID that exists.");
                             return;
@@ -830,7 +830,7 @@ public class Driver extends Application {
                         } 
                           //if all information entered is valid, insert the schedule entry into the database
                           else {
-                            SQL.sendToDatabase("insert into SCHEDULE (TRAIN_ID, TRACK_ID, DEPARTURE_TIME, ARRIVAL_TIME) values('" + trainId + "','" + sqlInfo2.get(0) + "','" + adminCreateSchedOut.getText() + "','" + adminCreateSchedIn.getText() + "');");
+                            SQL.sendToDatabase("insert into SCHEDULE (TRAIN_ID, TRACK_ID, DEPARTURE_TIME, ARRIVAL_TIME) values('" + tempSQL + "','" + sqlInfo2.get(0) + "','" + adminCreateSchedOut.getText() + "','" + adminCreateSchedIn.getText() + "');");
                             adminCheckTrainName.clear();
                             adminCheckTrackID.clear();
                             adminCreateSchedOut.clear();
@@ -843,7 +843,7 @@ public class Driver extends Application {
                         //check that all information entered is valid
                         //sqlInfo equals the train station id of the train given, if it doesn't exist then sqlInfo is empty and the id is invalid
                         sqlInfo = SQL.getFromDatabase("select TRAIN_STATION_ID from TRAIN_STATION where ID = " + adminCreateStationFrom.getText() + ";");
-                        trainId = sqlInfo.get(0); //must set a variable equal to what is in sqlInfo because of pass by reference...probably should change this up it is very sloppy
+                        tempSQL = sqlInfo.get(0); //must set a variable equal to what is in sqlInfo because of pass by reference...probably should change this up it is very sloppy
                         if (!SQL.wentInLoop) {
                             AlertBox.display("Train ID Invalid", 500, 200, "You did not enter a proper station ID to depart from.");
                             return;
@@ -860,7 +860,7 @@ public class Driver extends Application {
                         }
                         //if all information entered is valid, insert the track into the database
                         else {
-                            SQL.sendToDatabase("insert into TRACK (STATION_FROM_ID, STATION_TO_ID, LENGTH) values('" + trainId + "','" + sqlInfo2.get(0) + "'," + adminCreateLength.getText() + ");");
+                            SQL.sendToDatabase("insert into TRACK (STATION_FROM_ID, STATION_TO_ID, LENGTH) values('" + tempSQL + "','" + sqlInfo2.get(0) + "'," + adminCreateLength.getText() + ");");
                             adminCreateStationFrom.clear();
                             adminCreateStationTo.clear();
                             adminCreateLength.clear();
@@ -878,13 +878,13 @@ public class Driver extends Application {
                         }
                         //sqlInfo equals the ticket id of the ticket given, if it doesn't exist then sqlInfo is empty and the id is invalid
                         sqlInfo = SQL.getFromDatabase("select SCHEDULE_ID from SCHEDULE where ID = " + adminCheckSchedID.getText() + ";");
-                        trainId = sqlInfo.get(0);
+                        tempSQL = sqlInfo.get(0);
                         if (!SQL.wentInLoop) {
                             AlertBox.display("Schedule Entry ID Invalid", 500, 200, "You did not enter a proper schedule entry ID.");
                             return;
                         } else {
                             ////sqlInfo equals the number of seats that the train holds; this is done to determine if the admin entered in a seat number that is too large and doesn't exist
-                            sqlInfo2 = SQL.getFromDatabase("select NUM_OF_SEATS from TRAIN where TRAIN_ID = (select TRAIN_ID from SCHEDULE where SCHEDULE_ID = '" + trainId + "');");
+                            sqlInfo2 = SQL.getFromDatabase("select NUM_OF_SEATS from TRAIN where TRAIN_ID = (select TRAIN_ID from SCHEDULE where SCHEDULE_ID = '" + tempSQL + "');");
                             if (!(Pattern.matches("[0-9]+", adminCreateCustSeat.getText())) || Integer.parseInt(adminCreateCustSeat.getText()) < 1 || Integer.parseInt(adminCreateCustSeat.getText()) > Integer.parseInt(sqlInfo2.get(0))) {
                                 AlertBox.display("Customer Seat # Invalid", 500, 200, "You did not enter a proper customer seat number.");
                                 return;
@@ -897,7 +897,7 @@ public class Driver extends Application {
                             } 
                             //if all information entered is valid, insert the ticket into the database
                             else {
-                                SQL.sendToDatabase("insert into TICKET (SCHEDULE_ID, EVENT_DATE, SEAT, PRICE) values('" + trainId + "','" + adminCreateDate.getText() + "','" + adminCreateCustSeat.getText() + "'," + adminCreatePrice.getText() + ");");
+                                SQL.sendToDatabase("insert into TICKET (SCHEDULE_ID, EVENT_DATE, SEAT, PRICE) values('" + tempSQL + "','" + adminCreateDate.getText() + "','" + adminCreateCustSeat.getText() + "'," + adminCreatePrice.getText() + ");");
                                 adminCheckSchedID.clear();
                                 adminCreateDate.clear();
                                 adminCreateCustSeat.clear();
@@ -1034,7 +1034,7 @@ public class Driver extends Application {
                             return;
                         }
                         sqlInfo2 = SQL.getFromDatabase("select TRACK_ID from TRACK where ID = " + adminUpdateCheckTrackID.getText() + ";");
-                        trainId = sqlInfo.get(0);
+                        tempSQL = sqlInfo.get(0);
                         if (!SQL.wentInLoop) {
                             AlertBox.display("Track ID Invalid", 500, 200, "You did not enter a track ID that exists.");
                             return;
@@ -1047,7 +1047,7 @@ public class Driver extends Application {
                         } 
                           //if information is valid, then update schedule the schedule based on the information
                           else {
-                            SQL.sendToDatabase("update SCHEDULE set TRAIN_ID = '" + trainId + "', TRACK_ID = '" + sqlInfo2.get(0) + "', DEPARTURE_TIME = '" + adminUpdateSchedOut.getText() + "', ARRIVAL_TIME = '" + adminUpdateSchedIn.getText() + "' where ID = " + adminUpdateSchedID.getText() + ";");
+                            SQL.sendToDatabase("update SCHEDULE set TRAIN_ID = '" + tempSQL + "', TRACK_ID = '" + sqlInfo2.get(0) + "', DEPARTURE_TIME = '" + adminUpdateSchedOut.getText() + "', ARRIVAL_TIME = '" + adminUpdateSchedIn.getText() + "' where ID = " + adminUpdateSchedID.getText() + ";");
                             adminUpdateSchedID.clear();
                             adminUpdateCheckTrainName.clear();
                             adminUpdateCheckTrackID.clear();
@@ -1063,7 +1063,7 @@ public class Driver extends Application {
                         }
                         //if sqlInfo is occupied, then that means the train station from id supplied exists
                         sqlInfo = SQL.getFromDatabase("select TRAIN_STATION_ID from TRAIN_STATION where ID = " + adminUpdateStationFrom.getText() + ";");
-                        trainId = sqlInfo.get(0); //setting variable equal to sqlInfo so that information isn't lost due to pass by reference
+                        tempSQL = sqlInfo.get(0); //setting variable equal to sqlInfo so that information isn't lost due to pass by reference
                         if (!SQL.wentInLoop) {
                             AlertBox.display("Train ID Invalid", 500, 200, "You did not enter a proper station ID to depart from.");
                             return;
@@ -1079,7 +1079,7 @@ public class Driver extends Application {
                         } 
                           //if all info provided is valid, then update the track with the new information given by the admin
                           else {
-                            SQL.sendToDatabase("update TRACK set STATION_FROM_ID = '" + trainId + "', STATION_TO_ID = '" + sqlInfo2.get(0) + "', LENGTH = " + adminUpdateLength.getText() + " where ID = " + adminUpdateTrackID.getText() + ";");
+                            SQL.sendToDatabase("update TRACK set STATION_FROM_ID = '" + tempSQL + "', STATION_TO_ID = '" + sqlInfo2.get(0) + "', LENGTH = " + adminUpdateLength.getText() + " where ID = " + adminUpdateTrackID.getText() + ";");
                             adminUpdateTrackID.clear();
                             adminUpdateStationFrom.clear();
                             adminUpdateStationTo.clear();
@@ -1099,7 +1099,7 @@ public class Driver extends Application {
                             return;
                         } else {
                             //sqlInfo holds how many seats are in the train given by the ID
-                            sqlInfo2 = SQL.getFromDatabase("select NUM_OF_SEATS from TRAIN where TRAIN_ID = (select TRAIN_ID from SCHEDULE where SCHEDULE_ID = " + trainId + ");");
+                            sqlInfo2 = SQL.getFromDatabase("select NUM_OF_SEATS from TRAIN where TRAIN_ID = (select TRAIN_ID from SCHEDULE where SCHEDULE_ID = " + tempSQL + ");");
                             //check if information is valid
                             if (!(Pattern.matches("[0-9]+", adminUpdateCustSeat.getText())) || Integer.parseInt(adminUpdateCustSeat.getText()) < 1 || Integer.parseInt(adminUpdateCustSeat.getText()) > Integer.parseInt(sqlInfo2.get(0))) {
                                 AlertBox.display("Customer Seat # Invalid", 500, 200, "You did not enter a proper customer seat number.");
@@ -1113,7 +1113,7 @@ public class Driver extends Application {
                             } 
                             //if all information is valid, update the ticket based on the admin's input
                             else {
-                                SQL.sendToDatabase("update TICKET set SCHEDULE_ID = '" + trainId + "', EVENT_DATE = '" + adminUpdateDate.getText() + "', SEAT = " + adminUpdateCustSeat.getText() + ", PRICE = '" + adminUpdatePrice.getText() + "' where ID = " + adminUpdateCheckTicketID.getText() + ";");
+                                SQL.sendToDatabase("update TICKET set SCHEDULE_ID = '" + tempSQL + "', EVENT_DATE = '" + adminUpdateDate.getText() + "', SEAT = " + adminUpdateCustSeat.getText() + ", PRICE = '" + adminUpdatePrice.getText() + "' where ID = " + adminUpdateCheckTicketID.getText() + ";");
                                 adminUpdateCheckTicketID.clear();
                                 adminUpdateCheckSchedID.clear();
                                 adminUpdateCustSeat.clear();
