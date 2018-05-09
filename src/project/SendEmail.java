@@ -7,8 +7,10 @@ import javax.mail.*;
 import javax.mail.internet.*;
 
 public class SendEmail {
-    private static final String u = "railwaysimulationtest@gmail.com";
-    private static final String p = "railwayfun";
+    private static final String u = "railwaysimulationtest@gmail.com"; // the sender
+    private static final String p = "railwayfun"; //the password to send the email
+    
+    //method that handles the actual sending of the email
     public static void send(String userEmail) {
         // Recipient's email ID needs to be mentioned.
         String to = userEmail;
@@ -16,7 +18,7 @@ public class SendEmail {
         // Sender's email ID needs to be mentioned
         String from = u;
 
-        // Assuming you are sending email from localhost
+        // Assuming you are sending email using google's handy dandy tools
         String host = "smtp.gmail.com";
 
         // Get system properties
@@ -27,9 +29,7 @@ public class SendEmail {
         props.put("mail.smtp.port", "587");
 
         // Get the default Session object.
-
         //Session session = Session.getDefaultInstance(props);
-
         Session session = Session.getInstance(props,
                 new javax.mail.Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
@@ -60,6 +60,7 @@ public class SendEmail {
         }
     }
 
+    //checks various conditions to determine if the email is valid
     public static boolean isValidEmailAddress(String email) {
         boolean result = true;
         try {
@@ -72,6 +73,7 @@ public class SendEmail {
         return result;
     }
 
+    //checks various conditions to check if the regex or symbols within the email are actually valid
     public static boolean isValidRegex(String email)
     {
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
@@ -80,6 +82,7 @@ public class SendEmail {
                 "A-Z]{2,7}$";
 
         Pattern pat = Pattern.compile(emailRegex);
+        //if email appears to be invalid
         if (email == null) {
             AlertBox.display("Email Does Not Exist", 500, 200, "The email the user entered does not exist.");
             return false;
@@ -87,13 +90,16 @@ public class SendEmail {
         return pat.matcher(email).matches();
     }
 
+    //look at the domains of the emails
     public static boolean readDomains(String userEmail) {
         try {
             File file = new File("VerifiedEmailDomains.txt");
             Scanner scanner = new Scanner(file);
             String domain;
+            //there is more lines of text
             while (scanner.hasNextLine()) {
                 domain = scanner.nextLine();
+                //if the email contains a forbidden domain, return false
                 if(userEmail.contains(domain))
                     return false;
             }
