@@ -907,13 +907,16 @@ public class Driver extends Application {
                         }
                     }
                 }
+                //if admin chooses to update an element
                 else if(adminManipulateDropdownBox.getValue().equals("Update")) {
                     //if an admin wants to update an already existing customer
                     if (adminElementDropdownBox.getValue().equals("Customer")) {
                         invalidDomain = SendEmail.readDomains(adminUpdateEmail.getText());
+                        //sqlInfo will be populated if the customer id supplied by the admin actually exists; if sqlInfo is empty, then the customer id does not exist
                         sqlInfo = SQL.getFromDatabase("select CUST_ID from CUSTOMER where ID = '" + adminUpdateCheckCustID.getText() + "';");
                         if (SQL.wentInLoop) {
                             SQL.wentInLoop = false;
+                            //checking if information entered was invalid
                             if (adminUpdateCheckCustID.getText().equals("")) {
                                 AlertBox.display("Customer ID Invalid", 500, 200, "You did not enter a proper pre-existing customer ID.");
                             } else if (adminUpdateEmail.getText().equals("") || invalidDomain || !SendEmail.isValidEmailAddress(adminUpdateEmail.getText()) || !SendEmail.isValidRegex(adminUpdateEmail.getText())) {
@@ -931,7 +934,9 @@ public class Driver extends Application {
                             } else if (!adminUpdatePassword.getText().equals(adminUpdateConfirmPassword.getText())) {
                                 AlertBox.display("Password Confirmation Error", 500, 200, "Password and Confirmation do not match.");
                                 return;
-                            } else {
+                            } 
+                            //if information entered is valid, then check if the username and email entered already exists
+                            else {
                                 sqlInfo = SQL.getFromDatabase("select USERNAME from CUSTOMER where USERNAME = '" + adminUpdateUsername.getText() + "';");
                                 if (!SQL.wentInLoop) {
                                     sqlInfo = SQL.getFromDatabase("select USERNAME from ADMIN where USERNAME = '" + adminUpdateUsername.getText() + "';");
@@ -939,6 +944,7 @@ public class Driver extends Application {
                                         sqlInfo = SQL.getFromDatabase("select EMAIL from CUSTOMER where EMAIL = '" + adminUpdateEmail.getText() + "';");
                                         if (!SQL.wentInLoop) {
                                             sqlInfo = SQL.getFromDatabase("select EMAIL from ADMIN where EMAIL = '" + adminUpdateEmail.getText() + "';");
+                                            //if the username and email don't already exist, then update the customer in the database based on the given information
                                             if (!SQL.wentInLoop) {
                                                 emailAddress = adminUpdateEmail.getText();
                                                 SQL.sendToDatabase("update CUSTOMER set NAME = '" + adminUpdateCustName.getText() + "', EMAIL = '" + adminUpdateEmail.getText() + "', USERNAME = '" + adminUpdateUsername.getText() + "', PASSWORD = '" + adminUpdatePassword.getText() + "' where ID = '" + adminUpdateCheckCustID.getText() + "';");
@@ -973,6 +979,7 @@ public class Driver extends Application {
                     }
                     //if an admin wants to update an already existing train
                     else if (adminElementDropdownBox.getValue().equals("Train")) {
+                        //check if information entered is valid
                         if (adminUpdateCheckTrainID.getText().equals(" ")) {
                             AlertBox.display("Train ID Invalid", 500, 200, "You did not enter a proper pre-existing train ID.");
                         } else if (adminUpdateTrainName.getText().equals("")) {
@@ -985,6 +992,7 @@ public class Driver extends Application {
                             AlertBox.display("Number of Seats Invalid", 500, 200, "You did not enter a proper number of seats");
                             return;
                         } else {
+                            //if all informaion is valid, update the train based on the information given by the admin
                             SQL.sendToDatabase("update TRAIN set NAME = '" + adminUpdateTrainName.getText() + "', MODEL = '" + adminUpdateModel.getText() + "', NUM_OF_SEATS = '" + adminUpdateNumOfSeats.getText() + "' where ID = " + adminUpdateCheckTrainID.getText() + ";");
                             adminUpdateCheckTrainID.clear();
                             adminUpdateTrainName.clear();
@@ -995,6 +1003,7 @@ public class Driver extends Application {
                     }
                     //if an admin wants to update an already existing train station
                     else if (adminElementDropdownBox.getValue().equals("Train Station")) {
+                        //check if all information is valid
                         if (adminUpdateCheckTrainStationID.getText().equals(" ")) {
                             AlertBox.display("Train Station ID Invalid", 500, 200, "You did not enter a proper pre-existing train station ID.");
                         } else if (adminUpdateTrainStationName.getText().equals("")) {
@@ -1003,7 +1012,9 @@ public class Driver extends Application {
                         } else if (adminUpdateLocation.getText().equals("")) {
                             AlertBox.display("Location Invalid", 500, 200, "You did not enter a proper location.");
                             return;
-                        } else {
+                        } 
+                        //if all information is valid, update the train station based on admin information
+                        else {
                             SQL.sendToDatabase("update TRAIN_STATION set NAME = '" + adminUpdateTrainStationName.getText() + "', LOCATION = '" + adminUpdateLocation.getText() + "' where ID = " + adminUpdateCheckTrainStationID.getText() + ";");
                             adminUpdateCheckTrainStationID.clear();
                             adminUpdateTrainStationName.clear();
@@ -1013,6 +1024,7 @@ public class Driver extends Application {
                     }
                     //if an admin wants to update an already existing schedule entry
                     else if (adminElementDropdownBox.getValue().equals("Schedule Entry")) {
+                        //check if all information is valid
                         if (adminUpdateSchedID.getText().equals(" ")) {
                             AlertBox.display("Schedule Entry ID Invalid", 500, 200, "You did not enter a proper pre-existing schedule entry ID.");
                         }
@@ -1032,7 +1044,9 @@ public class Driver extends Application {
                         } else if (adminUpdateSchedIn.getText().equals("") || adminUpdateSchedIn.getText().length() != 5 || !(Pattern.matches("[0-9]+", adminUpdateSchedIn.getText().substring(0, 2))) || !(Pattern.matches("[0-9]+", adminUpdateSchedIn.getText().substring(3, 5))) || !adminUpdateSchedIn.getText().substring(2, 3).equals(":") || Integer.parseInt(adminUpdateSchedIn.getText().substring(0, 2)) < 1 || Integer.parseInt(adminUpdateSchedIn.getText().substring(0, 2)) > 23 || Integer.parseInt(adminUpdateSchedIn.getText().substring(3, 5)) < 0 || Integer.parseInt(adminUpdateSchedIn.getText().substring(3, 5)) > 59) {
                             AlertBox.display("Arrival Time Invalid", 500, 200, "You did not enter a proper arrival time (Must be in HH:MM format).");
                             return;
-                        } else {
+                        } 
+                          //if information is valid, then update schedule the schedule based on the information
+                          else {
                             SQL.sendToDatabase("update SCHEDULE set TRAIN_ID = '" + trainId + "', TRACK_ID = '" + sqlInfo2.get(0) + "', DEPARTURE_TIME = '" + adminUpdateSchedOut.getText() + "', ARRIVAL_TIME = '" + adminUpdateSchedIn.getText() + "' where ID = " + adminUpdateSchedID.getText() + ";");
                             adminUpdateSchedID.clear();
                             adminUpdateCheckTrainName.clear();
@@ -1047,12 +1061,14 @@ public class Driver extends Application {
                         if (adminUpdateTrackID.getText().equals(" ")) {
                             AlertBox.display("Schedule Entry ID Invalid", 500, 200, "You did not enter a proper pre-existing track ID.");
                         }
+                        //if sqlInfo is occupied, then that means the train station from id supplied exists
                         sqlInfo = SQL.getFromDatabase("select TRAIN_STATION_ID from TRAIN_STATION where ID = " + adminUpdateStationFrom.getText() + ";");
-                        trainId = sqlInfo.get(0);
+                        trainId = sqlInfo.get(0); //setting variable equal to sqlInfo so that information isn't lost due to pass by reference
                         if (!SQL.wentInLoop) {
                             AlertBox.display("Train ID Invalid", 500, 200, "You did not enter a proper station ID to depart from.");
                             return;
                         }
+                        //if sqlInfo2 is occupied, then that means the train station to id supplied exists
                         sqlInfo2 = SQL.getFromDatabase("select TRAIN_STATION_ID from TRAIN_STATION where ID = " + adminUpdateStationTo.getText() + ";");
                         if (!SQL.wentInLoop) {
                             AlertBox.display("Track ID Invalid", 500, 200, "You did not enter a proper station ID to arrive at.");
@@ -1060,7 +1076,9 @@ public class Driver extends Application {
                         } else if (adminUpdateLength.getText().equals("") || !(Pattern.matches("[0-9]+", adminUpdateLength.getText())) || Integer.parseInt(adminUpdateLength.getText()) < 1) {
                             AlertBox.display("Length Invalid", 500, 200, "You did not enter a proper length (Must be a whole number).");
                             return;
-                        } else {
+                        } 
+                          //if all info provided is valid, then update the track with the new information given by the admin
+                          else {
                             SQL.sendToDatabase("update TRACK set STATION_FROM_ID = '" + trainId + "', STATION_TO_ID = '" + sqlInfo2.get(0) + "', LENGTH = " + adminUpdateLength.getText() + " where ID = " + adminUpdateTrackID.getText() + ";");
                             adminUpdateTrackID.clear();
                             adminUpdateStationFrom.clear();
@@ -1074,12 +1092,15 @@ public class Driver extends Application {
                         if (adminUpdateCheckTicketID.getText().equals(" ")) {
                             AlertBox.display("Ticket ID Invalid", 500, 200, "You did not enter a proper pre-existing ticket ID.");
                         }
+                        //if sqlInfo is occupied, then that means the schedule entry id supplied exists
                         sqlInfo = SQL.getFromDatabase("select SCHEDULE_ID from SCHEDULE where ID = " + adminUpdateCheckSchedID.getText() + ";");
                         if (!SQL.wentInLoop) {
                             AlertBox.display("Schedule Entry ID Invalid", 500, 200, "You did not enter a proper schedule entry ID.");
                             return;
                         } else {
+                            //sqlInfo holds how many seats are in the train given by the ID
                             sqlInfo2 = SQL.getFromDatabase("select NUM_OF_SEATS from TRAIN where TRAIN_ID = (select TRAIN_ID from SCHEDULE where SCHEDULE_ID = " + trainId + ");");
+                            //check if information is valid
                             if (!(Pattern.matches("[0-9]+", adminUpdateCustSeat.getText())) || Integer.parseInt(adminUpdateCustSeat.getText()) < 1 || Integer.parseInt(adminUpdateCustSeat.getText()) > Integer.parseInt(sqlInfo2.get(0))) {
                                 AlertBox.display("Customer Seat # Invalid", 500, 200, "You did not enter a proper customer seat number.");
                                 return;
@@ -1089,7 +1110,9 @@ public class Driver extends Application {
                             } else if (adminUpdatePrice.getText().equals("") || adminUpdatePrice.getText().length() < 4 || !adminUpdatePrice.getText().contains(".") || !(Pattern.matches("[0-9]+", adminUpdatePrice.getText().substring(0, adminUpdatePrice.getText().indexOf(".")))) || !(Pattern.matches("[0-9]+", adminUpdatePrice.getText().substring(adminUpdatePrice.getText().indexOf(".") + 1))) || Integer.parseInt(adminUpdatePrice.getText().substring(0, adminUpdatePrice.getText().indexOf("."))) < 1 || Integer.parseInt(adminUpdatePrice.getText().substring(adminUpdatePrice.getText().indexOf(".") + 1)) > 99) {
                                 AlertBox.display("Price Invalid", 500, 200, "You did not enter a proper price (Must be two digits after the decimal).");
                                 return;
-                            } else {
+                            } 
+                            //if all information is valid, update the ticket based on the admin's input
+                            else {
                                 SQL.sendToDatabase("update TICKET set SCHEDULE_ID = '" + trainId + "', EVENT_DATE = '" + adminUpdateDate.getText() + "', SEAT = " + adminUpdateCustSeat.getText() + ", PRICE = '" + adminUpdatePrice.getText() + "' where ID = " + adminUpdateCheckTicketID.getText() + ";");
                                 adminUpdateCheckTicketID.clear();
                                 adminUpdateCheckSchedID.clear();
@@ -1103,11 +1126,14 @@ public class Driver extends Application {
                 }
                 //if user wants to delete elements
                 else if(adminManipulateDropdownBox.getValue().equals("Delete")) {
+                    //if user wants to delete a customer
                     if(adminElementDropdownBox.getValue().equals("Customer")) {
+                        //if id entered is invalid
                         if(adminDeleteCustID.getText().equals("")) {
                             AlertBox.display("Customer ID Invalid", 500, 200, "You did not enter a proper pre-existing customer ID.");
                             return;
                         }
+                        //if id entered is valid, then delete the customer
                         else {
                             SQL.sendToDatabase("delete from CUSTOMER where ID = " + adminDeleteCustID.getText());
                             adminDeleteCustID.clear();
@@ -1115,10 +1141,13 @@ public class Driver extends Application {
                         }
                     }
                     else if(adminElementDropdownBox.getValue().equals("Train")) {
+                        //if user wants to delete a train
                         if(adminDeleteTrainID.getText().equals("")) {
+                            //if id entered is invalid
                             AlertBox.display("Train ID Invalid", 500, 200, "You did not enter a proper pre-existing train ID.");
                             return;
                         }
+                        //if id entered is valid, then delete the train
                         else {
                             SQL.sendToDatabase("delete from TRAIN where ID = " + adminDeleteTrainID.getText());
                             adminDeleteTrainID.clear();
@@ -1126,10 +1155,13 @@ public class Driver extends Application {
                         }
                     }
                     else if(adminElementDropdownBox.getValue().equals("Train Station")) {
+                        //if user wants to delete a train station
                         if(adminDeleteTrainStationID.getText().equals("")) {
+                            //if id entered is invalid
                             AlertBox.display("Train Station ID Invalid", 500, 200, "You did not enter a proper pre-existing train station ID.");
                             return;
                         }
+                        //if id entered is valid, then delete the train station
                         else {
                             SQL.sendToDatabase("delete from TRAIN_STATION where ID = " + adminDeleteTrainStationID.getText());
                             adminDeleteTrainStationID.clear();
@@ -1137,10 +1169,13 @@ public class Driver extends Application {
                         }
                     }
                     else if(adminElementDropdownBox.getValue().equals("Schedule Entry")) {
+                        //if user wants to delete a schedule entry
                         if(adminDeleteSchedID.getText().equals("")) {
+                            //if id entered is invalid
                             AlertBox.display("Schedule Entry ID Invalid", 500, 200, "You did not enter a proper pre-existing schedule entry ID.");
                             return;
                         }
+                        //if id entered is valid, then delete the schedule entry
                         else {
                             SQL.sendToDatabase("delete from SCHEDULE where ID = " + adminDeleteSchedID.getText());
                             adminDeleteSchedID.clear();
@@ -1148,10 +1183,13 @@ public class Driver extends Application {
                         }
                     }
                     else if(adminElementDropdownBox.getValue().equals("Track")) {
+                        //if user wants to delete a track
                         if(adminDeleteTrackID.getText().equals("")) {
+                            //if id entered is invalid
                             AlertBox.display("Track ID Invalid", 500, 200, "You did not enter a proper pre-existing track ID.");
                             return;
                         }
+                        //if id entered is valid, then delete the track
                         else {
                             SQL.sendToDatabase("delete from TRACK where ID = " + adminDeleteTrackID.getText());
                             adminDeleteTrackID.clear();
@@ -1159,10 +1197,13 @@ public class Driver extends Application {
                         }
                     }
                     else if(adminElementDropdownBox.getValue().equals("Ticket")) {
+                        //if user wants to delete a ticket
                         if(adminDeleteTicketID.getText().equals("")) {
+                            //if id entered is invalid
                             AlertBox.display("Ticket ID Invalid", 500, 200, "You did not enter a proper pre-existing ticket ID.");
                             return;
                         }
+                        //if id entered is valid, then delete the ticket
                         else {
                             SQL.sendToDatabase("delete from TICKET where ID = " + adminDeleteTicketID.getText());
                             adminDeleteTicketID.clear();
@@ -1180,37 +1221,53 @@ public class Driver extends Application {
         custSaveChangesButton.setOnAction(e -> {
             result = ConfirmBox.display("Confirm Changes", 500, 200, "Are you sure you want to make this change?");
             if(result) {
+                //sqlInfo holds the ticket id and owner id based on the ticket id input; if ticket id doesn't exist or another customer already owns the ticket, then a ticket will not be purchased
                 sqlInfo = SQL.getFromDatabase("select TICKET_ID,OWNER_ID from TICKET where ID = " + custTicketID.getText() + ";");
                 if (SQL.wentInLoop) {
                     SQL.wentInLoop = false;
+                    //if there is no owner of the ticket, the customer can have it
                     if (sqlInfo.get(1) == null) {
                         if (custDropdownBox.getValue().equals("Purchase")) {
+                            //update the ticket so that the owner is equivalent to the customer id of the buyer
                             SQL.sendToDatabase("Update TICKET set OWNER_ID = (select CUST_ID from CUSTOMER where USERNAME = '" + custUsername + "');");
                             custTicketID.clear();
                             AlertBox.display("Purchase Ticket Successful", 500, 200, "You have successfully purchased a ticket!");
                             return;
-                        } else if (custDropdownBox.getValue().equals("Cancel")) {
+                        }
+                        //but if a customer is trying to cancel a ticket they don't own, then they must be stopped
+                        else if (custDropdownBox.getValue().equals("Cancel")) {
                             AlertBox.display("Invalid Ticket Cancel", 500, 200, "You are trying to cancel a ticket you don't own.");
                             return;
                         }
-                    } else {
+                    } 
+                     //if there is an owner of the ticket
+                     else {
+                        //find the username of the person that owns the ticket
                         sqlInfo = SQL.getFromDatabase("select USERNAME from CUSTOMER where CUST_ID = '" + sqlInfo.get(1) + "';");
                         if (SQL.wentInLoop) {
                             SQL.wentInLoop = false;
+                            //if the customer is trying to buy a ticket they already own
                             if (custDropdownBox.getValue().equals("Purchase") && (sqlInfo.get(0).equals(custUsername))) {
                                 custTicketID.clear();
                                 AlertBox.display("Invalid Ticket Purchase", 500, 200, "You already own this ticket.");
-                            } else if (custDropdownBox.getValue().equals("Purchase") && !(sqlInfo.get(0).equals(custUsername))) {
+                            }
+                            //if the customer is trying to buy a ticket someone else owns
+                            else if (custDropdownBox.getValue().equals("Purchase") && !(sqlInfo.get(0).equals(custUsername))) {
                                 custTicketID.clear();
                                 AlertBox.display("Invalid Ticket Purchase", 500, 200, "This ticket was already purchased by another user.");
-                            } else if (custDropdownBox.getValue().equals("Cancel") && (sqlInfo.get(0).equals(custUsername))) {
+                            } 
+                            //if the customer is trying to cancel and they own the ticket
+                            else if (custDropdownBox.getValue().equals("Cancel") && (sqlInfo.get(0).equals(custUsername))) {
                                 custTicketID.clear();
+                                //update the ticket owner to NULL as now there is no owner of the ticket
                                 SQL.sendToDatabase("update TICKET set OWNER_ID = NULL;");
                                 AlertBox.display("Cancel Ticket Successful", 500, 200, "You have successfully cancelled a ticket!");
                             }
                         }
                     }
-                } else {
+                } 
+                //if the ticket id entered doesn't exist
+                else {
                     AlertBox.display("Ticket ID Does Not Exist", 500, 200, "You have entered a ticket ID that does not exist.");
                 }
             }
