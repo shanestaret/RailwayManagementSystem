@@ -848,16 +848,18 @@ public class Driver extends Application {
                             AlertBox.display("Train ID Invalid", 500, 200, "You did not enter a proper station ID to depart from.");
                             return;
                         }
-                        //sqlInfo2 equals the train
+                        //sqlInfo2 equals the train station id of the train station that is going to be arriving, if it doesn't exist then sqlInfo2 is empty and the id is invalid
                         sqlInfo2 = SQL.getFromDatabase("select TRAIN_STATION_ID from TRAIN_STATION where ID = " + adminCreateStationTo.getText() + ";");
                         if (!SQL.wentInLoop) {
-                            AlertBox.display("Track ID Invalid", 500, 200, "You did not enter a proper station ID to arrive at.");
+                            AlertBox.display("Train ID Invalid", 500, 200, "You did not enter a proper station ID to arrive at.");
                             return;
                         }
                         else if (adminCreateLength.getText().equals("") || !(Pattern.matches("[0-9]+", adminCreateLength.getText())) || Integer.parseInt(adminCreateLength.getText()) < 1) {
                             AlertBox.display("Length Invalid", 500, 200, "You did not enter a proper length (Must be a whole number).");
                             return;
-                        } else {
+                        }
+                        //if all information entered is valid, insert the track into the database
+                        else {
                             SQL.sendToDatabase("insert into TRACK (STATION_FROM_ID, STATION_TO_ID, LENGTH) values('" + trainId + "','" + sqlInfo2.get(0) + "'," + adminCreateLength.getText() + ");");
                             adminCreateStationFrom.clear();
                             adminCreateStationTo.clear();
@@ -874,12 +876,14 @@ public class Driver extends Application {
                         catch (ParseException excep) {
                             excep.printStackTrace(System.out);
                         }
+                        //sqlInfo equals the ticket id of the ticket given, if it doesn't exist then sqlInfo is empty and the id is invalid
                         sqlInfo = SQL.getFromDatabase("select SCHEDULE_ID from SCHEDULE where ID = " + adminCheckSchedID.getText() + ";");
                         trainId = sqlInfo.get(0);
                         if (!SQL.wentInLoop) {
                             AlertBox.display("Schedule Entry ID Invalid", 500, 200, "You did not enter a proper schedule entry ID.");
                             return;
                         } else {
+                            ////sqlInfo equals the number of seats that the train holds; this is done to determine if the admin entered in a seat number that is too large and doesn't exist
                             sqlInfo2 = SQL.getFromDatabase("select NUM_OF_SEATS from TRAIN where TRAIN_ID = (select TRAIN_ID from SCHEDULE where SCHEDULE_ID = '" + trainId + "');");
                             if (!(Pattern.matches("[0-9]+", adminCreateCustSeat.getText())) || Integer.parseInt(adminCreateCustSeat.getText()) < 1 || Integer.parseInt(adminCreateCustSeat.getText()) > Integer.parseInt(sqlInfo2.get(0))) {
                                 AlertBox.display("Customer Seat # Invalid", 500, 200, "You did not enter a proper customer seat number.");
@@ -890,7 +894,9 @@ public class Driver extends Application {
                             } else if (adminCreatePrice.getText().equals("") || adminCreatePrice.getText().length() < 4 || !adminCreatePrice.getText().contains(".") || !(Pattern.matches("[0-9]+", adminCreatePrice.getText().substring(0, adminCreatePrice.getText().indexOf(".")))) || !(Pattern.matches("[0-9]+", adminCreatePrice.getText().substring(adminCreatePrice.getText().indexOf(".") + 1))) || Integer.parseInt(adminCreatePrice.getText().substring(0, adminCreatePrice.getText().indexOf("."))) < 1 || Integer.parseInt(adminCreatePrice.getText().substring(adminCreatePrice.getText().indexOf(".") + 1)) > 99) {
                                 AlertBox.display("Price Invalid", 500, 200, "You did not enter a proper price (Must be two digits after the decimal).");
                                 return;
-                            } else {
+                            } 
+                            //if all information entered is valid, insert the ticket into the database
+                            else {
                                 SQL.sendToDatabase("insert into TICKET (SCHEDULE_ID, EVENT_DATE, SEAT, PRICE) values('" + trainId + "','" + adminCreateDate.getText() + "','" + adminCreateCustSeat.getText() + "'," + adminCreatePrice.getText() + ");");
                                 adminCheckSchedID.clear();
                                 adminCreateDate.clear();
