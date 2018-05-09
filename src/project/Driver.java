@@ -1,4 +1,4 @@
-package sample;
+package project;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -39,6 +39,7 @@ public class Driver extends Application {
     ArrayList<String> sqlInfo2 = new ArrayList<>(); //second ArrayList that holds information retrieved from SQL Database when we need to save info from first ArrayList
     Date currentDate; //date that will be used to determine the current date when creating a ticket
     SimpleDateFormat sqlFormat = new SimpleDateFormat("yyyy-MM-dd"); //the date format we need to be compatible with SQL
+    String trainId; //string that will hold the train ID
 
     @Override
     //allows GUI to load and controls what is shown at what periods and what events happen based on user input
@@ -600,6 +601,7 @@ public class Driver extends Application {
                 AlertBox.display("Password Confirmation Error", 500, 200, "Password and Confirmation do not match.");
             }
             else {
+                SQL.wentInLoop = false;
                 emailAddress = createAccountEmail.getText();
                 sqlInfo = SQL.getFromDatabase("select USERNAME from ADMIN where USERNAME = '" + createAccountUsername.getText() + "';");
                 //checking if username is already an admin username
@@ -782,6 +784,7 @@ public class Driver extends Application {
                     //if an admin wants to create a schedule entry
                     else if (adminElementDropdownBox.getValue().equals("Schedule Entry")) {
                         sqlInfo = SQL.getFromDatabase("select TRAIN_ID from TRAIN where ID = " + adminCheckTrainName.getText() + ";");
+                        trainId = sqlInfo.get(0);
                         if (!SQL.wentInLoop) {
                             AlertBox.display("Train ID Invalid", 500, 200, "You did not enter a train ID that exists.");
                             return;
@@ -797,7 +800,7 @@ public class Driver extends Application {
                             AlertBox.display("Arrival Time Invalid", 500, 200, "You did not enter a proper arrival time (Must be in HH:MM format).");
                             return;
                         } else {
-                            SQL.sendToDatabase("insert into SCHEDULE (TRAIN_ID, TRACK_ID, DEPARTURE_TIME, ARRIVAL_TIME) values('" + sqlInfo.get(0) + "','" + sqlInfo2.get(0) + "','" + adminCreateSchedOut.getText() + "','" + adminCreateSchedIn.getText() + "');");
+                            SQL.sendToDatabase("insert into SCHEDULE (TRAIN_ID, TRACK_ID, DEPARTURE_TIME, ARRIVAL_TIME) values('" + trainId + "','" + sqlInfo2.get(0) + "','" + adminCreateSchedOut.getText() + "','" + adminCreateSchedIn.getText() + "');");
                             adminCheckTrainName.clear();
                             adminCheckTrackID.clear();
                             adminCreateSchedOut.clear();
@@ -808,6 +811,7 @@ public class Driver extends Application {
                     //if an admin wants to create a track
                     else if (adminElementDropdownBox.getValue().equals("Track")) {
                         sqlInfo = SQL.getFromDatabase("select TRAIN_STATION_ID from TRAIN_STATION where ID = " + adminCreateStationFrom.getText() + ";");
+                        trainId = sqlInfo.get(0);
                         if (!SQL.wentInLoop) {
                             AlertBox.display("Train ID Invalid", 500, 200, "You did not enter a proper station ID to depart from.");
                             return;
@@ -821,7 +825,7 @@ public class Driver extends Application {
                             AlertBox.display("Length Invalid", 500, 200, "You did not enter a proper length (Must be a whole number).");
                             return;
                         } else {
-                            SQL.sendToDatabase("insert into TRACK (STATION_FROM_ID, STATION_TO_ID, LENGTH) values('" + sqlInfo.get(0) + "','" + sqlInfo2.get(0) + "','" + adminCreateLength.getText() + "');");
+                            SQL.sendToDatabase("insert into TRACK (STATION_FROM_ID, STATION_TO_ID, LENGTH) values('" + trainId + "','" + sqlInfo2.get(0) + "'," + adminCreateLength.getText() + ");");
                             adminCreateStationFrom.clear();
                             adminCreateStationTo.clear();
                             adminCreateLength.clear();
@@ -831,28 +835,30 @@ public class Driver extends Application {
                     //if an admin wants to create a ticket
                     else if (adminElementDropdownBox.getValue().equals("Ticket")) {
                         try {
-                            currentDate = sqlFormat.parse(sqlFormat.format(new Date()));
+                            currentDate = new Date();
+                            currentDate = sqlFormat.parse(sqlFormat.format(currentDate));
                         }
                         catch (ParseException excep) {
                             excep.printStackTrace(System.out);
                         }
                         sqlInfo = SQL.getFromDatabase("select SCHEDULE_ID from SCHEDULE where ID = " + adminCheckSchedID.getText() + ";");
+                        trainId = sqlInfo.get(0);
                         if (!SQL.wentInLoop) {
                             AlertBox.display("Schedule Entry ID Invalid", 500, 200, "You did not enter a proper schedule entry ID.");
                             return;
                         } else {
-                            sqlInfo2 = SQL.getFromDatabase("select NUM_OF_SEATS from TRAIN where TRAIN_ID = (select TRAIN_ID from SCHEDULE where SCHEDULE_ID = " + sqlInfo.get(0) + ");");
+                            sqlInfo2 = SQL.getFromDatabase("select NUM_OF_SEATS from TRAIN where TRAIN_ID = (select TRAIN_ID from SCHEDULE where SCHEDULE_ID = '" + trainId + "');");
                             if (!(Pattern.matches("[0-9]+", adminCreateCustSeat.getText())) || Integer.parseInt(adminCreateCustSeat.getText()) < 1 || Integer.parseInt(adminCreateCustSeat.getText()) > Integer.parseInt(sqlInfo2.get(0))) {
                                 AlertBox.display("Customer Seat # Invalid", 500, 200, "You did not enter a proper customer seat number.");
                                 return;
-                            } else if (adminCreateDate.getText().equals("") || adminCreateDate.getText().length() != 10 || !adminCreateDate.getText().substring(4, 5).equals("-") || !adminCreateDate.getText().substring(7, 8).equals("-") || !(Pattern.matches("[0-9]+", adminCreateDate.getText().substring(0, 4))) || !(Pattern.matches("[0-9]+", adminCreateDate.getText().substring(5, 7))) || !(Pattern.matches("[0-9]+", adminCreateDate.getText().substring(8, 10))) || Integer.parseInt(adminCreateDate.getText().substring(0, 4)) < 1 || Integer.parseInt(adminCreateDate.getText().substring(5, 7)) > 12 || Integer.parseInt(adminCreateDate.getText().substring(5, 7)) < 1 || Integer.parseInt(adminCreateDate.getText().substring(8, 10)) > 30 || Integer.parseInt(adminCreateDate.getText().substring(8, 10)) < 1 || Integer.parseInt(adminCreateDate.getText().substring(0, 4)) > 9999 || Integer.parseInt(adminCreateDate.getText().substring(0, 4)) != Integer.parseInt(currentDate.toString().substring(0, 4)) || Integer.parseInt(adminCreateDate.getText().substring(5, 7)) != Integer.parseInt(currentDate.toString().substring(5, 7)) || Integer.parseInt(adminCreateDate.getText().substring(8, 10)) < Integer.parseInt(currentDate.toString().substring(8, 10))) {
+                            } else if (adminCreateDate.getText().equals("") || adminCreateDate.getText().length() != 10 || !adminCreateDate.getText().substring(4, 5).equals("-") || !adminCreateDate.getText().substring(7, 8).equals("-") || !(Pattern.matches("[0-9]+", adminCreateDate.getText().substring(0, 4))) || !(Pattern.matches("[0-9]+", adminCreateDate.getText().substring(5, 7))) || !(Pattern.matches("[0-9]+", adminCreateDate.getText().substring(8, 10))) || Integer.parseInt(adminCreateDate.getText().substring(0, 4)) < 1 || Integer.parseInt(adminCreateDate.getText().substring(5, 7)) > 12 || Integer.parseInt(adminCreateDate.getText().substring(5, 7)) < 1 || Integer.parseInt(adminCreateDate.getText().substring(8, 10)) > 30 || Integer.parseInt(adminCreateDate.getText().substring(8, 10)) < 1 || Integer.parseInt(adminCreateDate.getText().substring(0, 4)) > 9999 || Integer.parseInt(adminCreateDate.getText().substring(0, 4)) != Integer.parseInt(currentDate.toString().substring(24, 28))) {
                                 AlertBox.display("Date Invalid", 500, 200, "You did not enter a proper date (Must be in YYYY-MM-DD format) and must be a current or future date within this month.");
                                 return;
                             } else if (adminCreatePrice.getText().equals("") || adminCreatePrice.getText().length() < 4 || !adminCreatePrice.getText().contains(".") || !(Pattern.matches("[0-9]+", adminCreatePrice.getText().substring(0, adminCreatePrice.getText().indexOf(".")))) || !(Pattern.matches("[0-9]+", adminCreatePrice.getText().substring(adminCreatePrice.getText().indexOf(".") + 1))) || Integer.parseInt(adminCreatePrice.getText().substring(0, adminCreatePrice.getText().indexOf("."))) < 1 || Integer.parseInt(adminCreatePrice.getText().substring(adminCreatePrice.getText().indexOf(".") + 1)) > 99) {
                                 AlertBox.display("Price Invalid", 500, 200, "You did not enter a proper price (Must be two digits after the decimal).");
                                 return;
                             } else {
-                                SQL.sendToDatabase("insert into TICKET (SCHEDULE_ID, EVENT_DATE, SEAT, PRICE) values('" + sqlInfo.get(0) + "','" + adminCreateDate.getText() + "','" + adminCreateCustSeat.getText() + "'," + adminCreatePrice.getText() + ");");
+                                SQL.sendToDatabase("insert into TICKET (SCHEDULE_ID, EVENT_DATE, SEAT, PRICE) values('" + trainId + "','" + adminCreateDate.getText() + "','" + adminCreateCustSeat.getText() + "'," + adminCreatePrice.getText() + ");");
                                 adminCheckSchedID.clear();
                                 adminCreateDate.clear();
                                 adminCreateCustSeat.clear();
@@ -871,7 +877,7 @@ public class Driver extends Application {
                             SQL.wentInLoop = false;
                             if (adminUpdateCheckCustID.getText().equals("")) {
                                 AlertBox.display("Customer ID Invalid", 500, 200, "You did not enter a proper pre-existing customer ID.");
-                            } else if (adminCreateEmail.getText().equals("") || invalidDomain || !SendEmail.isValidEmailAddress(createAccountEmail.getText()) || !SendEmail.isValidRegex(createAccountEmail.getText())) {
+                            } else if (adminUpdateEmail.getText().equals("") || invalidDomain || !SendEmail.isValidEmailAddress(adminUpdateEmail.getText()) || !SendEmail.isValidRegex(adminUpdateEmail.getText())) {
                                 AlertBox.display("Email Invalid", 500, 200, "You did not enter a proper email address.");
                                 return;
                             } else if (adminUpdateCustName.getText().equals("")) {
@@ -977,6 +983,7 @@ public class Driver extends Application {
                             return;
                         }
                         sqlInfo2 = SQL.getFromDatabase("select TRACK_ID from TRACK where ID = " + adminUpdateCheckTrackID.getText() + ";");
+                        trainId = sqlInfo.get(0);
                         if (!SQL.wentInLoop) {
                             AlertBox.display("Track ID Invalid", 500, 200, "You did not enter a track ID that exists.");
                             return;
@@ -987,7 +994,7 @@ public class Driver extends Application {
                             AlertBox.display("Arrival Time Invalid", 500, 200, "You did not enter a proper arrival time (Must be in HH:MM format).");
                             return;
                         } else {
-                            SQL.sendToDatabase("update SCHEDULE set TRAIN_ID = '" + sqlInfo.get(0) + "', TRACK_ID = '" + sqlInfo2.get(0) + "', DEPARTURE_TIME = '" + adminUpdateSchedOut.getText() + "', ARRIVAL_TIME = '" + adminUpdateSchedIn.getText() + "' where ID = " + adminUpdateSchedID.getText() + ";");
+                            SQL.sendToDatabase("update SCHEDULE set TRAIN_ID = '" + trainId + "', TRACK_ID = '" + sqlInfo2.get(0) + "', DEPARTURE_TIME = '" + adminUpdateSchedOut.getText() + "', ARRIVAL_TIME = '" + adminUpdateSchedIn.getText() + "' where ID = " + adminUpdateSchedID.getText() + ";");
                             adminUpdateSchedID.clear();
                             adminUpdateCheckTrainName.clear();
                             adminUpdateCheckTrackID.clear();
@@ -1002,6 +1009,7 @@ public class Driver extends Application {
                             AlertBox.display("Schedule Entry ID Invalid", 500, 200, "You did not enter a proper pre-existing track ID.");
                         }
                         sqlInfo = SQL.getFromDatabase("select TRAIN_STATION_ID from TRAIN_STATION where ID = " + adminUpdateStationFrom.getText() + ";");
+                        trainId = sqlInfo.get(0);
                         if (!SQL.wentInLoop) {
                             AlertBox.display("Train ID Invalid", 500, 200, "You did not enter a proper station ID to depart from.");
                             return;
@@ -1014,7 +1022,7 @@ public class Driver extends Application {
                             AlertBox.display("Length Invalid", 500, 200, "You did not enter a proper length (Must be a whole number).");
                             return;
                         } else {
-                            SQL.sendToDatabase("update TRACK set STATION_FROM_ID = '" + sqlInfo.get(0) + "', STATION_TO_ID = '" + sqlInfo2.get(0) + "', LENGTH = " + adminUpdateLength.getText() + " where ID = " + adminUpdateTrackID.getText() + ";");
+                            SQL.sendToDatabase("update TRACK set STATION_FROM_ID = '" + trainId + "', STATION_TO_ID = '" + sqlInfo2.get(0) + "', LENGTH = " + adminUpdateLength.getText() + " where ID = " + adminUpdateTrackID.getText() + ";");
                             adminUpdateTrackID.clear();
                             adminUpdateStationFrom.clear();
                             adminUpdateStationTo.clear();
@@ -1032,7 +1040,7 @@ public class Driver extends Application {
                             AlertBox.display("Schedule Entry ID Invalid", 500, 200, "You did not enter a proper schedule entry ID.");
                             return;
                         } else {
-                            sqlInfo2 = SQL.getFromDatabase("select NUM_OF_SEATS from TRAIN where TRAIN_ID = (select TRAIN_ID from SCHEDULE where SCHEDULE_ID = " + sqlInfo.get(0) + ");");
+                            sqlInfo2 = SQL.getFromDatabase("select NUM_OF_SEATS from TRAIN where TRAIN_ID = (select TRAIN_ID from SCHEDULE where SCHEDULE_ID = " + trainId + ");");
                             if (!(Pattern.matches("[0-9]+", adminUpdateCustSeat.getText())) || Integer.parseInt(adminUpdateCustSeat.getText()) < 1 || Integer.parseInt(adminUpdateCustSeat.getText()) > Integer.parseInt(sqlInfo2.get(0))) {
                                 AlertBox.display("Customer Seat # Invalid", 500, 200, "You did not enter a proper customer seat number.");
                                 return;
@@ -1043,7 +1051,7 @@ public class Driver extends Application {
                                 AlertBox.display("Price Invalid", 500, 200, "You did not enter a proper price (Must be two digits after the decimal).");
                                 return;
                             } else {
-                                SQL.sendToDatabase("update TICKET set SCHEDULE_ID = '" + sqlInfo.get(0) + "', EVENT_DATE = '" + adminUpdateDate.getText() + "', SEAT = " + adminUpdateCustSeat.getText() + ", PRICE = '" + adminUpdatePrice.getText() + "' where ID = " + adminUpdateCheckTicketID.getText() + ";");
+                                SQL.sendToDatabase("update TICKET set SCHEDULE_ID = '" + trainId + "', EVENT_DATE = '" + adminUpdateDate.getText() + "', SEAT = " + adminUpdateCustSeat.getText() + ", PRICE = '" + adminUpdatePrice.getText() + "' where ID = " + adminUpdateCheckTicketID.getText() + ";");
                                 adminUpdateCheckTicketID.clear();
                                 adminUpdateCheckSchedID.clear();
                                 adminUpdateCustSeat.clear();
@@ -1342,6 +1350,10 @@ public class Driver extends Application {
             else if(adminManipulateDropdownBox.getValue().equals("Create") && adminElementDropdownBox.getValue().equals("Track")) {
                 adminOuterLayout.getChildren().clear();
                 adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, createTrackDisplay, adminButtonOuterLayout);
+            }
+            else if(adminManipulateDropdownBox.getValue().equals("Create") && adminElementDropdownBox.getValue().equals("Schedule Entry")) {
+                adminOuterLayout.getChildren().clear();
+                adminOuterLayout.getChildren().addAll(adminDropdownOuterLayout, createSchedDisplay, adminButtonOuterLayout);
             }
             else if(adminManipulateDropdownBox.getValue().equals("Create") && adminElementDropdownBox.getValue().equals("Ticket")) {
                 adminOuterLayout.getChildren().clear();

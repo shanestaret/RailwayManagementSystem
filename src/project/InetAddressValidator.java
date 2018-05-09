@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package sample;
+package project;
 
 import java.io.Serializable;
 import java.util.ArrayList;
