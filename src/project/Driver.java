@@ -1,5 +1,6 @@
 package project;
 
+//all necessary imports
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -44,7 +45,7 @@ public class Driver extends Application {
     @Override
     //allows GUI to load and controls what is shown at what periods and what events happen based on user input
     public void start(Stage primaryStage) throws Exception{
-        mainWindow = primaryStage;
+        mainWindow = primaryStage; //the main window that pops up when the application starts running
 
         //putting train icon in top left of window
         mainWindowIcon = new Image(getClass().getResourceAsStream("ApplicationIcon.png"));
@@ -126,7 +127,7 @@ public class Driver extends Application {
         horizontalSeparator6 = new Separator();
         horizontalSeparator7 = new Separator();
 
-        //TextFields that hold user information on login screen
+        //TextField and PasswordField that hold user information on login screen
         username = new TextField();
         username.setPrefWidth(300);
         username.setPromptText("Username");
@@ -457,6 +458,7 @@ public class Driver extends Application {
 
         //on button click...
         loginButton.setOnAction(e -> {
+            //set sqlInfo equal to whatever password came back with the given username from the Admin Table
             sqlInfo = SQL.getFromDatabase("select PASSWORD from ADMIN where USERNAME = '" + username.getText() + "';");
             //if there was a password associated with that username within the admin table
             if(SQL.wentInLoop) {
@@ -488,6 +490,7 @@ public class Driver extends Application {
                     password.clear();
                 }
             }
+            //set sqlInfo equal to whatever password came back with the given username from the Customer Table
             sqlInfo = SQL.getFromDatabase("select PASSWORD from CUSTOMER where USERNAME = '" + username.getText() + "';");
             //if there was a password associated with that username within the customer table
             if(SQL.wentInLoop) {
@@ -535,7 +538,7 @@ public class Driver extends Application {
         //on button click...
         adminSignOutButton.setOnAction(e -> {
             result = ConfirmBox.display("Confirming Sign Out Request", 500, 200, "Are you sure you want to sign out of your account?");
-            //if the user said "yes", then initiate popup dialogue saying logout was successful and return to login screen
+            //if the user said "yes", then initiate popup dialogue saying logout was successful and return to login screen; appears in admin view
             if(result) {
                 mainWindow.setTitle("Railway System Simulation: Login");
                 mainWindow.setScene(loginUI);
@@ -588,6 +591,7 @@ public class Driver extends Application {
             if(createAccountName.getText().equals("")) {
                 AlertBox.display("Name Invalid", 500, 200, "You did not enter a proper name.");
             }
+            //if the username APPEARS to be invalid, then say that the email was invalid; not perfect because it is impossible to have a list of all correct emails
             else if(createAccountEmail.getText().equals("") || invalidDomain || !SendEmail.isValidEmailAddress(createAccountEmail.getText()) || !SendEmail.isValidRegex(createAccountEmail.getText())) {
                 AlertBox.display("Email Invalid", 500, 200, "You did not enter a proper email address.");
             }
@@ -600,9 +604,11 @@ public class Driver extends Application {
             else if(!createAccountPassword.getText().equals(createAccountConfirmPassword.getText())) {
                 AlertBox.display("Password Confirmation Error", 500, 200, "Password and Confirmation do not match.");
             }
+            //if all fields have valid information...
             else {
                 SQL.wentInLoop = false;
                 emailAddress = createAccountEmail.getText();
+                //set SQLInfo equal to the username that is associated with the username given; really is just here to see if the username entered by the user exists in the database
                 sqlInfo = SQL.getFromDatabase("select USERNAME from ADMIN where USERNAME = '" + createAccountUsername.getText() + "';");
                 //checking if username is already an admin username
                 if (!SQL.wentInLoop) {
@@ -610,7 +616,7 @@ public class Driver extends Application {
                     //checking if username is already a customer username
                     if(!SQL.wentInLoop) {
                         sqlInfo = SQL.getFromDatabase("select EMAIL from ADMIN where EMAIL = '" + createAccountEmail.getText() + "';");
-                        //checking if email is already an admin email
+                        //set SQLInfo equal to the email that is associated with the email given; really is just here to see if the email entered by the user exists in the database
                         if(!SQL.wentInLoop) {
                             sqlInfo = SQL.getFromDatabase("select EMAIL from CUSTOMER where EMAIL = '" + createAccountEmail.getText() + "';");
                             //checking if email is already a customer email
@@ -631,13 +637,19 @@ public class Driver extends Application {
                                     adminAuthorizationWindow.setResizable(false);
                                     adminAuthorizationWindow.setX(primScreenBounds.getWidth() - (primScreenBounds.getWidth() / 1.7));
                                     adminAuthorizationWindow.setY(primScreenBounds.getHeight() - (primScreenBounds.getHeight() / 1.75));
+                                    //wait for an admin to enter their information and then return
                                     adminAuthorizationWindow.showAndWait();
                                     return;
                                 }
                                 ////if no information is already in the system and this is a customer creation, then send the customer's information to the database, creating a new customer and send an email to the email address provided
                                 else {
-                                    SendEmail.send(emailAddress);
+                                    SendEmail.send(emailAddress); //sends email to customer
+                                    //insert new customer into database
                                     SQL.sendToDatabase("insert into CUSTOMER (NAME, EMAIL, USERNAME, PASSWORD) values('" + createAccountName.getText() + "','" + createAccountEmail.getText() + "','" + createAccountUsername.getText() + "','" + createAccountPassword.getText() + "');");
+                                    mainWindow.setScene(loginUI);
+                                    mainWindow.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
+                                    mainWindow.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
+                                    mainWindow.setTitle("Railway System Simulation: Login");
                                     createAccountName.clear();
                                     createAccountEmail.clear();
                                     createAccountUsername.clear();
@@ -673,6 +685,7 @@ public class Driver extends Application {
         //on button click...
         createAccountCancelButton.setOnAction(e -> {
             result = ConfirmBox.display("Confirming Cancellation of Account Creation", 500, 200, "Are you sure you want to cancel creating an account?");
+            //if user says "yes", then they are brought to the login screen
             if(result) {
                 mainWindow.setScene(loginUI);
                 mainWindow.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
@@ -692,6 +705,7 @@ public class Driver extends Application {
                     //if an admin wants to create a customer
                     if (adminElementDropdownBox.getValue().equals("Customer")) {
                         invalidDomain = SendEmail.readDomains(adminCreateEmail.getText());
+                        //checking if all information entered is valid
                         if (adminCreateEmail.getText().equals("") || invalidDomain || !SendEmail.isValidEmailAddress(adminCreateEmail.getText()) || !SendEmail.isValidRegex(adminCreateEmail.getText())) {
                             AlertBox.display("Email Invalid", 500, 200, "You did not enter a proper email address.");
                             return;
@@ -707,17 +721,22 @@ public class Driver extends Application {
                         } else if (!adminCreatePassword.getText().equals(adminCreateConfirmPassword.getText())) {
                             AlertBox.display("Password Confirmation Error", 500, 200, "Password and Confirmation do not match.");
                             return;
-                        } else {
+                        } 
+                          //if all information entered is valid...
+                          else {
                             emailAddress = adminCreateEmail.getText();
+                            //set SQLInfo equal to the username that is associated with the username given; really is just here to see if the username entered by the user exists in the database
                             sqlInfo = SQL.getFromDatabase("select USERNAME from ADMIN where USERNAME = '" + adminCreateUsername.getText() + "';");
                             if (!SQL.wentInLoop) {
                                 sqlInfo = SQL.getFromDatabase("select USERNAME from CUSTOMER where USERNAME = '" + adminCreateUsername.getText() + "';");
                                 if(!SQL.wentInLoop) {
+                                    //set SQLInfo equal to the email that is associated with the email given; really is just here to see if the email entered by the user exists in the database
                                     sqlInfo = SQL.getFromDatabase("select EMAIL from ADMIN where EMAIL = '" + adminCreateEmail.getText() + "';");
                                     if(!SQL.wentInLoop) {
                                         sqlInfo = SQL.getFromDatabase("select EMAIL from CUSTOMER where EMAIL = '" + adminCreateEmail.getText() + "';");
                                         if(!SQL.wentInLoop) {
-                                            SendEmail.send(emailAddress);
+                                            SendEmail.send(emailAddress); //send an email to the customer
+                                            //inserting the new customer in the database
                                             SQL.sendToDatabase("insert into CUSTOMER (NAME, EMAIL, USERNAME, PASSWORD) values('" + adminCreateCustName.getText() + "','" + adminCreateEmail.getText() + "','" + adminCreateUsername.getText() + "','" + adminCreatePassword.getText() + "');");
                                             adminCreateCustName.clear();
                                             adminCreateEmail.clear();
@@ -749,6 +768,7 @@ public class Driver extends Application {
                     }
                     //if an admin wants to create a train
                     else if (adminElementDropdownBox.getValue().equals("Train")) {
+                        //check that all information entered is valid
                         if (adminCreateTrainName.getText().equals("")) {
                             AlertBox.display("Name Invalid", 500, 200, "You did not enter a proper name.");
                             return;
@@ -758,7 +778,9 @@ public class Driver extends Application {
                         } else if (!(Pattern.matches("[0-9]+", adminCreateNumOfSeats.getText())) || Integer.parseInt(adminCreateNumOfSeats.getText()) < 1) {
                             AlertBox.display("Number of Seats Invalid", 500, 200, "You did not enter a proper number of seats");
                             return;
-                        } else {
+                        } 
+                          //if all information entered is valid, then insert the train into the database
+                          else {
                             SQL.sendToDatabase("insert into TRAIN (NAME, MODEL, NUM_OF_SEATS) values('" + adminCreateTrainName.getText() + "','" + adminCreateModel.getText() + "','" + adminCreateNumOfSeats.getText() + "');");
                             adminCreateTrainName.clear();
                             adminCreateModel.clear();
@@ -768,13 +790,16 @@ public class Driver extends Application {
                     }
                     //if an admin wants to create a train station
                     else if (adminElementDropdownBox.getValue().equals("Train Station")) {
+                        //check that all information entered is valid
                         if (adminCreateTrainStationName.getText().equals("")) {
                             AlertBox.display("Name Invalid", 500, 200, "You did not enter a proper name.");
                             return;
                         } else if (adminCreateLocation.getText().equals("")) {
                             AlertBox.display("Location Invalid", 500, 200, "You did not enter a proper location.");
                             return;
-                        } else {
+                        } 
+                          //if all information entered is valid, then insert the train station into the database 
+                          else {
                             SQL.sendToDatabase("insert into TRAIN_STATION (NAME, LOCATION) values('" + adminCreateTrainStationName.getText() + "','" + adminCreateLocation.getText() + "');");
                             adminCreateTrainStationName.clear();
                             adminCreateLocation.clear();
@@ -783,12 +808,15 @@ public class Driver extends Application {
                     }
                     //if an admin wants to create a schedule entry
                     else if (adminElementDropdownBox.getValue().equals("Schedule Entry")) {
+                        //check that all information entered is valid
+                        //sqlInfo equals the train id of the train given, if it doesn't exist then sqlInfo is empty and the id is invalid
                         sqlInfo = SQL.getFromDatabase("select TRAIN_ID from TRAIN where ID = " + adminCheckTrainName.getText() + ";");
                         trainId = sqlInfo.get(0);
                         if (!SQL.wentInLoop) {
                             AlertBox.display("Train ID Invalid", 500, 200, "You did not enter a train ID that exists.");
                             return;
                         }
+                        //sqlInfo equals the track id of the track given, if it doesn't exist then sqlInfo2 is empty and the id is invalid; the reason a second ArrayList is used is that we don't want to overwrite the other one that may have information we need
                         sqlInfo2 = SQL.getFromDatabase("select TRACK_ID from TRACK where ID = " + adminCheckTrackID.getText() + ";");
                         if (!SQL.wentInLoop) {
                             AlertBox.display("Track ID Invalid", 500, 200, "You did not enter a track ID that exists.");
@@ -799,7 +827,9 @@ public class Driver extends Application {
                         } else if (adminCreateSchedIn.getText().equals("") || adminCreateSchedIn.getText().length() != 5 || !(Pattern.matches("[0-9]+", adminCreateSchedIn.getText().substring(0, 2))) || !(Pattern.matches("[0-9]+", adminCreateSchedIn.getText().substring(3, 5))) || !adminCreateSchedIn.getText().substring(2, 3).equals(":") || Integer.parseInt(adminCreateSchedIn.getText().substring(0, 2)) < 1 || Integer.parseInt(adminCreateSchedIn.getText().substring(0, 2)) > 23 || Integer.parseInt(adminCreateSchedIn.getText().substring(3, 5)) < 0 || Integer.parseInt(adminCreateSchedIn.getText().substring(3, 5)) > 59) {
                             AlertBox.display("Arrival Time Invalid", 500, 200, "You did not enter a proper arrival time (Must be in HH:MM format).");
                             return;
-                        } else {
+                        } 
+                          //if all information entered is valid, insert the schedule entry into the database
+                          else {
                             SQL.sendToDatabase("insert into SCHEDULE (TRAIN_ID, TRACK_ID, DEPARTURE_TIME, ARRIVAL_TIME) values('" + trainId + "','" + sqlInfo2.get(0) + "','" + adminCreateSchedOut.getText() + "','" + adminCreateSchedIn.getText() + "');");
                             adminCheckTrainName.clear();
                             adminCheckTrackID.clear();
@@ -810,12 +840,15 @@ public class Driver extends Application {
                     }
                     //if an admin wants to create a track
                     else if (adminElementDropdownBox.getValue().equals("Track")) {
+                        //check that all information entered is valid
+                        //sqlInfo equals the train station id of the train given, if it doesn't exist then sqlInfo is empty and the id is invalid
                         sqlInfo = SQL.getFromDatabase("select TRAIN_STATION_ID from TRAIN_STATION where ID = " + adminCreateStationFrom.getText() + ";");
-                        trainId = sqlInfo.get(0);
+                        trainId = sqlInfo.get(0); //must set a variable equal to what is in sqlInfo because of pass by reference...probably should change this up it is very sloppy
                         if (!SQL.wentInLoop) {
                             AlertBox.display("Train ID Invalid", 500, 200, "You did not enter a proper station ID to depart from.");
                             return;
                         }
+                        //sqlInfo2 equals the train
                         sqlInfo2 = SQL.getFromDatabase("select TRAIN_STATION_ID from TRAIN_STATION where ID = " + adminCreateStationTo.getText() + ";");
                         if (!SQL.wentInLoop) {
                             AlertBox.display("Track ID Invalid", 500, 200, "You did not enter a proper station ID to arrive at.");
