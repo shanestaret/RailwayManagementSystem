@@ -4,7 +4,7 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class SQL {
-    static String url = "jdbc:sqlserver://SQL2.cis245.mc3.edu:1433;databaseName=zz_CIS245_16;user=user16;password=JayHey99"; //name of SQL server and info
+    static String url = "jdbc:sqlserver://SQL2.cis245.mc3.edu:1433;databaseName=zz_CIS245_16;user=xx;password=xx"; //name of SQL server and info
     static Connection myConn = null;
     static Statement myStmt = null; //all must be null to start
     static ResultSet rs = null;
