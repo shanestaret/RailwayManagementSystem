@@ -11,7 +11,7 @@ ________________________________________________________________________________
 
 #### After designing the frontend, I came up with the most efficient way to organize the backend. The total number of "things" I had was seven--two users and five objects. Obviously, that means within the database there would be at least seven tables and multiple relationships between these users and objects. At this moment, I asked myself, "*What is the main object that this program is built around?*" ...Well considering its a railway management system, obviously the answer is the train...right? Well at first that is what I thought, but I quickly realized that it is actually the ticket. Without the ticket, our entire system collapses. A railway cannot operate without the customers who purchase the ticket and a ticket cannot exist if there is not a train, train station, track, etc. Therefore, the entire program revolves around the ticket and every other object must be properly implemented to ensure that a ticket can be appropriately created and sold for purchase by a customer.
 
-#### When I was finished designing and deciding how I wanted to implement both the frontend and the backend, it was time to code...not much explaining needs to be done there as you can literally view the code and its comments above ._.
+#### When I was finished designing and deciding how I wanted to implement both the frontend and the backend, it was time to code...not much explaining needs to be done there as you can literally view the code and its comments above.
 ________________________________________________________________________________________________________________________________
 
 ## How it was Made
