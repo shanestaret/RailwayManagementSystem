@@ -16,7 +16,7 @@ ________________________________________________________________________________
 
 ## How it was Made
 
-#### My Railway Management System was created using JavaFX and its UI along with SQL Server Management Studio.
+#### My Railway Management System was created using JavaFX and its UI along with SQL Server Management Studio. At the moment, the code is admittedly not efficient. There are definitely some methods that I can create that will not only shorten the length of the code, but will also make the code easier to understand, build upon, and run.
 ________________________________________________________________________________________________________________________________
 
 ## Thoughts & Future Plans
