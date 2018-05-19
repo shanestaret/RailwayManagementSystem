@@ -1,4 +1,4 @@
-# RailwayManagementSystem
+# Railway Management System
 ###### Official CIS245 (Database Management Sys. /SQL) Final Project by [Shane Staret](https://github.com/SStaret43).
 ________________________________________________________________________________________________________________________________
 
