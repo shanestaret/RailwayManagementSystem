@@ -27,4 +27,3 @@ ________________________________________________________________________________
    * ##### create classes to house methods so code is more organized and readable
    * ##### add CSS to UI to make it more professional and aesthetic
    * ##### *possibly* move UI to the web
-________________________________________________________________________________________________________________________________
