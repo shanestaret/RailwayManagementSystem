@@ -16,10 +16,15 @@ ________________________________________________________________________________
 
 ### **How it was Made**
 
-#### My Railway Management System is created using JavaFX and its UI along with SQL Server Management Studio. Java is used for frontend implementation, whereas SQL is used for the backend. At the moment, the code is admittedly not efficient. There are definitely some methods that I can create that will not only shorten the length of the code, but will also make the code easier to understand, build upon, and run. I plan on continuing to create this software within Java and SQL and have no intention on switching languages. However, JavaFX does can implement CSS, which I have yet to do. I will definitely do this in the future to make the UI look better.
+#### My Railway Management System is created using JavaFX and its UI along with SQL Server Management Studio. Java is used for frontend implementation, whereas SQL is used for the backend. At the moment, the code is admittedly not efficient. There are definitely some methods that I can create that will not only shorten the length of the code, but will also make the code easier to understand, build upon, and run. I plan on continuing to create this software within Java and SQL and have no intention on switching languages. However, JavaFX does can implement CSS, which I have yet to do. I will definitely do this in the future to make the UI look better. I also think that putting the UI onto the web rather than through Java *may* be something I contemplate doing.
 ________________________________________________________________________________________________________________________________
 
 ### **Thoughts & Future Plans**
 
-#### This project was created with the intent to be a simulation of a railway management system. In its current state, I feel as though this could realistically be implemented as a simplistic application that effectively manages a railway system and all of its components. Obviously, the program still needs to be worked on in order for it to properly function as an actual software program that could control even the most basic railway system.
+#### This project was created with the intent to be a simulation of a railway management system. In its current state, I feel as though this could realistically be implemented as a simplistic application that effectively manages a railway system and all of its components. Obviously, the program still needs to be worked on in order for it to properly function as an actual software program that could control even the most basic railway system. Here is a shortlist of what I will do in the future:
+   * ##### fix backend issues in SQL leading to relationships not working properly
+   * ##### implement needed methods to avoid repetitive code
+   * ##### create classes to house methods so code is more organized and readable
+   * ##### add CSS to UI to make it more professional and aesthetic
+   * ##### *possibly* move UI to the web
 ________________________________________________________________________________________________________________________________
