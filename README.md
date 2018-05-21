@@ -2,7 +2,7 @@
 ###### Official CIS245 (Database Management Sys. /SQL) Final Project by [Shane Staret](https://github.com/SStaret43).
 ###### This is a link to [my YouTube channel](https://www.youtube.com/channel/UCmQA16swmtPa29pRo9YtRTA?view_as=subscriber), featuring videos of this project on it. Here is a [video](https://www.youtube.com/watch?v=VBhkxXqMgSw&t=268s) that does "well" at explaining and showcasing the basics of the application and some of its flaws.
 
-**IMPORTANT NOTE: The .jar file will *NOT* work unless you have Java 1.9 on your device**
+**IMPORTANT NOTE: The .jar executable file will *NOT* work unless you have Java 1.9 on your device**
 ________________________________________________________________________________________________________________________________
 
 ## **Explanation & Design Process**
