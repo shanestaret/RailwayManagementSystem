@@ -44,3 +44,6 @@ ________________________________________________________________________________
 ![Picture of Admin UI](Pictures/AdminUI2.PNG)
 ![Picture of Admin UI](Pictures/AdminUI3.PNG)
 ![Picture of Admin UI](Pictures/AdminUI4.PNG)
+
+#### This is the Customer UI. Pre-existing customers can purchase unowned tickets here or cancel their owned tickets.
+![Picture of Customer UI](Pictures/CustomerUI.PNG)
