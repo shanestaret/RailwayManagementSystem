@@ -38,3 +38,6 @@ ________________________________________________________________________________
 
 #### These are some of the many views that an admin can see.
 ![Picture of Admin UI](Pictures/AdminUI.PNG)
+![Picture of Admin UI](Pictures/AdminUI2.PNG)
+![Picture of Admin UI](Pictures/AdminUI3.PNG)
+![Picture of Admin UI](Pictures/AdminUI4.PNG)
