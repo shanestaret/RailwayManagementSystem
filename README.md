@@ -39,6 +39,9 @@ ________________________________________________________________________________
 #### This is the Create Account UI. Here, an account can be created for either an admin or a customer and the email address entered will receive an email if the address exists.
 ![Picture of Create Account UI](Pictures/CreateAccountUI.PNG)
 
+#### The email that is sent to a user whenever their account is created or updated.
+![Picture of Create Account UI](Pictures/Email.PNG)
+
 #### These are some of the many views that an admin can see.
 ![Picture of Admin UI](Pictures/AdminUI.PNG)
 ![Picture of Admin UI](Pictures/AdminUI2.PNG)
@@ -47,3 +50,5 @@ ________________________________________________________________________________
 
 #### This is the Customer UI. Pre-existing customers can purchase unowned tickets here or cancel their owned tickets.
 ![Picture of Customer UI](Pictures/CustomerUI.PNG)
+
+#### 
