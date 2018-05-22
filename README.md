@@ -36,6 +36,9 @@ ________________________________________________________________________________
 #### What the Login UI looks like. When the program is run, this is the first scene to show.
 ![Picture of Login UI](Pictures/LoginUI.PNG)
 
+#### This is the Create Account UI. Here, an account can be created for either an admin or a customer and the email address entered will receive an email if the address exists.
+![Picture of Create Account UI](Pictures/CreateAccountUI.PNG)
+
 #### These are some of the many views that an admin can see.
 ![Picture of Admin UI](Pictures/AdminUI.PNG)
 ![Picture of Admin UI](Pictures/AdminUI2.PNG)
