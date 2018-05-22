@@ -40,7 +40,7 @@ ________________________________________________________________________________
 ![Picture of Create Account UI](Pictures/CreateAccountUI.PNG)
 
 #### The email that is sent to a user whenever their account is created or updated.
-![Picture of Create Account UI](Pictures/Email.PNG)
+![Picture of Create Account UI](Pictures/EmailSent.PNG)
 
 #### These are some of the many views that an admin can see.
 ![Picture of Admin UI](Pictures/AdminUI.PNG)
