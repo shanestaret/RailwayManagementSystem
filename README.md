@@ -39,6 +39,9 @@ ________________________________________________________________________________
 #### This is the Create Account UI. Here, an account can be created for either an admin or a customer and the email address entered will receive an email if the address exists.
 ![Picture of Create Account UI](Pictures/CreateAccountUI.PNG)
 
+#### The pop-up box that comes up when an admin account is trying to be created. This authorization window requires a pre-existing admin's information to confirm that a new admin account should actually be created.
+![Picture of Admin Authorization UI](Pictures/AdminAuthorizationUI.PNG)
+
 #### The email that is sent to a user whenever their account is created or updated.
 ![Picture of Create Account UI](Pictures/EmailSent.PNG)
 
