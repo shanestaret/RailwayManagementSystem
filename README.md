@@ -55,4 +55,5 @@ ________________________________________________________________________________
 ![Picture of Customer UI](Pictures/CustomerUI.PNG)
 ![Picture of Customer UI](Pictures/CustomerUI2.PNG)
 
-#### 
+#### Example of the tables and the contents of those tables that you might find in the SQL database.
+![Picture of a sample of what the tables in the database may look like](Pictures/DatabaseTableExample.PNG)
