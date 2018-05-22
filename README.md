@@ -35,3 +35,6 @@ ________________________________________________________________________________
 
 #### What the Login UI looks like. When the program is run, this is the first scene to show.
 ![Picture of Login UI](Pictures/LoginUI.PNG)
+
+#### These are some of the many views that an admin can see.
+![Picture of Admin UI](Pictures/AdminUI.PNG)
