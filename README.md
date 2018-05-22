@@ -33,3 +33,4 @@ ________________________________________________________________________________
 
 ## **Pictures**
 
+#### What the Login UI looks like. When the program is run, this is the first scene to show.
